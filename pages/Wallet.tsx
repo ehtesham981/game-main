@@ -27,7 +27,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
 
    // Updated Exchange Rates
    const WITHDRAW_RATE = 5000; // 5000 Coins = $1
-   const DEPOSIT_RATE = 3000;  // 6000 Coins = $2 ($1 per 3000 coins)
+   const DEPOSIT_RATE = 6000;  // 6000 Coins = $2 ($1 per 3000 coins)
    const MIN_DEPOSIT = 6000;   // Set to 6000 as per prompt logic
    const MIN_WITHDRAWAL = 5000;
 
