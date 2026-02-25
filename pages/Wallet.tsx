@@ -208,7 +208,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                         <h3 className="text-indigo-400 text-[10px] font-black uppercase tracking-[0.3em] mb-8">Withdrawal Protocol</h3>
                         <div className="flex items-center gap-6">
                            <div className="text-center px-6 py-4 bg-white/5 rounded-2xl border border-white/10">
-                              <p className="text-3xl font-black text-white">3,000</p>
+                              <p className="text-3xl font-black text-white">5,000</p>
                               <p className="text-[9px] font-black text-slate-500 uppercase">Coins</p>
                            </div>
                            <i className="fa-solid fa-equals text-indigo-500 text-xl"></i>
@@ -365,7 +365,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                               </div>
                            </div>
                            <div className="px-6 flex justify-between items-center text-[9px] font-black uppercase tracking-widest">
-                              <span className="text-slate-400">Min {activeTab}: {activeTab === 'deposit' ? '6,000' : '3,000'} Units</span>
+                              <span className="text-slate-400">Min {activeTab}: {activeTab === 'deposit' ? '6,000' : '5,000'} Units</span>
                               <span className="text-indigo-600">Node Sync Active</span>
                            </div>
                         </div>
