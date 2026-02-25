@@ -146,6 +146,178 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
             </div>
           </div>
         )}
+        {view === 'finance' && (
+          <div className="bg-white rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
+            <div className="p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
+              <h2 className="text-2xl font-black text-slate-900 uppercase">Financial Requests</h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left min-w-[800px]">
+                <thead className="bg-slate-50 text-[10px] font-black uppercase text-slate-400 border-b border-slate-100">
+                  <tr>
+                    <th className="px-10 py-6">ID / User</th>
+                    <th className="px-6 py-6">Type & Amount</th>
+                    <th className="px-6 py-6">Details</th>
+                    <th className="px-10 py-6 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50">
+                  {transactions.filter(tx => (tx.type === 'deposit' || tx.type === 'withdraw')).map(tx => (
+                    <tr key={tx.id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="px-10 py-6">
+                        <p className="text-[10px] text-indigo-400 font-mono">{tx.id.substring(0, 12)}...</p>
+                        <p className="text-xs font-black text-slate-900 mt-1">{tx.userId}</p>
+                      </td>
+                      <td className="px-6 py-6 font-black">
+                        <span className={`px-2 py-1 rounded text-[9px] uppercase tracking-widest ${tx.type === 'withdraw' ? 'bg-amber-100 text-amber-600' : 'bg-emerald-100 text-emerald-600'}`}>
+                          {tx.type}
+                        </span>
+                        <p className="mt-2 text-slate-900">{tx.amount.toLocaleString()} Coins</p>
+                      </td>
+                      <td className="px-6 py-6">
+                        <p className="text-[10px] font-bold text-slate-500">{tx.method} <br /> {tx.account}</p>
+                        <p className={`text-[10px] font-black uppercase mt-1 ${tx.status === 'pending' ? 'text-amber-500' : tx.status === 'success' ? 'text-emerald-500' : 'text-rose-500'}`}>{tx.status}</p>
+                      </td>
+                      <td className="px-10 py-6 text-right space-x-2">
+                        {tx.proofImage && (
+                          <a href={tx.proofImage} target="_blank" rel="noreferrer" className="inline-block px-4 py-2 bg-indigo-50 text-indigo-600 text-[9px] font-black uppercase rounded-lg">Proof</a>
+                        )}
+                        {tx.status === 'pending' && (
+                          <>
+                            <button onClick={async () => { await storage.updateGlobalTransaction(tx.id, { status: 'success' }); refreshActiveData(); }} className="px-4 py-2 bg-emerald-500 text-white text-[9px] font-black uppercase rounded-lg">Approve</button>
+                            <button onClick={async () => { await storage.updateGlobalTransaction(tx.id, { status: 'failed' }); refreshActiveData(); }} className="px-4 py-2 bg-rose-500 text-white text-[9px] font-black uppercase rounded-lg">Reject</button>
+                          </>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+        {view === 'reviews' && (
+          <div className="bg-white rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
+            <div className="p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
+              <h2 className="text-2xl font-black text-slate-900 uppercase">Task Reviews</h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left min-w-[800px]">
+                <thead className="bg-slate-50 text-[10px] font-black uppercase text-slate-400 border-b border-slate-100">
+                  <tr>
+                    <th className="px-10 py-6">Task ID</th>
+                    <th className="px-6 py-6">User / Amount</th>
+                    <th className="px-6 py-6">Proofs</th>
+                    <th className="px-10 py-6 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50">
+                  {transactions.filter(tx => tx.type === 'earn').map(tx => (
+                    <tr key={tx.id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="px-10 py-6 font-mono text-[10px] text-indigo-500">{tx.taskId || 'Unknown'}</td>
+                      <td className="px-6 py-6 text-xs font-black text-slate-900">
+                        {tx.userId}
+                        <p className="text-emerald-600 mt-1">+{tx.amount} C</p>
+                        <p className={`text-[9px] uppercase tracking-widest mt-1 ${tx.status === 'pending' ? 'text-amber-500' : tx.status === 'success' ? 'text-emerald-500' : 'text-rose-500'}`}>{tx.status}</p>
+                      </td>
+                      <td className="px-6 py-6 space-x-2">
+                        {tx.proofImage && <a href={tx.proofImage} target="_blank" rel="noreferrer" className="inline-block px-3 py-1 bg-slate-100 text-slate-600 rounded text-[9px] font-black uppercase">Image 1</a>}
+                        {tx.proofImage2 && <a href={tx.proofImage2} target="_blank" rel="noreferrer" className="inline-block px-3 py-1 bg-slate-100 text-slate-600 rounded text-[9px] font-black uppercase">Image 2</a>}
+                      </td>
+                      <td className="px-10 py-6 text-right space-x-2">
+                        {tx.status === 'pending' && (
+                          <>
+                            <button onClick={async () => { await storage.updateGlobalTransaction(tx.id, { status: 'success' }); refreshActiveData(); }} className="px-4 py-2 bg-emerald-500 text-white text-[9px] font-black uppercase rounded-lg">Approve</button>
+                            <button onClick={async () => { await storage.updateGlobalTransaction(tx.id, { status: 'failed' }); refreshActiveData(); }} className="px-4 py-2 bg-rose-500 text-white text-[9px] font-black uppercase rounded-lg">Reject</button>
+                          </>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+        {view === 'tasks' && (
+          <div className="bg-white rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
+            <div className="p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
+              <h2 className="text-2xl font-black text-slate-900 uppercase">Campaigns Management</h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left min-w-[800px]">
+                <thead className="bg-slate-50 text-[10px] font-black uppercase text-slate-400 border-b border-slate-100">
+                  <tr>
+                    <th className="px-10 py-6">Campaign Info</th>
+                    <th className="px-6 py-6">Progress</th>
+                    <th className="px-6 py-6">Creator</th>
+                    <th className="px-10 py-6 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50">
+                  {tasks.map(task => (
+                    <tr key={task.id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="px-10 py-6">
+                        <p className="text-sm font-black text-slate-900">{task.title}</p>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase mt-1">{task.type} - {task.reward} Coins</p>
+                        <p className={`mt-1 text-[9px] font-black uppercase tracking-widest ${task.status === 'pending' ? 'text-amber-500' : task.status === 'active' ? 'text-emerald-500' : 'text-slate-400'}`}>{task.status}</p>
+                      </td>
+                      <td className="px-6 py-6 text-xs font-black text-slate-700">
+                        {task.completedCount} / {task.totalWorkers}
+                      </td>
+                      <td className="px-6 py-6 text-xs font-bold text-slate-700">{task.creatorId}</td>
+                      <td className="px-10 py-6 text-right space-x-2">
+                        {task.status === 'pending' && (
+                          <>
+                            <button onClick={async () => { await storage.updateTaskInCloud(task.id, { status: 'active' }); refreshActiveData(); }} className="px-4 py-2 bg-emerald-500 text-white text-[9px] font-black uppercase rounded-lg">Approve</button>
+                            <button onClick={async () => { await storage.updateTaskInCloud(task.id, { status: 'rejected' }); refreshActiveData(); }} className="px-4 py-2 bg-rose-500 text-white text-[9px] font-black uppercase rounded-lg">Reject</button>
+                          </>
+                        )}
+                        <button onClick={async () => { await storage.deleteTaskFromCloud(task.id); refreshActiveData(); }} className="px-4 py-2 bg-slate-900 text-white text-[9px] font-black uppercase rounded-lg">Delete</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+        {view === 'history' && (
+          <div className="bg-white rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
+            <div className="p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
+              <h2 className="text-2xl font-black text-slate-900 uppercase">Global Transaction Logs</h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left min-w-[800px]">
+                <thead className="bg-slate-50 text-[10px] font-black uppercase text-slate-400 border-b border-slate-100">
+                  <tr>
+                    <th className="px-10 py-6">ID / Date</th>
+                    <th className="px-6 py-6">Entity</th>
+                    <th className="px-6 py-6">Amount / Type</th>
+                    <th className="px-10 py-6 text-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50">
+                  {transactions.slice(0, 100).map(tx => (
+                    <tr key={tx.id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="px-10 py-6">
+                        <p className="font-mono text-[10px] text-indigo-500">{tx.id}</p>
+                        <p className="text-[10px] text-slate-400 font-bold mt-1">{tx.date}</p>
+                      </td>
+                      <td className="px-6 py-6 text-xs font-black text-slate-900">{tx.userId}</td>
+                      <td className="px-6 py-6 text-xs font-black">
+                        {tx.amount} C <span className="ml-2 px-2 py-0.5 bg-slate-100 text-slate-600 rounded uppercase tracking-widest text-[8px]">{tx.type}</span>
+                      </td>
+                      <td className="px-10 py-6 text-right">
+                        <span className={`text-[10px] font-black uppercase tracking-widest ${tx.status === 'success' ? 'text-emerald-500' : tx.status === 'pending' ? 'text-amber-500' : 'text-rose-500'}`}>{tx.status}</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
