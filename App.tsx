@@ -138,6 +138,29 @@ const App: React.FC = () => {
     await storage.addTransaction(tx);
   };
 
+  const handleClaimReferral = async (referredUserId: string) => {
+    if (user.claimedReferrals?.includes(referredUserId)) return;
+    const REWARD = 50;
+    const updatedUser = {
+      ...user,
+      coins: user.coins + REWARD,
+      claimedReferrals: [...(user.claimedReferrals || []), referredUserId]
+    };
+    setUser(updatedUser);
+    await storage.setUser(updatedUser);
+    const tx: Transaction = {
+      id: `REF-${Math.random().toString(36).substr(2, 6).toUpperCase()}-${Date.now()}`,
+      userId: user.id,
+      amount: REWARD,
+      type: 'referral_claim',
+      method: 'Referral Bonus',
+      status: 'success',
+      date: new Date().toLocaleString()
+    };
+    await storage.addTransaction(tx);
+    await refreshUserBalance();
+  };
+
   const navigateTo = (page: string) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -170,7 +193,7 @@ const App: React.FC = () => {
           {currentPage === 'math-solver' && user.isLoggedIn && <MathSolver user={user} transactions={transactions} onSolve={() => refreshUserBalance()} />}
           {currentPage === 'login' && <Login onLogin={handleLogin} />}
           {currentPage === 'spin' && user.isLoggedIn && <SpinWheel userCoins={user.coins} onSpin={(w, c) => { setUser({ ...user, coins: user.coins + w - c }); }} transactions={transactions} />}
-          {currentPage === 'referrals' && user.isLoggedIn && <Referrals user={user} onClaim={() => refreshUserBalance()} />}
+          {currentPage === 'referrals' && user.isLoggedIn && <Referrals user={user} onClaim={handleClaimReferral} />}
           {currentPage === 'profile' && user.isLoggedIn && <ProfileSettings user={user} />}
           {currentPage === 'privacy-policy' && <PrivacyPolicy />}
           {currentPage === 'terms-conditions' && <TermsConditions />}

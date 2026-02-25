@@ -16,21 +16,32 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
   const [searchQuery, setSearchQuery] = useState('');
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
 
-  const refreshActiveData = useCallback(async (forcedView?: string) => {
-    const targetView = forcedView || view;
+  const refreshActiveData = useCallback(async () => {
     setIsSyncing(true);
     try {
-      if (targetView === 'overview' || targetView === 'history' || targetView === 'reviews' || targetView === 'finance' || targetView === 'tasks') {
-        const allTxs = await storage.getAllGlobalTransactions();
-        setTransactions(allTxs.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
-      }
-      if (targetView === 'overview' || targetView === 'users') {
-        const allUsers = await storage.getAllUsers();
+      if (view === 'overview') {
+        // Optimize overview load: fetch concurrently
+        const [allTxs, allUsers, allTasks] = await Promise.all([
+          storage.getAllGlobalTransactions(),
+          storage.getAllUsers(),
+          storage.getTasks()
+        ]);
+        setTransactions(allTxs || []);
         setUsers(allUsers || []);
-      }
-      if (targetView === 'overview' || targetView === 'tasks' || targetView === 'create-task') {
-        const allTasks = await storage.getTasks();
         setTasks(allTasks || []);
+      } else {
+        if (['history', 'reviews', 'finance', 'tasks'].includes(view)) {
+          const allTxs = await storage.getAllGlobalTransactions();
+          setTransactions(allTxs || []);
+        }
+        if (view === 'users') {
+          const allUsers = await storage.getAllUsers();
+          setUsers(allUsers || []);
+        }
+        if (['tasks', 'create-task'].includes(view)) {
+          const allTasks = await storage.getTasks();
+          setTasks(allTasks || []);
+        }
       }
     } catch (err) {
       console.error("Sync error:", err);
@@ -71,16 +82,16 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
       <div className="max-w-[1600px] mx-auto px-6 mb-12">
         <div className="bg-slate-900 rounded-[3rem] p-8 md:p-10 border border-slate-800 shadow-2xl flex flex-col xl:flex-row justify-between items-center gap-10 relative overflow-hidden">
           <div className="flex items-center gap-6 relative z-10">
-             <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-2xl">
-                <i className={`fa-solid ${isSyncing ? 'fa-sync fa-spin' : 'fa-user-shield'}`}></i>
-             </div>
-             <div>
-                <h1 className="text-3xl font-black text-white tracking-tighter uppercase">Admin Hub</h1>
-                <div className="flex items-center gap-2 mt-1">
-                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                   <span className="text-[8px] font-black uppercase tracking-widest text-slate-400">Live Management</span>
-                </div>
-             </div>
+            <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-2xl">
+              <i className={`fa-solid ${isSyncing ? 'fa-sync fa-spin' : 'fa-user-shield'}`}></i>
+            </div>
+            <div>
+              <h1 className="text-3xl font-black text-white tracking-tighter uppercase">Admin Hub</h1>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span className="text-[8px] font-black uppercase tracking-widest text-slate-400">Live Management</span>
+              </div>
+            </div>
           </div>
           <div className="flex bg-white/5 p-1.5 rounded-2xl border border-white/10 overflow-x-auto no-scrollbar relative z-10">
             {tabs.map(tab => (
