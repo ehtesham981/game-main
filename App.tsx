@@ -12,6 +12,10 @@ const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Login = lazy(() => import('./pages/Login'));
 const SpinWheel = lazy(() => import('./pages/SpinWheel'));
 const Referrals = lazy(() => import('./pages/Referrals'));
+const Tasks = lazy(() => import('./pages/Tasks'));
+const CreateTask = lazy(() => import('./pages/CreateTask'));
+const MathSolver = lazy(() => import('./pages/MathSolver'));
+const MyCampaigns = lazy(() => import('./pages/MyCampaigns'));
 const Features = lazy(() => import('./pages/Features'));
 const Contact = lazy(() => import('./pages/Contact'));
 const ProfileSettings = lazy(() => import('./pages/ProfileSettings'));
@@ -44,7 +48,7 @@ const App: React.FC = () => {
       try {
         const initialTasks = await storage.getTasks();
         setTasks(initialTasks);
-        
+
         if (user.isLoggedIn) {
           const cloudUser = await storage.syncUserFromCloud(user.id);
           if (cloudUser) {
@@ -59,7 +63,7 @@ const App: React.FC = () => {
             setTransactions(userTxs);
           }
         }
-        
+
         const seo = await storage.getSEOConfig();
         document.title = seo.siteTitle;
       } catch (error) {
@@ -142,13 +146,13 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       <Navbar currentPage={currentPage} setCurrentPage={navigateTo} user={user} onLogout={handleLogout} />
-      
+
       {sessionConflict && (
         <div className="fixed inset-0 z-[1000] bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-6 text-center">
           <div className="bg-white p-12 rounded-[3rem] max-w-md shadow-2xl animate-in zoom-in-95 duration-300">
-             <h2 className="text-3xl font-black text-slate-900 tracking-tighter mb-4">Access Terminated</h2>
-             <p className="text-slate-500 font-bold text-sm mb-8">Dual session detected.</p>
-             <button onClick={() => { setSessionConflict(false); setCurrentPage('login'); }} className="w-full py-5 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase">Reconnect</button>
+            <h2 className="text-3xl font-black text-slate-900 tracking-tighter mb-4">Access Terminated</h2>
+            <p className="text-slate-500 font-bold text-sm mb-8">Dual session detected.</p>
+            <button onClick={() => { setSessionConflict(false); setCurrentPage('login'); }} className="w-full py-5 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase">Reconnect</button>
           </div>
         </div>
       )}
@@ -159,9 +163,13 @@ const App: React.FC = () => {
           {currentPage === 'features' && <Features />}
           {currentPage === 'contact' && <Contact />}
           {currentPage === 'wallet' && <Wallet coins={user.coins} depositBalance={user.depositBalance} onAction={handleWalletAction} transactions={transactions} onRefresh={() => refreshUserBalance()} />}
-          {currentPage === 'dashboard' && user.isLoggedIn && <Dashboard user={user} tasks={tasks} transactions={transactions} onDeleteTask={() => {}} onUpdateTask={() => {}} />}
+          {currentPage === 'dashboard' && user.isLoggedIn && <Dashboard user={user} tasks={tasks} transactions={transactions} onDeleteTask={() => { }} onUpdateTask={() => { }} />}
+          {currentPage === 'tasks' && user.isLoggedIn && <Tasks user={user} tasks={tasks} transactions={transactions} onComplete={async () => { await refreshUserBalance(); }} />}
+          {currentPage === 'create-task' && user.isLoggedIn && <CreateTask user={user} tasks={tasks} userDepositBalance={user.depositBalance} onDeleteTask={async () => { }} onUpdateTask={async () => { }} onCreate={() => { }} navigateTo={navigateTo} />}
+          {currentPage === 'my-campaigns' && user.isLoggedIn && <MyCampaigns user={user} tasks={tasks} transactions={transactions} onDeleteTask={() => { }} onUpdateTask={() => { }} onNavigate={navigateTo} />}
+          {currentPage === 'math-solver' && user.isLoggedIn && <MathSolver user={user} transactions={transactions} onSolve={() => refreshUserBalance()} />}
           {currentPage === 'login' && <Login onLogin={handleLogin} />}
-          {currentPage === 'spin' && user.isLoggedIn && <SpinWheel userCoins={user.coins} onSpin={(w, c) => { setUser({...user, coins: user.coins + w - c}); }} transactions={transactions} />}
+          {currentPage === 'spin' && user.isLoggedIn && <SpinWheel userCoins={user.coins} onSpin={(w, c) => { setUser({ ...user, coins: user.coins + w - c }); }} transactions={transactions} />}
           {currentPage === 'referrals' && user.isLoggedIn && <Referrals user={user} onClaim={() => refreshUserBalance()} />}
           {currentPage === 'profile' && user.isLoggedIn && <ProfileSettings user={user} />}
           {currentPage === 'privacy-policy' && <PrivacyPolicy />}
