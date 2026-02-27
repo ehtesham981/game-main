@@ -15,6 +15,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
   const [isSyncing, setIsSyncing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
+  const [previewImages, setPreviewImages] = useState<string[] | null>(null);
 
   const refreshActiveData = useCallback(async () => {
     setIsSyncing(true);
@@ -322,9 +323,26 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
                         <p className="text-emerald-600 mt-1">+{tx.amount} C</p>
                         <p className={`text-[9px] font-black uppercase tracking-widest mt-1 ${tx.status === 'pending' ? 'text-amber-500' : tx.status === 'success' ? 'text-emerald-500' : 'text-rose-500'}`}>{tx.status}</p>
                       </td>
-                      <td className="px-6 py-6 space-x-2">
-                        {tx.proofImage && <a href={tx.proofImage} target="_blank" rel="noreferrer" className="inline-block px-3 py-1 bg-slate-100 text-slate-600 rounded text-[9px] font-black uppercase">Proof 1</a>}
-                        {tx.proofImage2 && <a href={tx.proofImage2} target="_blank" rel="noreferrer" className="inline-block px-3 py-1 bg-slate-100 text-slate-600 rounded text-[9px] font-black uppercase">Proof 2</a>}
+                      <td className="px-6 py-6">
+                        <div className="flex gap-2">
+                          {tx.proofImage && (
+                            <button
+                              onClick={() => setPreviewImages([tx.proofImage])}
+                              className="w-12 h-12 rounded-xl overflow-hidden border border-slate-200 hover:border-indigo-500 transition-all shadow-sm"
+                            >
+                              <img src={tx.proofImage} alt="Proof 1" className="w-full h-full object-cover" />
+                            </button>
+                          )}
+                          {tx.proofImage2 && (
+                            <button
+                              onClick={() => setPreviewImages(tx.proofImage ? [tx.proofImage, tx.proofImage2] : [tx.proofImage2])}
+                              className="w-12 h-12 rounded-xl overflow-hidden border border-slate-200 hover:border-indigo-500 transition-all shadow-sm"
+                            >
+                              <img src={tx.proofImage2} alt="Proof 2" className="w-full h-full object-cover" />
+                            </button>
+                          )}
+                          {!tx.proofImage && !tx.proofImage2 && <span className="text-[10px] text-slate-300 italic">No proof provided</span>}
+                        </div>
                       </td>
                       <td className="px-10 py-6 text-right space-x-2">
                         {tx.status === 'pending' && (
@@ -549,6 +567,36 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
           </div>
         )}
       </div>
+
+      {/* Proof Preview Modal */}
+      {previewImages && (
+        <div
+          className="fixed inset-0 z-[2000] bg-slate-950/98 backdrop-blur-3xl flex items-center justify-center p-6"
+          onClick={() => setPreviewImages(null)}
+        >
+          <div className="relative w-full max-w-6xl h-full flex flex-col items-center justify-center pointer-events-none">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full pointer-events-auto overflow-y-auto no-scrollbar py-20">
+              {previewImages.map((src, idx) => (
+                <div key={idx} className="relative rounded-[3rem] overflow-hidden shadow-2xl border border-white/10 bg-white/5 p-4">
+                  <p className="absolute top-8 left-8 z-10 px-4 py-1.5 bg-black/40 backdrop-blur-md rounded-lg text-[9px] font-black uppercase text-white border border-white/10">USER PROOF {idx + 1}</p>
+                  <img src={src} alt={`Proof ${idx + 1}`} className="w-full h-auto object-contain rounded-[2rem]" />
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={(e) => { e.stopPropagation(); setPreviewImages(null); }}
+              className="absolute top-8 right-8 w-12 h-12 bg-white/10 text-white rounded-full flex items-center justify-center hover:bg-white/20 transition-all backdrop-blur-xl border border-white/20 pointer-events-auto"
+            >
+              <i className="fa-solid fa-xmark text-2xl"></i>
+            </button>
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
     </div>
   );
 };
