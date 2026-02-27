@@ -282,7 +282,7 @@ const App: React.FC = () => {
           {currentPage === 'privacy-policy' && <PrivacyPolicy />}
           {currentPage === 'terms-conditions' && <TermsConditions />}
           {currentPage === 'disclaimer' && <Disclaimer />}
-          {currentPage === 'freelance-figma' && user.isLoggedIn && <FreelanceFigma user={user} />}
+          {currentPage === 'freelance-figma' && user.isLoggedIn && <FreelanceFigma user={user} onBack={() => navigateTo('dashboard')} />}
 
           {currentPage.startsWith('admin-') && user.isAdmin && <AdminPanel initialView={currentPage.slice(6) as any} />}
         </Suspense>

@@ -3,9 +3,10 @@ import { User } from '../types';
 
 interface FreelanceFigmaProps {
     user: User;
+    onBack: () => void;
 }
 
-const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user }) => {
+const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, onBack }) => {
     const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
@@ -28,9 +29,18 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user }) => {
                     <p className="text-slate-500 font-bold text-lg max-w-sm mx-auto leading-relaxed mb-10">
                         Our specialized Figma marketplace is currently under development. Get your portfolios ready!
                     </p>
-                    <div className="inline-flex items-center gap-4 px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.3em]">
-                        <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                        Alpha Launch Approaching
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <div className="inline-flex items-center gap-4 px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.3em]">
+                            <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                            Alpha Launch Approaching
+                        </div>
+                        <button
+                            onClick={onBack}
+                            className="inline-flex items-center gap-4 px-8 py-4 bg-white border border-slate-200 text-slate-900 rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] hover:bg-slate-50 transition-all shadow-sm active:scale-95"
+                        >
+                            <i className="fa-solid fa-arrow-left"></i>
+                            Return to Dashboard
+                        </button>
                     </div>
                 </div>
             </div>
