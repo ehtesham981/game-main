@@ -15,8 +15,27 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user }) => {
     if (!isClient) return null;
 
     return (
-        <div className="pt-24 pb-20 min-h-screen bg-slate-50">
-            <div className="max-w-[1600px] mx-auto px-4 sm:px-8 space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
+        <div className="pt-24 pb-20 min-h-screen bg-slate-50 relative overflow-hidden">
+            {/* Coming Soon Overlay */}
+            <div className="fixed inset-0 z-[150] flex items-center justify-center p-6 bg-slate-50/10 backdrop-blur-[6px] pointer-events-none">
+                <div className="bg-white/80 backdrop-blur-3xl border border-white shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] p-12 md:p-20 rounded-[4rem] text-center animate-in zoom-in-95 duration-500 pointer-events-auto">
+                    <div className="w-24 h-24 bg-indigo-600 rounded-[2rem] flex items-center justify-center text-white mx-auto mb-10 shadow-2xl shadow-indigo-200 animate-bounce">
+                        <i className="fa-brands fa-figma text-4xl"></i>
+                    </div>
+                    <h2 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter mb-6 uppercase">
+                        Coming <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-indigo-400">Soon</span>
+                    </h2>
+                    <p className="text-slate-500 font-bold text-lg max-w-sm mx-auto leading-relaxed mb-10">
+                        Our specialized Figma marketplace is currently under development. Get your portfolios ready!
+                    </p>
+                    <div className="inline-flex items-center gap-4 px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.3em]">
+                        <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                        Alpha Launch Approaching
+                    </div>
+                </div>
+            </div>
+
+            <div className="max-w-[1600px] mx-auto px-4 sm:px-8 space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700 opacity-40 grayscale-[0.5]">
 
                 {/* Header Section */}
                 <header className="bg-white p-8 md:p-12 rounded-[2.5rem] border border-slate-200/60 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative overflow-hidden">
