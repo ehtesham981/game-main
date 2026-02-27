@@ -103,15 +103,18 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
                       Ads<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-indigo-400">Predia</span>
                     </span>
                     <span className="text-[7px] font-black uppercase tracking-[0.3em] text-slate-400 mt-1.5 block">
-                      {user.isAdmin ? 'Admin Global Hub' : 'Verified Partner'}
+                      {user?.isAdmin ? 'Admin Global Hub' : 'Verified Partner'}
                     </span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="hidden lg:flex items-center bg-slate-900/5 p-1.5 rounded-[1.75rem] border border-slate-200/30 backdrop-blur-sm shadow-inner overflow-x-auto no-scrollbar max-w-[60vw]">
-              {(user.isLoggedIn ? (user.isAdmin ? [...adminLinks, ...authLinks] : authLinks) : publicLinks).slice(0, 15).map(link => {
+            <div className="hidden lg:flex items-center bg-slate-900/5 p-1.5 rounded-[1.75rem] border border-slate-200/30 backdrop-blur-sm shadow-inner max-w-[70vw]">
+              {(user?.isLoggedIn ? (user?.isAdmin ? [...adminLinks, ...authLinks] : authLinks) : publicLinks).slice(0, 15).map(link => {
+                // Safely handle possible undefined links
+                if (!link) return null;
+
                 // If it's one of the items we want to hide from the main list
                 if (link.id === 'create-task' || link.id === 'my-campaigns') return null;
 
@@ -125,7 +128,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
                   return (
                     <div
                       key="tasks-dropdown"
-                      className="relative group/task"
+                      className="relative"
                       onMouseLeave={() => setIsTaskDropdownOpen(false)}
                     >
                       <button
@@ -143,7 +146,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
 
                       {isTaskDropdownOpen && (
                         <div
-                          className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl border border-slate-200 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] p-2 z-[110] animate-in fade-in zoom-in-95 duration-200"
+                          className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl border border-slate-200 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] p-2 z-[150]"
                         >
                           {taskSubLinks.map(subLink => (
                             <button
