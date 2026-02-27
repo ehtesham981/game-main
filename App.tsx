@@ -202,7 +202,7 @@ const App: React.FC = () => {
                   taskId: taskId,
                   amount: task.reward,
                   type: 'earn',
-                  method: task.title,
+                  method: `${task.type} | ${task.title}`,
                   proofImage: img1,
                   proofImage2: img2,
                   status: 'pending',

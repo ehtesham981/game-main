@@ -11,7 +11,7 @@ interface TasksProps {
 export default function Tasks({ user, tasks, transactions, onComplete }: TasksProps) {
   const [activeView, setActiveView] = useState<'Marketplace' | 'My History'>('Marketplace');
   const [categoryFilter, setCategoryFilter] = useState<TaskType | 'All'>('All');
-  const [historyFilter, setHistoryFilter] = useState<'Pending' | 'Approved' | 'Rejected'>('Pending');
+  const [historyFilter, setHistoryFilter] = useState<'All' | 'Pending' | 'Approved' | 'Rejected'>('All');
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isSubmittingProof, setIsSubmittingProof] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -50,11 +50,17 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
     return safeTransactions
       .filter(tx => tx && tx.type === 'earn' && tx.userId === user.id)
       .filter(tx => {
+        if (historyFilter === 'All') return true;
         if (historyFilter === 'Pending') return tx.status === 'pending';
         if (historyFilter === 'Rejected') return tx.status === 'failed';
         return tx.status === 'success';
       })
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      .sort((a, b) => {
+        // Fallback for sorting: use timestamp if available, then date
+        const timeA = new Date(a.date).getTime();
+        const timeB = new Date(b.date).getTime();
+        return timeB - timeA;
+      });
   }, [transactions, user.id, historyFilter]);
 
   const compressImage = (file: File): Promise<string> => {
@@ -162,15 +168,15 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
     <div className="pt-28 pb-20 min-h-screen bg-slate-50">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-8">
         <div className="mb-12">
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 border-b border-slate-200 pb-12">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 md:gap-12 border-b border-slate-200 pb-8 md:pb-12">
             <div className="max-w-2xl">
               <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 border border-indigo-100 shadow-sm">
                 Node Status: Active
               </div>
               <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter leading-none mb-4">
-                {activeView === 'Marketplace' ? 'Task Marketplace' : 'My History'}
+                {activeView === 'Marketplace' ? 'Marketplace' : 'My History'}
               </h1>
-              <p className="text-slate-500 font-medium text-lg leading-relaxed">
+              <p className="text-slate-500 font-medium text-sm md:text-lg leading-relaxed">
                 {activeView === 'Marketplace'
                   ? 'Identify micro-tasks to generate daily coin yield. Dual-proof verification required.'
                   : 'Track your verification status and audit history.'}
@@ -210,6 +216,7 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
               </div>
             ) : (
               <div className="flex bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto no-scrollbar">
+                <button onClick={() => setHistoryFilter('All')} className={`px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${historyFilter === 'All' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-400'}`}>All</button>
                 <button onClick={() => setHistoryFilter('Pending')} className={`px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${historyFilter === 'Pending' ? 'bg-amber-500 text-white shadow-lg' : 'text-slate-400'}`}>Pending</button>
                 <button onClick={() => setHistoryFilter('Approved')} className={`px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${historyFilter === 'Approved' ? 'bg-emerald-600 text-white shadow-lg' : 'text-slate-400'}`}>Approved</button>
                 <button onClick={() => setHistoryFilter('Rejected')} className={`px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${historyFilter === 'Rejected' ? 'bg-rose-600 text-white shadow-lg' : 'text-slate-400'}`}>Rejected</button>
@@ -230,7 +237,7 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
                 <div
                   key={task.id}
                   onClick={() => setSelectedTask(task)}
-                  className="group bg-white rounded-[3rem] p-8 border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer flex flex-col h-full relative overflow-hidden"
+                  className="group bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-8 border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer flex flex-col h-full relative overflow-hidden"
                 >
                   <div className="flex justify-between items-start mb-8">
                     <div className="w-14 h-14 bg-slate-50 rounded-[1.25rem] flex items-center justify-center text-xl group-hover:bg-indigo-600 group-hover:text-white transition-all">
@@ -268,13 +275,13 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {userHistoryItems.length === 0 ? (
-              <div className="col-span-full py-40 text-center bg-white rounded-[4rem] border-2 border-dashed border-slate-200">
+              <div className="col-span-full py-40 text-center bg-white rounded-[3rem] border-2 border-dashed border-slate-200">
                 <i className="fa-solid fa-receipt text-6xl text-slate-100 mb-6"></i>
                 <p className="text-xl font-black text-slate-300 uppercase tracking-widest">No Records Found</p>
               </div>
             ) : (
               userHistoryItems.map(tx => (
-                <div key={tx.id} className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm relative overflow-hidden group">
+                <div key={tx.id} className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] border border-slate-100 shadow-sm relative overflow-hidden group">
                   <div className="flex justify-between items-start mb-8">
                     <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-xl text-slate-400 group-hover:bg-slate-900 group-hover:text-white transition-all">
                       <i className={`fa-solid ${getIcon(tx.method || '')}`}></i>
@@ -287,11 +294,14 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-xl font-black text-slate-900 mb-2 truncate">{tx.method?.split('|')[0] || 'Task'}</h3>
+                    <div className="flex flex-col mb-4">
+                      <span className="text-[9px] font-black text-indigo-500 uppercase tracking-widest mb-1">{tx.method?.split(' | ')[0] || 'Microwork'}</span>
+                      <h3 className="text-xl font-black text-slate-900 truncate">{tx.method?.split(' | ')[1] || tx.method || 'Task'}</h3>
+                    </div>
                     <div className="flex items-center justify-between mt-6">
                       <div>
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Yield</p>
-                        <div className="text-3xl font-black text-slate-900">+{tx.amount}</div>
+                        <div className="text-2xl md:text-3xl font-black text-slate-900">+{tx.amount}</div>
                       </div>
                       <div className="text-right">
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Submission Date</p>
@@ -327,8 +337,8 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
       {/* Task detail modal */}
       {selectedTask && (
         <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 sm:p-6 bg-slate-950/90 backdrop-blur-2xl">
-          <div className="bg-white w-full max-w-2xl rounded-[3.5rem] shadow-3xl overflow-hidden relative flex flex-col max-h-[90vh]">
-            <div className="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
+          <div className="bg-white w-full max-w-2xl rounded-[2.5rem] md:rounded-[3.5rem] shadow-3xl overflow-hidden relative flex flex-col max-h-[90vh]">
+            <div className="p-6 md:p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-slate-900 text-white rounded-2xl flex items-center justify-center text-lg">
                   <i className={`fa-solid ${getIcon(selectedTask.type)}`}></i>
@@ -343,7 +353,7 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
               </button>
             </div>
 
-            <div className="p-8 overflow-y-auto no-scrollbar space-y-10 flex-grow">
+            <div className="p-6 md:p-8 overflow-y-auto no-scrollbar space-y-8 md:space-y-10 flex-grow">
               <div className="space-y-4">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4">Objective Node</label>
                 <a
@@ -374,7 +384,7 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
                       <input type="file" ref={fileInputRef1} onChange={e => handleFileChange(e, 1)} className="hidden" accept="image/*" />
                       <button
                         onClick={() => fileInputRef1.current?.click()}
-                        className={`w-full py-10 rounded-[2.5rem] border-2 border-dashed flex flex-col items-center justify-center gap-4 transition-all ${proof1 ? 'border-emerald-500 bg-emerald-50/20 text-emerald-600' : 'border-slate-200 bg-slate-50 text-slate-400 hover:border-indigo-400'}`}
+                        className={`w-full py-6 md:py-10 rounded-[2rem] md:rounded-[2.5rem] border-2 border-dashed flex flex-col items-center justify-center gap-4 transition-all ${proof1 ? 'border-emerald-500 bg-emerald-50/20 text-emerald-600' : 'border-slate-200 bg-slate-50 text-slate-400 hover:border-indigo-400'}`}
                       >
                         {isCompressing === 1 ? <i className="fa-solid fa-spinner fa-spin text-2xl"></i> : <i className={`fa-solid ${proof1 ? 'fa-check-circle' : 'fa-camera'} text-2xl`}></i>}
                         <span className="text-[9px] font-black uppercase tracking-widest">{proof1 ? 'Proof 1 Loaded' : 'Primary Proof'}</span>
@@ -385,7 +395,7 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
                         <input type="file" ref={fileInputRef2} onChange={e => handleFileChange(e, 2)} className="hidden" accept="image/*" />
                         <button
                           onClick={() => fileInputRef2.current?.click()}
-                          className={`w-full py-10 rounded-[2.5rem] border-2 border-dashed flex flex-col items-center justify-center gap-4 transition-all ${proof2 ? 'border-emerald-500 bg-emerald-50/20 text-emerald-600' : 'border-slate-200 bg-slate-50 text-slate-400 hover:border-indigo-400'}`}
+                          className={`w-full py-6 md:py-10 rounded-[2rem] md:rounded-[2.5rem] border-2 border-dashed flex flex-col items-center justify-center gap-4 transition-all ${proof2 ? 'border-emerald-500 bg-emerald-50/20 text-emerald-600' : 'border-slate-200 bg-slate-50 text-slate-400 hover:border-indigo-400'}`}
                         >
                           {isCompressing === 2 ? <i className="fa-solid fa-spinner fa-spin text-2xl"></i> : <i className={`fa-solid ${proof2 ? 'fa-check-circle' : 'fa-camera'} text-2xl`}></i>}
                           <span className="text-[9px] font-black uppercase tracking-widest">{proof2 ? 'Proof 2 Loaded' : 'Secondary Proof'}</span>
