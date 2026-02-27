@@ -187,8 +187,40 @@ const App: React.FC = () => {
           {currentPage === 'contact' && <Contact />}
           {currentPage === 'wallet' && <Wallet coins={user.coins} depositBalance={user.depositBalance} onAction={handleWalletAction} transactions={transactions} onRefresh={() => refreshUserBalance()} />}
           {currentPage === 'dashboard' && user.isLoggedIn && <Dashboard user={user} tasks={tasks} transactions={transactions} onDeleteTask={() => { }} onUpdateTask={() => { }} />}
-          {currentPage === 'tasks' && user.isLoggedIn && <Tasks user={user} tasks={tasks} transactions={transactions} onComplete={async () => { await refreshUserBalance(); }} />}
-          {currentPage === 'create-task' && user.isLoggedIn && <CreateTask user={user} tasks={tasks} userDepositBalance={user.depositBalance} onDeleteTask={async () => { }} onUpdateTask={async () => { }} onCreate={() => { }} navigateTo={navigateTo} />}
+          {currentPage === 'tasks' && user.isLoggedIn && (
+            <Tasks
+              user={user}
+              tasks={tasks}
+              transactions={transactions}
+              onComplete={async (taskId, img1, img2, date) => {
+                const task = tasks.find(t => t.id === taskId);
+                if (!task) return;
+
+                const tx: Transaction = {
+                  id: `TASK-${Math.random().toString(36).substr(2, 6).toUpperCase()}-${Date.now()}`,
+                  userId: user.id,
+                  taskId: taskId,
+                  amount: task.reward,
+                  type: 'earn',
+                  method: task.title,
+                  proofImage: img1,
+                  proofImage2: img2,
+                  status: 'pending',
+                  date: date || new Date().toLocaleString()
+                };
+
+                const updatedUser = {
+                  ...user,
+                  completedTasks: [...(user.completedTasks || []), taskId]
+                };
+
+                await storage.addTransaction(tx);
+                await storage.setUser(updatedUser);
+                setUser(updatedUser);
+                await refreshUserBalance();
+              }}
+            />
+          )}          {currentPage === 'create-task' && user.isLoggedIn && <CreateTask user={user} tasks={tasks} userDepositBalance={user.depositBalance} onDeleteTask={async () => { }} onUpdateTask={async () => { }} onCreate={() => { }} navigateTo={navigateTo} />}
           {currentPage === 'my-campaigns' && user.isLoggedIn && <MyCampaigns user={user} tasks={tasks} transactions={transactions} onDeleteTask={() => { }} onUpdateTask={() => { }} onNavigate={navigateTo} />}
           {currentPage === 'math-solver' && user.isLoggedIn && (
             <MathSolver

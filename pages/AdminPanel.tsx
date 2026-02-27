@@ -313,23 +313,61 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
                 <tbody className="divide-y divide-slate-50">
                   {transactions.filter(tx => tx.type === 'earn').map(tx => (
                     <tr key={tx.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-10 py-6 font-mono text-[10px] text-indigo-500">{tx.taskId || 'Unknown'}</td>
+                      <td className="px-10 py-6">
+                        <p className="text-xs font-black text-slate-900 line-clamp-1">{tx.method || 'Task Completion'}</p>
+                        <p className="font-mono text-[9px] text-indigo-400 mt-1">{tx.taskId || tx.id}</p>
+                      </td>
                       <td className="px-6 py-6 text-xs font-black text-slate-900">
                         {tx.userId}
                         <p className="text-emerald-600 mt-1">+{tx.amount} C</p>
-                        <p className={`text-[9px] uppercase tracking-widest mt-1 ${tx.status === 'pending' ? 'text-amber-500' : tx.status === 'success' ? 'text-emerald-500' : 'text-rose-500'}`}>{tx.status}</p>
+                        <p className={`text-[9px] font-black uppercase tracking-widest mt-1 ${tx.status === 'pending' ? 'text-amber-500' : tx.status === 'success' ? 'text-emerald-500' : 'text-rose-500'}`}>{tx.status}</p>
                       </td>
                       <td className="px-6 py-6 space-x-2">
-                        {tx.proofImage && <a href={tx.proofImage} target="_blank" rel="noreferrer" className="inline-block px-3 py-1 bg-slate-100 text-slate-600 rounded text-[9px] font-black uppercase">Image 1</a>}
-                        {tx.proofImage2 && <a href={tx.proofImage2} target="_blank" rel="noreferrer" className="inline-block px-3 py-1 bg-slate-100 text-slate-600 rounded text-[9px] font-black uppercase">Image 2</a>}
+                        {tx.proofImage && <a href={tx.proofImage} target="_blank" rel="noreferrer" className="inline-block px-3 py-1 bg-slate-100 text-slate-600 rounded text-[9px] font-black uppercase">Proof 1</a>}
+                        {tx.proofImage2 && <a href={tx.proofImage2} target="_blank" rel="noreferrer" className="inline-block px-3 py-1 bg-slate-100 text-slate-600 rounded text-[9px] font-black uppercase">Proof 2</a>}
                       </td>
                       <td className="px-10 py-6 text-right space-x-2">
                         {tx.status === 'pending' && (
                           <>
-                            <button onClick={async () => { await storage.updateGlobalTransaction(tx.id, { status: 'success' }); refreshActiveData(); }} className="px-4 py-2 bg-emerald-500 text-white text-[9px] font-black uppercase rounded-lg">Approve</button>
-                            <button onClick={async () => { await storage.updateGlobalTransaction(tx.id, { status: 'failed' }); refreshActiveData(); }} className="px-4 py-2 bg-rose-500 text-white text-[9px] font-black uppercase rounded-lg">Reject</button>
+                            <button
+                              onClick={async () => {
+                                // 1. Update Transaction
+                                await storage.updateGlobalTransaction(tx.id, { status: 'success' });
+
+                                // 2. Credit User
+                                const user = users.find(u => u.id === tx.userId);
+                                if (user) {
+                                  await storage.updateUserInCloud(user.id, { coins: (user.coins || 0) + tx.amount });
+                                }
+
+                                // 3. Update Task Progress
+                                if (tx.taskId) {
+                                  const task = tasks.find(t => t.id === tx.taskId);
+                                  if (task) {
+                                    const newCount = (task.completedCount || 0) + 1;
+                                    const newStatus = newCount >= task.totalWorkers ? 'completed' : task.status;
+                                    await storage.updateTaskInCloud(task.id, {
+                                      completedCount: newCount,
+                                      status: newStatus as any
+                                    });
+                                  }
+                                }
+
+                                refreshActiveData();
+                              }}
+                              className="px-4 py-2 bg-emerald-500 text-white text-[9px] font-black uppercase rounded-lg shadow-lg shadow-emerald-100 active:scale-95 transition-all"
+                            >
+                              Approve
+                            </button>
+                            <button
+                              onClick={async () => { await storage.updateGlobalTransaction(tx.id, { status: 'failed' }); refreshActiveData(); }}
+                              className="px-4 py-2 bg-rose-500 text-white text-[9px] font-black uppercase rounded-lg shadow-lg shadow-rose-100 active:scale-95 transition-all"
+                            >
+                              Reject
+                            </button>
                           </>
                         )}
+                        {tx.status !== 'pending' && <span className="text-[9px] font-black text-slate-300 uppercase">Archived</span>}
                       </td>
                     </tr>
                   ))}
