@@ -190,9 +190,59 @@ const App: React.FC = () => {
           {currentPage === 'tasks' && user.isLoggedIn && <Tasks user={user} tasks={tasks} transactions={transactions} onComplete={async () => { await refreshUserBalance(); }} />}
           {currentPage === 'create-task' && user.isLoggedIn && <CreateTask user={user} tasks={tasks} userDepositBalance={user.depositBalance} onDeleteTask={async () => { }} onUpdateTask={async () => { }} onCreate={() => { }} navigateTo={navigateTo} />}
           {currentPage === 'my-campaigns' && user.isLoggedIn && <MyCampaigns user={user} tasks={tasks} transactions={transactions} onDeleteTask={() => { }} onUpdateTask={() => { }} onNavigate={navigateTo} />}
-          {currentPage === 'math-solver' && user.isLoggedIn && <MathSolver user={user} transactions={transactions} onSolve={() => refreshUserBalance()} />}
+          {currentPage === 'math-solver' && user.isLoggedIn && (
+            <MathSolver
+              user={user}
+              transactions={transactions}
+              onSolve={async (reward: number, isLast: boolean) => {
+                const updatedUser = {
+                  ...user,
+                  coins: user.coins + reward,
+                  ...(isLast ? { lastMathTimestamp: Date.now() } : {})
+                };
+                setUser(updatedUser);
+                await storage.setUser(updatedUser);
+
+                const tx: Transaction = {
+                  id: `MATH-${Math.random().toString(36).substr(2, 6).toUpperCase()}-${Date.now()}`,
+                  userId: user.id,
+                  amount: reward,
+                  type: 'math_reward',
+                  method: 'Math Solver',
+                  status: 'success',
+                  date: new Date().toLocaleString()
+                };
+                await storage.addTransaction(tx);
+                await refreshUserBalance();
+              }}
+            />
+          )}
           {currentPage === 'login' && <Login onLogin={handleLogin} />}
-          {currentPage === 'spin' && user.isLoggedIn && <SpinWheel userCoins={user.coins} onSpin={(w, c) => { setUser({ ...user, coins: user.coins + w - c }); }} transactions={transactions} />}
+          {currentPage === 'spin' && user.isLoggedIn && (
+            <SpinWheel
+              userCoins={user.coins}
+              onSpin={async (w: number, c: number) => {
+                const updatedUser = { ...user, coins: user.coins + w - c };
+                setUser(updatedUser);
+                await storage.setUser(updatedUser);
+
+                if (w > 0 || c > 0) {
+                  const tx: Transaction = {
+                    id: `SPIN-${Math.random().toString(36).substr(2, 6).toUpperCase()}-${Date.now()}`,
+                    userId: user.id,
+                    amount: w - c,
+                    type: 'spin',
+                    method: 'Spin Wheel',
+                    status: 'success',
+                    date: new Date().toLocaleString()
+                  };
+                  await storage.addTransaction(tx);
+                }
+                await refreshUserBalance();
+              }}
+              transactions={transactions}
+            />
+          )}
           {currentPage === 'referrals' && user.isLoggedIn && <Referrals user={user} onClaim={handleClaimReferral} />}
           {currentPage === 'profile' && user.isLoggedIn && <ProfileSettings user={user} />}
           {currentPage === 'privacy-policy' && <PrivacyPolicy />}
