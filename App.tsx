@@ -228,6 +228,7 @@ const App: React.FC = () => {
             <MathSolver
               user={user}
               transactions={transactions}
+              onBack={() => navigateTo('dashboard')}
               onSolve={async (reward: number, isLast: boolean) => {
                 const updatedUser = {
                   ...user,
