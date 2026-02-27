@@ -15,11 +15,17 @@ interface Question {
 }
 
 const MathSolver: React.FC<MathSolverProps> = ({ user, onSolve, transactions, onBack }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(() => {
+    const saved = localStorage.getItem('math_current_index');
+    return saved ? parseInt(saved) : 0;
+  });
   const [userAnswer, setUserAnswer] = useState('');
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [completed, setCompleted] = useState(false);
-  const [earnedCoins, setEarnedCoins] = useState(0);
+  const [earnedCoins, setEarnedCoins] = useState(() => {
+    const saved = localStorage.getItem('math_earned_coins');
+    return saved ? parseInt(saved) : 0;
+  });
   const [timeLeft, setTimeLeft] = useState<string>('');
 
   const questions: Question[] = useMemo(() => [
@@ -76,11 +82,17 @@ const MathSolver: React.FC<MathSolverProps> = ({ user, onSolve, transactions, on
 
       setTimeout(() => {
         if (!isLast) {
-          setCurrentIndex(prev => prev + 1);
+          const nextIndex = currentIndex + 1;
+          const nextCoins = earnedCoins + 5;
+          setCurrentIndex(nextIndex);
+          localStorage.setItem('math_current_index', nextIndex.toString());
+          localStorage.setItem('math_earned_coins', nextCoins.toString());
           setUserAnswer('');
           setIsCorrect(null);
         } else {
           setCompleted(true);
+          localStorage.removeItem('math_current_index');
+          localStorage.removeItem('math_earned_coins');
         }
       }, 1000);
     } else {
@@ -169,8 +181,8 @@ const MathSolver: React.FC<MathSolverProps> = ({ user, onSolve, transactions, on
               onChange={e => setUserAnswer(e.target.value)}
               placeholder="Enter answer"
               className={`w-full px-10 py-8 bg-slate-50 border-4 rounded-[2.5rem] font-black text-4xl text-center outline-none transition-all ${isCorrect === true ? 'border-emerald-500 text-emerald-600' :
-                  isCorrect === false ? 'border-rose-500 text-rose-500 animate-shake' :
-                    'border-transparent focus:border-indigo-100 focus:bg-white text-slate-900'
+                isCorrect === false ? 'border-rose-500 text-rose-500 animate-shake' :
+                  'border-transparent focus:border-indigo-100 focus:bg-white text-slate-900'
                 }`}
               disabled={isCorrect === true}
             />
