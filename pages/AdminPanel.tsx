@@ -74,6 +74,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
     { id: 'reviews', label: 'Reviews', icon: 'fa-camera-retro', badge: stats.pendingTasks },
     { id: 'tasks', label: 'Campaigns', icon: 'fa-list-check', badge: stats.pendingTasksCount },
     { id: 'finance', label: 'Finance', icon: 'fa-wallet', badge: stats.pendingFinance },
+    { id: 'create-task', label: 'Create Task', icon: 'fa-plus' },
     { id: 'history', label: 'Logs', icon: 'fa-clock' }
   ];
 
@@ -377,6 +378,99 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+        )}
+        {view === 'create-task' && (
+          <div className="max-w-[1000px] mx-auto animate-in fade-in slide-in-from-bottom-6 duration-700">
+            <div className="bg-white rounded-[3.5rem] p-10 md:p-14 border border-slate-200 shadow-xl relative overflow-hidden">
+              <div className="relative z-10">
+                <div className="flex items-center gap-6 mb-12">
+                  <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-2xl">
+                    <i className="fa-solid fa-plus"></i>
+                  </div>
+                  <div>
+                    <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">Generate Task</h2>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Deploy new earning utility to network</p>
+                  </div>
+                </div>
+
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.currentTarget);
+                    const newTask: Task = {
+                      id: `TSK-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
+                      title: formData.get('title') as string,
+                      type: formData.get('type') as any,
+                      reward: parseInt(formData.get('reward') as string),
+                      description: formData.get('description') as string,
+                      creatorId: 'ADMIN',
+                      totalWorkers: parseInt(formData.get('totalWorkers') as string),
+                      completedCount: 0,
+                      status: 'active',
+                      link: formData.get('link') as string,
+                      requiredScreenshots: parseInt(formData.get('screenshots') as string),
+                      createdAt: new Date().toISOString()
+                    };
+
+                    try {
+                      const existingTasks = await storage.getTasks();
+                      await storage.setTasks([...existingTasks, newTask]);
+                      alert('Task deployed successfully!');
+                      setView('tasks');
+                    } catch (err) {
+                      alert('Failed to deploy task.');
+                    }
+                  }}
+                  className="space-y-10"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div className="space-y-4">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Task Heading</label>
+                      <input name="title" required placeholder="e.g. Subscribe to YouTube Channel" className="w-full px-8 py-5 bg-slate-50 border-none rounded-2xl font-bold text-slate-900 shadow-inner focus:bg-white transition-all outline-none" />
+                    </div>
+                    <div className="space-y-4">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Node Type (Category)</label>
+                      <select name="type" required className="w-full px-8 py-5 bg-slate-50 border-none rounded-2xl font-bold text-slate-900 shadow-inner focus:bg-white transition-all outline-none appearance-none">
+                        <option value="YouTube">YouTube</option>
+                        <option value="Websites">Websites</option>
+                        <option value="Apps">Apps</option>
+                        <option value="Social Media">Social Media</option>
+                      </select>
+                    </div>
+                    <div className="space-y-4">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Reward Volume (Coins)</label>
+                      <input name="reward" type="number" required placeholder="100" className="w-full px-8 py-5 bg-slate-50 border-none rounded-2xl font-bold text-slate-900 shadow-inner focus:bg-white transition-all outline-none" />
+                    </div>
+                    <div className="space-y-4">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Workforce Quota (Total Workers)</label>
+                      <input name="totalWorkers" type="number" required placeholder="1000" className="w-full px-8 py-5 bg-slate-50 border-none rounded-2xl font-bold text-slate-900 shadow-inner focus:bg-white transition-all outline-none" />
+                    </div>
+                    <div className="space-y-4">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Link Resource (URL)</label>
+                      <input name="link" required placeholder="https://..." className="w-full px-8 py-5 bg-slate-50 border-none rounded-2xl font-bold text-slate-900 shadow-inner focus:bg-white transition-all outline-none" />
+                    </div>
+                    <div className="space-y-4">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Verification Complexity (Screenshots Required)</label>
+                      <select name="screenshots" className="w-full px-8 py-5 bg-slate-50 border-none rounded-2xl font-bold text-slate-900 shadow-inner focus:bg-white transition-all outline-none appearance-none">
+                        <option value="1">1 Screenshot (Standard)</option>
+                        <option value="2">2 Screenshots (Dual Audit)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Task Brief (Instructions)</label>
+                    <textarea name="description" required rows={4} placeholder="Detailed instructions for the task..." className="w-full px-8 py-6 bg-slate-50 border-none rounded-[2rem] font-bold text-slate-900 shadow-inner focus:bg-white transition-all outline-none resize-none"></textarea>
+                  </div>
+
+                  <button type="submit" className="w-full py-8 bg-slate-900 text-white rounded-[2rem] font-black text-xs uppercase tracking-[0.5em] shadow-2xl hover:bg-indigo-600 transition-all active:scale-95">
+                    Deploy Task to Mainnet
+                  </button>
+                </form>
+              </div>
+              <i className="fa-solid fa-plus absolute -right-20 -bottom-20 text-[25rem] text-slate-50 -rotate-12 pointer-events-none opacity-50"></i>
             </div>
           </div>
         )}

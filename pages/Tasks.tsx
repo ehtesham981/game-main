@@ -124,12 +124,15 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
   };
 
   const handleFinalSubmit = async () => {
-    if (!proof1 || !proof2) return alert("Please upload both required screenshots for verification.");
+    const req = selectedTask?.requiredScreenshots || 1;
+    if (req === 1 && !proof1) return alert("Please upload the required screenshot for verification.");
+    if (req === 2 && (!proof1 || !proof2)) return alert("Please upload both required screenshots for verification.");
+
     if (!selectedTask) return;
 
     setIsUploading(true);
     try {
-      await onComplete(selectedTask.id, proof1, proof2, new Date().toLocaleString());
+      await onComplete(selectedTask.id, proof1 || undefined, proof2 || undefined, new Date().toLocaleString());
       handleCloseModal();
     } catch (error) {
       console.error("Submission failed:", error);
@@ -277,8 +280,8 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
                       <i className={`fa-solid ${getIcon(tx.method || '')}`}></i>
                     </div>
                     <div className={`px-4 py-1.5 text-[8px] font-black rounded-lg uppercase tracking-widest border transition-all ${tx.status === 'success' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
-                        tx.status === 'failed' ? 'bg-rose-50 text-rose-600 border-rose-100' :
-                          'bg-amber-50 text-amber-600 border-amber-100 animate-pulse'
+                      tx.status === 'failed' ? 'bg-rose-50 text-rose-600 border-rose-100' :
+                        'bg-amber-50 text-amber-600 border-amber-100 animate-pulse'
                       }`}>
                       {tx.status === 'failed' ? 'rejected' : tx.status}
                     </div>
@@ -365,8 +368,8 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
 
               {isSubmittingProof ? (
                 <div className="space-y-8 animate-in slide-in-from-bottom-6">
-                  <label className="text-[10px] font-black text-indigo-600 uppercase tracking-widest px-4 block text-center">Verification Required</label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <label className="text-[10px] font-black text-indigo-600 uppercase tracking-widest px-4 block text-center">Verification Required ({selectedTask.requiredScreenshots || 1} {selectedTask.requiredScreenshots === 2 ? 'Screenshots' : 'Screenshot'})</label>
+                  <div className={`grid gap-6 ${selectedTask.requiredScreenshots === 2 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'}`}>
                     <div className="space-y-3">
                       <input type="file" ref={fileInputRef1} onChange={e => handleFileChange(e, 1)} className="hidden" accept="image/*" />
                       <button
@@ -377,22 +380,24 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
                         <span className="text-[9px] font-black uppercase tracking-widest">{proof1 ? 'Proof 1 Loaded' : 'Primary Proof'}</span>
                       </button>
                     </div>
-                    <div className="space-y-3">
-                      <input type="file" ref={fileInputRef2} onChange={e => handleFileChange(e, 2)} className="hidden" accept="image/*" />
-                      <button
-                        onClick={() => fileInputRef2.current?.click()}
-                        className={`w-full py-10 rounded-[2.5rem] border-2 border-dashed flex flex-col items-center justify-center gap-4 transition-all ${proof2 ? 'border-emerald-500 bg-emerald-50/20 text-emerald-600' : 'border-slate-200 bg-slate-50 text-slate-400 hover:border-indigo-400'}`}
-                      >
-                        {isCompressing === 2 ? <i className="fa-solid fa-spinner fa-spin text-2xl"></i> : <i className={`fa-solid ${proof2 ? 'fa-check-circle' : 'fa-camera'} text-2xl`}></i>}
-                        <span className="text-[9px] font-black uppercase tracking-widest">{proof2 ? 'Proof 2 Loaded' : 'Secondary Proof'}</span>
-                      </button>
-                    </div>
+                    {selectedTask.requiredScreenshots === 2 && (
+                      <div className="space-y-3">
+                        <input type="file" ref={fileInputRef2} onChange={e => handleFileChange(e, 2)} className="hidden" accept="image/*" />
+                        <button
+                          onClick={() => fileInputRef2.current?.click()}
+                          className={`w-full py-10 rounded-[2.5rem] border-2 border-dashed flex flex-col items-center justify-center gap-4 transition-all ${proof2 ? 'border-emerald-500 bg-emerald-50/20 text-emerald-600' : 'border-slate-200 bg-slate-50 text-slate-400 hover:border-indigo-400'}`}
+                        >
+                          {isCompressing === 2 ? <i className="fa-solid fa-spinner fa-spin text-2xl"></i> : <i className={`fa-solid ${proof2 ? 'fa-check-circle' : 'fa-camera'} text-2xl`}></i>}
+                          <span className="text-[9px] font-black uppercase tracking-widest">{proof2 ? 'Proof 2 Loaded' : 'Secondary Proof'}</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
                   <div className="flex gap-4">
                     <button onClick={() => setIsSubmittingProof(false)} className="flex-1 py-6 bg-slate-100 text-slate-500 font-black rounded-3xl text-[10px] uppercase tracking-widest hover:bg-slate-200 transition-all">Back</button>
                     <button
                       onClick={handleFinalSubmit}
-                      disabled={!proof1 || !proof2 || isUploading}
+                      disabled={(selectedTask.requiredScreenshots === 2 ? (!proof1 || !proof2) : !proof1) || isUploading}
                       className="flex-[2] py-6 bg-slate-900 text-white font-black rounded-3xl text-[10px] uppercase tracking-widest shadow-2xl hover:bg-indigo-600 transition-all flex items-center justify-center gap-4 disabled:opacity-50"
                     >
                       {isUploading ? <i className="fa-solid fa-spinner fa-spin"></i> : <><i className="fa-solid fa-cloud-arrow-up"></i> Submit Audit</>}
