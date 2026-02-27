@@ -26,6 +26,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
     { name: 'Tasks', id: 'tasks', icon: 'fa-tasks' },
     { name: 'Create Task', id: 'create-task', icon: 'fa-plus' },
     { name: 'Campaigns', id: 'my-campaigns', icon: 'fa-bullhorn' },
+    { name: 'Freelance Figma', id: 'freelance-figma', icon: 'fa-pen-nib' },
     { name: 'Math Solver', id: 'math-solver', icon: 'fa-calculator' },
     { name: 'Spin', id: 'spin', icon: 'fa-clover' },
     { name: 'Affiliate', id: 'referrals', icon: 'fa-users' },
@@ -57,8 +58,8 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
       key={link.id}
       onClick={() => handleNavClick(link.id)}
       className={`w-full text-left px-6 py-4 rounded-2xl flex items-center gap-4 transition-all ${currentPage === link.id
-          ? 'bg-indigo-50 text-indigo-600 shadow-sm border border-indigo-100/50'
-          : 'text-slate-600 hover:bg-slate-50'
+        ? 'bg-indigo-50 text-indigo-600 shadow-sm border border-indigo-100/50'
+        : 'text-slate-600 hover:bg-slate-50'
         }`}
     >
       <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${currentPage === link.id ? 'bg-white text-indigo-600 shadow-sm' : 'bg-slate-100 text-slate-400'
@@ -73,8 +74,8 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
     <>
       <nav
         className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ease-in-out ${scrolled
-            ? 'py-3 bg-white/80 backdrop-blur-2xl border-b border-slate-200/40 shadow-[0_15px_50px_-15px_rgba(0,0,0,0.08)]'
-            : 'py-5 bg-white/40 backdrop-blur-md border-b border-white/20'
+          ? 'py-3 bg-white/80 backdrop-blur-2xl border-b border-slate-200/40 shadow-[0_15px_50px_-15px_rgba(0,0,0,0.08)]'
+          : 'py-5 bg-white/40 backdrop-blur-md border-b border-white/20'
           }`}
       >
         <div className="max-w-[1700px] mx-auto px-4 md:px-10">
@@ -114,8 +115,8 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
                   key={link.id}
                   onClick={() => handleNavClick(link.id)}
                   className={`px-5 py-3 rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-300 whitespace-nowrap ${currentPage === link.id
-                      ? 'text-indigo-600 bg-white shadow-lg shadow-slate-200/50 ring-1 ring-slate-100'
-                      : 'text-slate-500 hover:text-slate-900 hover:bg-white/40'
+                    ? 'text-indigo-600 bg-white shadow-lg shadow-slate-200/50 ring-1 ring-slate-100'
+                    : 'text-slate-500 hover:text-slate-900 hover:bg-white/40'
                     }`}
                 >
                   <div className="flex items-center gap-2.5">

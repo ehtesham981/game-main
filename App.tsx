@@ -22,6 +22,8 @@ const ProfileSettings = lazy(() => import('./pages/ProfileSettings'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const TermsConditions = lazy(() => import('./pages/TermsConditions'));
 const Disclaimer = lazy(() => import('./pages/Disclaimer'));
+const FreelanceFigma = lazy(() => import('./pages/FreelanceFigma'));
+
 
 const PageLoader = () => (
   <div className="min-h-[40vh] w-full flex items-center justify-center">
@@ -280,6 +282,8 @@ const App: React.FC = () => {
           {currentPage === 'privacy-policy' && <PrivacyPolicy />}
           {currentPage === 'terms-conditions' && <TermsConditions />}
           {currentPage === 'disclaimer' && <Disclaimer />}
+          {currentPage === 'freelance-figma' && user.isLoggedIn && <FreelanceFigma user={user} />}
+
           {currentPage.startsWith('admin-') && user.isAdmin && <AdminPanel initialView={currentPage.slice(6) as any} />}
         </Suspense>
       </main>
