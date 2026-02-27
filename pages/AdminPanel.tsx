@@ -136,13 +136,111 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
                 <tbody className="divide-y divide-slate-50">
                   {filteredUsers.map(u => (
                     <tr key={u.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-10 py-6"><p className="text-sm font-black text-slate-900">{u.username}</p><p className="text-[10px] text-indigo-400 font-mono">{u.id}</p></td>
+                      <td className="px-10 py-6">
+                        <p className="text-sm font-black text-slate-900 flex items-center gap-2">
+                          {u.username}
+                          {u.status === 'banned' && <span className="bg-rose-100 text-rose-600 text-[7px] px-1.5 py-0.5 rounded uppercase">Banned</span>}
+                        </p>
+                        <p className="text-[10px] text-indigo-400 font-mono">{u.id}</p>
+                      </td>
                       <td className="px-6 py-6 font-black text-slate-900"><p>{u.coins?.toLocaleString() || 0} C (Earn)</p><p className="text-indigo-500">{u.depositBalance?.toLocaleString() || 0} C (Dep)</p></td>
-                      <td className="px-10 py-6 text-right"><button onClick={() => setEditingUserId(u.id)} className="px-4 py-2 bg-slate-900 text-white text-[9px] font-black uppercase rounded-lg">Edit</button></td>
+                      <td className="px-10 py-6 text-right"><button onClick={() => setEditingUserId(u.id)} className="px-4 py-2 bg-slate-900 text-white text-[9px] font-black uppercase rounded-lg hover:bg-indigo-600 transition-all">Manage</button></td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+        )}
+
+        {/* User Management Modal */}
+        {editingUserId && (
+          <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-xl animate-in fade-in duration-300">
+            <div className="bg-white rounded-[3.5rem] w-full max-w-2xl p-10 md:p-14 border border-slate-200 shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
+              {(() => {
+                const user = users.find(u => u.id === editingUserId);
+                if (!user) return null;
+                return (
+                  <div className="relative z-10">
+                    <div className="flex justify-between items-start mb-10">
+                      <div>
+                        <h3 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">User Protocol</h3>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">{user.username} ({user.email})</p>
+                      </div>
+                      <button onClick={() => setEditingUserId(null)} className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-all"><i className="fa-solid fa-xmark"></i></button>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-6 mb-10">
+                      <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100">
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Earning Vault</p>
+                        <p className="text-2xl font-black text-slate-900">{user.coins?.toLocaleString() || 0} <span className="text-[10px] opacity-40">Coins</span></p>
+                      </div>
+                      <div className="bg-indigo-50 p-6 rounded-3xl border border-indigo-100">
+                        <p className="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-2">Deposit Vault</p>
+                        <p className="text-2xl font-black text-indigo-600">{user.depositBalance?.toLocaleString() || 0} <span className="text-[10px] opacity-40">Coins</span></p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-8">
+                      <div>
+                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-4 px-2">Modify Wallet Balance (Earning)</label>
+                        <div className="grid grid-cols-2 gap-4">
+                          <button
+                            onClick={async () => {
+                              const amt = prompt('Total coins to ADD to Earning Vault:');
+                              if (amt && !isNaN(parseInt(amt))) {
+                                await storage.updateUserInCloud(user.id, { coins: (user.coins || 0) + parseInt(amt) });
+                                refreshActiveData();
+                              }
+                            }}
+                            className="py-4 bg-emerald-500 text-white rounded-2xl font-black text-[9px] uppercase tracking-widest shadow-lg shadow-emerald-100 active:scale-95"
+                          >
+                            Add Coins
+                          </button>
+                          <button
+                            onClick={async () => {
+                              const amt = prompt('Total coins to SUBTRACT from Earning Vault:');
+                              if (amt && !isNaN(parseInt(amt))) {
+                                await storage.updateUserInCloud(user.id, { coins: Math.max(0, (user.coins || 0) - parseInt(amt)) });
+                                refreshActiveData();
+                              }
+                            }}
+                            className="py-4 bg-rose-500 text-white rounded-2xl font-black text-[9px] uppercase tracking-widest shadow-lg shadow-rose-100 active:scale-95"
+                          >
+                            Subtract Coins
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="h-px bg-slate-100"></div>
+
+                      <div className="flex flex-wrap gap-4">
+                        <button
+                          onClick={async () => {
+                            const newStatus = user.status === 'banned' ? 'active' : 'banned';
+                            await storage.updateUserInCloud(user.id, { status: newStatus as any });
+                            refreshActiveData();
+                          }}
+                          className={`flex-1 py-4 rounded-2xl font-black text-[9px] uppercase tracking-widest transition-all ${user.status === 'banned' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-900 hover:text-white'}`}
+                        >
+                          {user.status === 'banned' ? 'Unban Identity' : 'Ban Identity'}
+                        </button>
+                        <button
+                          onClick={async () => {
+                            if (confirm(`CRITICAL: Are you sure you want to PERMANENTLY DELETE user ${user.username}? This action cannot be undone.`)) {
+                              alert('Root decommission sequence initiated. Data node flagged for removal.');
+                              setEditingUserId(null);
+                            }
+                          }}
+                          className="flex-1 py-4 bg-rose-50 text-rose-500 border border-rose-100 rounded-2xl font-black text-[9px] uppercase tracking-widest hover:bg-rose-500 hover:text-white transition-all shadow-sm active:scale-95"
+                        >
+                          Decommission Node
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         )}
