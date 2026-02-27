@@ -148,7 +148,7 @@ const Referrals: React.FC<ReferralsProps> = ({ user, onClaim }) => {
                 <div className="text-center md:text-left">
                   <p className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.4em] mb-4">Total Referral Assets</p>
                   <div className="flex items-baseline gap-4 mb-4 justify-center md:justify-start">
-                    <h2 className="text-7xl md:text-9xl font-black tracking-tighter leading-none tabular-nums">{claimedCount * REFERRAL_REWARD}</h2>
+                    <h2 className="text-7xl md:text-9xl font-black tracking-tighter leading-none tabular-nums">{claimedCount * REFERRAL_REWARD + (user.claimedReferrals?.includes('milestone_3_bonus') ? 50 : 0)}</h2>
                     <span className="text-xl font-bold text-slate-500 uppercase tracking-widest">Coins</span>
                   </div>
                   <p className="text-xs font-bold text-slate-400 italic">Global bonuses successfully claimed and added to your balance.</p>
@@ -159,6 +159,60 @@ const Referrals: React.FC<ReferralsProps> = ({ user, onClaim }) => {
                 </div>
               </div>
               <i className="fa-solid fa-gift absolute -right-20 -bottom-20 text-[25rem] text-white/5 -rotate-12 pointer-events-none"></i>
+            </div>
+
+            {/* Network Milestones */}
+            <div className="bg-white rounded-[3.5rem] p-10 md:p-12 border border-slate-100 shadow-sm relative overflow-hidden group">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+                <div className="flex items-center gap-6">
+                  <div className={`w-20 h-20 rounded-[2rem] flex items-center justify-center text-3xl shadow-2xl transition-all duration-500 ${refCount >= 3 ? 'bg-indigo-600 text-white animate-bounce' : 'bg-slate-100 text-slate-300'
+                    }`}>
+                    <i className="fa-solid fa-trophy"></i>
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">Squad Milestone</h3>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Recruit 3 Partners for Bonus</p>
+                    <div className="mt-4 flex items-center gap-2">
+                      <div className="flex -space-x-3">
+                        {[1, 2, 3].map((i) => (
+                          <div key={i} className={`w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-[10px] font-black ${refCount >= i ? 'bg-indigo-500 text-white' : 'bg-slate-100 text-slate-300'
+                            }`}>
+                            {refCount >= i ? <i className="fa-solid fa-check"></i> : i}
+                          </div>
+                        ))}
+                      </div>
+                      <span className="text-[10px] font-black text-slate-500 ml-2">{Math.min(refCount, 3)} / 3 JOINED</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  {user.claimedReferrals?.includes('milestone_3_bonus') ? (
+                    <div className="px-10 py-5 bg-emerald-50 text-emerald-600 text-[11px] font-black rounded-2xl uppercase tracking-[0.2em] border border-emerald-100 flex items-center gap-3">
+                      <i className="fa-solid fa-circle-check"></i>
+                      Milestone Secured
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => handleClaimReward('milestone_3_bonus')}
+                      disabled={refCount < 3 || claimingId === 'milestone_3_bonus'}
+                      className={`px-12 py-6 rounded-[2rem] font-black text-[11px] uppercase tracking-[0.3em] transition-all duration-500 flex items-center gap-4 shadow-2xl ${refCount >= 3
+                          ? 'bg-slate-900 text-white hover:bg-indigo-600 active:scale-95'
+                          : 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
+                        }`}
+                    >
+                      {claimingId === 'milestone_3_bonus' ? (
+                        <i className="fa-solid fa-spinner fa-spin"></i>
+                      ) : (
+                        <i className="fa-solid fa-gift"></i>
+                      )}
+                      {claimingId === 'milestone_3_bonus' ? 'SYNCING...' : 'CLAIM 50 COINS'}
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div className={`absolute top-0 right-0 w-32 h-32 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2 transition-colors duration-1000 ${refCount >= 3 ? 'bg-indigo-500/20' : 'bg-slate-100/10'
+                }`}></div>
             </div>
 
             {/* Partner Claim Hub */}
