@@ -11,6 +11,7 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLogout }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isTaskDropdownOpen, setIsTaskDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -109,22 +110,81 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
               </div>
             </div>
 
-            <div className="hidden lg:flex items-center bg-slate-900/5 p-1.5 rounded-[1.75rem] border border-slate-200/30 backdrop-blur-sm shadow-inner overflow-x-auto no-scrollbar max-w-[50vw]">
-              {(user.isLoggedIn ? (user.isAdmin ? [...adminLinks, ...authLinks] : authLinks) : publicLinks).slice(0, 15).map(link => (
-                <button
-                  key={link.id}
-                  onClick={() => handleNavClick(link.id)}
-                  className={`px-5 py-3 rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-300 whitespace-nowrap ${currentPage === link.id
-                    ? 'text-indigo-600 bg-white shadow-lg shadow-slate-200/50 ring-1 ring-slate-100'
-                    : 'text-slate-500 hover:text-slate-900 hover:bg-white/40'
-                    }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <i className={`fa-solid ${link.icon} text-[10px] ${currentPage === link.id ? 'opacity-100' : 'opacity-40'}`}></i>
-                    {link.name}
-                  </div>
-                </button>
-              ))}
+            <div className="hidden lg:flex items-center bg-slate-900/5 p-1.5 rounded-[1.75rem] border border-slate-200/30 backdrop-blur-sm shadow-inner overflow-x-auto no-scrollbar max-w-[60vw]">
+              {(user.isLoggedIn ? (user.isAdmin ? [...adminLinks, ...authLinks] : authLinks) : publicLinks).slice(0, 15).map(link => {
+                // If it's one of the items we want to hide from the main list
+                if (link.id === 'create-task' || link.id === 'my-campaigns') return null;
+
+                // Handle 'Tasks' as a dropdown if it's the one we want to turn into a dropdown
+                if (link.id === 'tasks') {
+                  const taskSubLinks = [
+                    { name: 'Create Task', id: 'create-task', icon: 'fa-plus' },
+                    { name: 'My Campaigns', id: 'my-campaigns', icon: 'fa-bullhorn' },
+                  ];
+
+                  return (
+                    <div
+                      key="tasks-dropdown"
+                      className="relative group/task"
+                      onMouseLeave={() => setIsTaskDropdownOpen(false)}
+                    >
+                      <button
+                        onMouseEnter={() => setIsTaskDropdownOpen(true)}
+                        onClick={() => handleNavClick('tasks')}
+                        className={`px-5 py-3 rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-300 whitespace-nowrap flex items-center gap-2.5 ${currentPage === 'tasks' || currentPage === 'create-task' || currentPage === 'my-campaigns'
+                          ? 'text-indigo-600 bg-white shadow-lg shadow-slate-200/50 ring-1 ring-slate-100'
+                          : 'text-slate-500 hover:text-slate-900 hover:bg-white/40'
+                          }`}
+                      >
+                        <i className={`fa-solid ${link.icon} text-[10px] ${currentPage === 'tasks' ? 'opacity-100' : 'opacity-40'}`}></i>
+                        {link.name}
+                        <i className={`fa-solid fa-chevron-down text-[8px] transition-transform duration-300 ${isTaskDropdownOpen ? 'rotate-180' : ''}`}></i>
+                      </button>
+
+                      {isTaskDropdownOpen && (
+                        <div
+                          className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl border border-slate-200 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] p-2 z-[110] animate-in fade-in zoom-in-95 duration-200"
+                        >
+                          {taskSubLinks.map(subLink => (
+                            <button
+                              key={subLink.id}
+                              onClick={() => {
+                                handleNavClick(subLink.id);
+                                setIsTaskDropdownOpen(false);
+                              }}
+                              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${currentPage === subLink.id
+                                ? 'bg-indigo-50 text-indigo-600 shadow-sm'
+                                : 'text-slate-500 hover:bg-slate-50 hover:text-indigo-500'
+                                }`}
+                            >
+                              <div className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${currentPage === subLink.id ? 'bg-white text-indigo-600 shadow-sm' : 'bg-slate-50 text-slate-300'}`}>
+                                <i className={`fa-solid ${subLink.icon} text-[10px]`}></i>
+                              </div>
+                              {subLink.name}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+
+                return (
+                  <button
+                    key={link.id}
+                    onClick={() => handleNavClick(link.id)}
+                    className={`px-5 py-3 rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-300 whitespace-nowrap ${currentPage === link.id
+                      ? 'text-indigo-600 bg-white shadow-lg shadow-slate-200/50 ring-1 ring-slate-100'
+                      : 'text-slate-500 hover:text-slate-900 hover:bg-white/40'
+                      }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <i className={`fa-solid ${link.icon} text-[10px] ${currentPage === link.id ? 'opacity-100' : 'opacity-40'}`}></i>
+                      {link.name}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
 
             <div className="flex items-center gap-4">
