@@ -31,10 +31,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
    const MIN_DEPOSIT = 6000;   // Set to 6000 as per prompt logic
    const MIN_WITHDRAWAL = 5000;
 
-   // External conversion multipliers (simulated live rates)
-   const PKR_RATE = 280;
-   const EUR_RATE = 0.92;
-   const GBP_RATE = 0.79;
+
 
    const totalWorthUSD = coins / WITHDRAW_RATE;
 
@@ -75,13 +72,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
          bg: 'bg-indigo-50',
          step: activeTab === 'deposit' ? 'Transfer TRC20 USDT, then paste TxID and select screenshot below.' : 'Enter Wallet Address and Full Name.'
       },
-      'Bank Account': {
-         address: 'Bank: Meezan | Acc: 02120104812345',
-         icon: 'fa-building-columns',
-         color: 'text-slate-700',
-         bg: 'bg-slate-100',
-         step: activeTab === 'deposit' ? 'Transfer to Bank Account, then paste TxID and select screenshot below.' : 'Enter Bank Name, Account Number, and Title.'
-      }
+
    };
 
    const availableMethods = useMemo(() => {

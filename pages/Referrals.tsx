@@ -96,7 +96,7 @@ const Referrals: React.FC<ReferralsProps> = ({ user, onClaim }) => {
             Recruit & <span className="text-indigo-600">Claim 50</span>
           </h1>
           <p className="text-slate-500 font-medium text-lg leading-relaxed">
-            Expand your earning network. Every authorized sign-up via your ID yields 100 instant coins. Use the claim hub below to finalize your rewards.
+            Expand your earning network. Every authorized sign-up via your ID yields 50 instant coins. Use the claim hub below to finalize your rewards.
           </p>
         </div>
 
