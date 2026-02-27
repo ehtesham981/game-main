@@ -18,36 +18,37 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
   }, []);
 
   const COIN_RATE = 3000;
-  
+
   const earnings = useMemo(() => {
     const total = user.coins || 0;
     const usd = (total / COIN_RATE).toFixed(2);
     const pending = transactions
       .filter(tx => tx.type === 'earn' && tx.status === 'pending')
       .reduce((sum, tx) => sum + tx.amount, 0);
-    
+
     return { total, usd, pending };
   }, [user.coins, transactions]);
 
   const progressToNextDollar = ((earnings.total % COIN_RATE) / COIN_RATE) * 100;
 
   const ledgerList = useMemo(() => {
-    let filtered = transactions.filter(tx => ['earn', 'spin', 'referral_claim'].includes(tx.type));
+    let filtered = transactions.filter(tx => ['earn', 'spin', 'referral_claim', 'math_reward'].includes(tx.type));
     if (ledgerTab === 'pending') filtered = filtered.filter(tx => tx.status === 'pending');
     else if (ledgerTab === 'verified') filtered = filtered.filter(tx => tx.status === 'success');
-    
+
     return filtered
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
       .slice(0, 10);
   }, [transactions, ledgerTab]);
 
   const activityStats = useMemo(() => {
-    const counts: Record<string, number> = { 'Lucky Spin': 0, 'Referrals': 0 };
+    const counts: Record<string, number> = { 'Lucky Spin': 0, 'Referrals': 0, 'Math Solver': 0 };
     transactions
       .filter(tx => tx.status === 'success')
       .forEach(tx => {
         if (tx.type === 'spin') counts['Lucky Spin'] += tx.amount;
         else if (tx.type === 'referral_claim') counts['Referrals'] += tx.amount;
+        else if (tx.type === 'math_reward') counts['Math Solver'] += tx.amount;
       });
     return counts;
   }, [transactions]);
@@ -57,6 +58,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
   const getActivityIcon = (type: string = '') => {
     if (type === 'spin') return 'fa-clover text-emerald-500';
     if (type === 'referral_claim') return 'fa-users text-blue-500';
+    if (type === 'math_reward') return 'fa-calculator text-indigo-500';
     return 'fa-coins text-amber-500';
   };
 
@@ -77,7 +79,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
   return (
     <div className="pt-24 pb-20 min-h-screen bg-slate-50">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-8 space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
-        
+
         <header className="bg-white p-8 md:p-12 rounded-[2.5rem] border border-slate-200/60 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-8">
           <div className="flex items-center gap-6">
             <div className="relative group">
@@ -97,16 +99,16 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-4">
             <div className="hidden md:block bg-slate-50 px-8 py-4 rounded-2xl border border-slate-100">
-               <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                  <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Network Live</span>
-               </div>
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Network Live</span>
+              </div>
             </div>
             <div className="bg-indigo-600 px-8 py-4 rounded-2xl text-white shadow-xl shadow-indigo-100">
-               <span className="text-[10px] font-black uppercase tracking-widest">Node Level 01</span>
+              <span className="text-[10px] font-black uppercase tracking-widest">Node Level 01</span>
             </div>
           </div>
         </header>
@@ -122,21 +124,21 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
                     <span className="text-xl font-bold text-slate-500 uppercase tracking-widest">USD</span>
                   </div>
                   <div className="flex flex-wrap items-center gap-4">
-                     <div className="px-5 py-3 bg-white/5 rounded-2xl border border-white/10 text-xs font-black shadow-inner flex items-center gap-3">
-                       <i className="fa-solid fa-coins text-yellow-500"></i>
-                       {earnings.total.toLocaleString()} <span className="opacity-40 text-[10px]">COINS</span>
-                     </div>
+                    <div className="px-5 py-3 bg-white/5 rounded-2xl border border-white/10 text-xs font-black shadow-inner flex items-center gap-3">
+                      <i className="fa-solid fa-coins text-yellow-500"></i>
+                      {earnings.total.toLocaleString()} <span className="opacity-40 text-[10px]">COINS</span>
+                    </div>
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4 w-full sm:w-auto">
                   <div className="bg-white/5 p-6 rounded-[2rem] border border-white/5 backdrop-blur-md flex flex-col justify-center text-center">
-                     <p className="text-[8px] font-black uppercase text-slate-500 mb-2 tracking-widest">Vault Units</p>
-                     <p className="text-3xl font-black">{earnings.total.toLocaleString()}</p>
+                    <p className="text-[8px] font-black uppercase text-slate-500 mb-2 tracking-widest">Vault Units</p>
+                    <p className="text-3xl font-black">{earnings.total.toLocaleString()}</p>
                   </div>
                   <div className="bg-white/5 p-6 rounded-[2rem] border border-white/5 backdrop-blur-md flex flex-col justify-center text-center">
-                     <p className="text-[8px] font-black uppercase text-slate-500 mb-2 tracking-widest">Ref Partners</p>
-                     <p className="text-3xl font-black tabular-nums">{user.claimedReferrals?.length || 0}</p>
+                    <p className="text-[8px] font-black uppercase text-slate-500 mb-2 tracking-widest">Ref Partners</p>
+                    <p className="text-3xl font-black tabular-nums">{user.claimedReferrals?.length || 0}</p>
                   </div>
                 </div>
               </div>
@@ -150,11 +152,11 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
                   <span className="text-sm font-black text-white">{Math.floor(progressToNextDollar)}%</span>
                 </div>
                 <div className="w-full h-4 bg-white/5 rounded-full overflow-hidden border border-white/10 p-1">
-                  <div 
+                  <div
                     className="h-full bg-indigo-500 rounded-full transition-all duration-1000 shadow-[0_0_25px_rgba(79,70,229,0.5)] relative overflow-hidden"
                     style={{ width: `${progressToNextDollar}%` }}
                   >
-                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-[shimmer_2s_infinite]"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-[shimmer_2s_infinite]"></div>
                   </div>
                 </div>
               </div>
@@ -163,95 +165,93 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
           </div>
 
           <div className="lg:col-span-4 bg-white p-10 rounded-[3rem] border border-slate-200/60 shadow-sm flex flex-col relative overflow-hidden">
-             <div className="relative z-10 mb-8">
-                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-2">Revenue Analysis</h3>
-                <h4 className="text-2xl font-black text-slate-900 tracking-tighter">Activity Yield</h4>
-             </div>
-             
-             <div className="flex-grow flex flex-col justify-center gap-6 relative z-10">
-                {Object.entries(activityStats).map(([act, val], i) => (
-                  <div key={act} className="space-y-2">
-                    <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-widest">
-                       <span className="text-slate-500">{act}</span>
-                       <span className="text-slate-900">{(val as number).toLocaleString()}</span>
-                    </div>
-                    <div className="w-full h-2.5 bg-slate-50 rounded-full overflow-hidden border border-slate-100">
-                      <div 
-                        className={`h-full rounded-full transition-all duration-1000 ${
-                          act === 'Lucky Spin' ? 'bg-emerald-500' : 'bg-blue-500'
-                        }`}
-                        style={{ width: `${((val as number) / maxActivityValue) * 100}%` }}
-                      ></div>
-                    </div>
+            <div className="relative z-10 mb-8">
+              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-2">Revenue Analysis</h3>
+              <h4 className="text-2xl font-black text-slate-900 tracking-tighter">Activity Yield</h4>
+            </div>
+
+            <div className="flex-grow flex flex-col justify-center gap-6 relative z-10">
+              {Object.entries(activityStats).map(([act, val], i) => (
+                <div key={act} className="space-y-2">
+                  <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-widest">
+                    <span className="text-slate-500">{act}</span>
+                    <span className="text-slate-900">{(val as number).toLocaleString()}</span>
                   </div>
-                ))}
-             </div>
-             
-             <div className="mt-10 pt-6 border-t border-slate-50 text-center">
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Analysis synchronized with global ledger</p>
-             </div>
+                  <div className="w-full h-2.5 bg-slate-50 rounded-full overflow-hidden border border-slate-100">
+                    <div
+                      className={`h-full rounded-full transition-all duration-1000 ${act === 'Lucky Spin' ? 'bg-emerald-500' : 'bg-blue-500'
+                        }`}
+                      style={{ width: `${((val as number) / maxActivityValue) * 100}%` }}
+                    ></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-10 pt-6 border-t border-slate-50 text-center">
+              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Analysis synchronized with global ledger</p>
+            </div>
           </div>
         </div>
 
         <div className="bg-white rounded-[3.5rem] border border-slate-200 shadow-sm overflow-hidden">
           <div className="p-8 md:p-12 border-b border-slate-50 flex flex-col md:flex-row justify-between items-center bg-slate-50/20 gap-6">
-             <div>
-                <h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">Income Analysis</h3>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Audit of yield and verification status</p>
-             </div>
-             
-             <div className="flex bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto no-scrollbar">
-                {[
-                  { id: 'all', label: 'All Activity' },
-                  { id: 'pending', label: 'In Audit' },
-                  { id: 'verified', label: 'Verified' }
-                ].map(tab => (
-                  <button 
-                    key={tab.id} 
-                    onClick={() => setLedgerTab(tab.id as any)}
-                    className={`px-6 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${ledgerTab === tab.id ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-400 hover:text-slate-900'}`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-             </div>
+            <div>
+              <h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">Income Analysis</h3>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Audit of yield and verification status</p>
+            </div>
+
+            <div className="flex bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto no-scrollbar">
+              {[
+                { id: 'all', label: 'All Activity' },
+                { id: 'pending', label: 'In Audit' },
+                { id: 'verified', label: 'Verified' }
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setLedgerTab(tab.id as any)}
+                  className={`px-6 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${ledgerTab === tab.id ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-400 hover:text-slate-900'}`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-100">
-             {ledgerList.length === 0 ? (
-               <div className="col-span-full py-32 text-center">
-                  <div className="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center mx-auto mb-6 text-slate-100">
-                    <i className="fa-solid fa-receipt text-4xl"></i>
+            {ledgerList.length === 0 ? (
+              <div className="col-span-full py-32 text-center">
+                <div className="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center mx-auto mb-6 text-slate-100">
+                  <i className="fa-solid fa-receipt text-4xl"></i>
+                </div>
+                <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No entries found for {ledgerTab} filter</p>
+              </div>
+            ) : (
+              ledgerList.map((tx) => (
+                <div key={tx.id} className="p-8 hover:bg-slate-50/50 transition-all flex items-center justify-between group">
+                  <div className="flex items-center gap-5">
+                    <div className="w-14 h-14 bg-white border border-slate-100 rounded-2xl flex items-center justify-center text-xl shadow-sm group-hover:scale-110 transition-transform">
+                      <i className={`fa-solid ${getActivityIcon(tx.type)}`}></i>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-lg font-black text-slate-900 tabular-nums">+{tx.amount.toLocaleString()}</span>
+                        <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Coins</span>
+                      </div>
+                      <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest truncate max-w-[150px]">{tx.date}</p>
+                    </div>
                   </div>
-                  <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No entries found for {ledgerTab} filter</p>
-               </div>
-             ) : (
-               ledgerList.map((tx) => (
-                 <div key={tx.id} className="p-8 hover:bg-slate-50/50 transition-all flex items-center justify-between group">
-                    <div className="flex items-center gap-5">
-                       <div className="w-14 h-14 bg-white border border-slate-100 rounded-2xl flex items-center justify-center text-xl shadow-sm group-hover:scale-110 transition-transform">
-                          <i className={`fa-solid ${getActivityIcon(tx.type)}`}></i>
-                       </div>
-                       <div>
-                          <div className="flex items-center gap-2 mb-1">
-                             <span className="text-lg font-black text-slate-900 tabular-nums">+{tx.amount.toLocaleString()}</span>
-                             <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Coins</span>
-                          </div>
-                          <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest truncate max-w-[150px]">{tx.date}</p>
-                       </div>
-                    </div>
-                    <div className={`px-3 py-1 text-[8px] font-black rounded-lg uppercase tracking-widest border transition-all ${
-                       tx.status === 'success' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100 animate-pulse'
+                  <div className={`px-3 py-1 text-[8px] font-black rounded-lg uppercase tracking-widest border transition-all ${tx.status === 'success' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100 animate-pulse'
                     }`}>
-                       {tx.status === 'pending' ? 'Audit In-Progress' : 'Verified'}
-                    </div>
-                 </div>
-               ))
-             )}
+                    {tx.status === 'pending' ? 'Audit In-Progress' : 'Verified'}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
-      
+
       <style>{`
         @keyframes shimmer { 100% { transform: translateX(100%); } }
       `}</style>
