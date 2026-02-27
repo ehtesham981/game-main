@@ -74,13 +74,6 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
          color: 'text-indigo-500',
          bg: 'bg-indigo-50',
          step: activeTab === 'deposit' ? 'Transfer TRC20 USDT, then paste TxID and select screenshot below.' : 'Enter Wallet Address and Full Name.'
-      },
-      'Bank Account': {
-         address: 'Bank: Meezan | Acc: 02120104812345',
-         icon: 'fa-building-columns',
-         color: 'text-slate-700',
-         bg: 'bg-slate-100',
-         step: activeTab === 'deposit' ? 'Transfer to Bank Account, then paste TxID and select screenshot below.' : 'Enter Bank Name, Account Number, and Title.'
       }
    };
 
