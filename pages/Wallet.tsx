@@ -311,13 +311,13 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                         onClick={() => setActiveTab('deposit')}
                         className={`flex-1 py-5 rounded-[2rem] font-black text-[11px] uppercase tracking-[0.2em] transition-all ${activeTab === 'deposit' ? 'bg-white text-emerald-600 shadow-2xl' : 'text-slate-400 hover:text-slate-600'}`}
                      >
-                        Deposit Funds
+                        Deposit Credits
                      </button>
                      <button
                         onClick={() => setActiveTab('withdraw')}
                         className={`flex-1 py-5 rounded-[2rem] font-black text-[11px] uppercase tracking-[0.2em] transition-all ${activeTab === 'withdraw' ? 'bg-white text-indigo-600 shadow-2xl' : 'text-slate-400 hover:text-slate-600'}`}
                      >
-                        Withdraw Sec
+                        Withdraw Yield
                      </button>
                   </div>
 
@@ -341,7 +341,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                         </div>
 
                         <div className="space-y-6">
-                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 block">2. Input Coins (Coins)</label>
+                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 block">2. Input Unit Volume (Coins)</label>
                            <div className="relative">
                               <input
                                  type="number"
@@ -358,8 +358,8 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                               </div>
                            </div>
                            <div className="px-6 flex justify-between items-center text-[9px] font-black uppercase tracking-widest">
-                              <span className="text-slate-400">Min {activeTab}: {activeTab === 'deposit' ? '6,000' : '4,000'} Coins</span>
-                              <span className="text-indigo-600">Sec Sync Active</span>
+                              <span className="text-slate-400">Min {activeTab}: {activeTab === 'deposit' ? '6,000' : '4,000'} Units</span>
+                              <span className="text-indigo-600">Node Sync Active</span>
                            </div>
                         </div>
                      </div>
@@ -426,7 +426,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                      >
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-[shimmer_3s_infinite]"></div>
                         <span className="relative z-10 flex items-center justify-center gap-4">
-                           Execute {activeTab} Now
+                           Execute {activeTab} protocol
                            <i className="fa-solid fa-arrow-right"></i>
                         </span>
                      </button>
