@@ -26,10 +26,10 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
    const fileInputRef = useRef<HTMLInputElement>(null);
 
    // Updated Exchange Rates
-   const WITHDRAW_RATE = 5000; // 5000 Coins = $1
+   const WITHDRAW_RATE = 4000; // 4000 Coins = $1
    const DEPOSIT_RATE = 6000;  // 6000 Coins = $2 ($1 per 3000 coins)
-   const MIN_DEPOSIT = 6000;   // Set to 6000 as per prompt logic
-   const MIN_WITHDRAWAL = 5000;
+   const MIN_DEPOSIT = 6000;
+   const MIN_WITHDRAWAL = 4000;
 
    // External conversion multipliers (simulated live rates)
    const PKR_RATE = 280;
@@ -171,11 +171,11 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
    return (
-      <div className="pt-28 pb-20 min-h-screen bg-slate-50">
-         <div className="max-w-[1600px] mx-auto px-6 md:px-12 space-y-12">
+      <div className="pt-24 md:pt-32 pb-16 md:pb-24 min-h-screen bg-slate-50">
+         <div className="max-w-[1600px] mx-auto px-4 sm:px-8 md:px-12 space-y-10 md:space-y-16">
 
             {/* Header Section */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 bg-white p-8 md:p-0 rounded-[2.5rem] md:rounded-none md:bg-transparent shadow-sm md:shadow-none border border-slate-100 md:border-none">
                <div>
                   <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 border border-indigo-100 shadow-sm">
                      <i className="fa-solid fa-building-columns"></i>
@@ -184,11 +184,11 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                   <h1 className="text-4xl md:text-7xl font-black text-slate-900 tracking-tighter mb-4 leading-none">
                      Wallet <span className="text-indigo-600">& Vault</span>
                   </h1>
-                  <p className="text-slate-500 font-medium text-lg leading-relaxed max-w-2xl">
+                  <p className="text-slate-500 font-medium text-base md:text-lg leading-relaxed max-w-2xl">
                      Manage your liquidity, audit your earnings, and fund your marketing campaigns through our secure gateway.
                   </p>
                </div>
-               <button onClick={onRefresh} className="px-8 py-4 bg-white border border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center gap-4 shadow-sm active:scale-95">
+               <button onClick={onRefresh} className="w-full md:w-auto px-8 py-4 bg-white border border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center justify-center gap-4 shadow-sm active:scale-95">
                   <i className="fa-solid fa-sync"></i> Refresh Balance
                </button>
             </div>
@@ -201,7 +201,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                         <h3 className="text-indigo-400 text-[10px] font-black uppercase tracking-[0.3em] mb-8">Withdrawal Protocol</h3>
                         <div className="flex items-center gap-6">
                            <div className="text-center px-6 py-4 bg-white/5 rounded-2xl border border-white/10">
-                              <p className="text-3xl font-black text-white">5,000</p>
+                              <p className="text-3xl font-black text-white">4,000</p>
                               <p className="text-[9px] font-black text-slate-500 uppercase">Coins</p>
                            </div>
                            <i className="fa-solid fa-equals text-indigo-500 text-xl"></i>
@@ -244,43 +244,43 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
 
             {/* Balance Displays */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-               <div className="lg:col-span-8 bg-slate-900 p-12 md:p-16 rounded-[4rem] text-white shadow-3xl relative overflow-hidden">
-                  <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+               <div className="lg:col-span-8 bg-slate-900 p-8 md:p-16 rounded-[3rem] md:rounded-[4rem] text-white shadow-3xl relative overflow-hidden">
+                  <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12 items-center">
                      <div>
-                        <p className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.4em] mb-6">Main Earning Vault</p>
-                        <div className="flex items-baseline gap-4 mb-8">
-                           <h2 className="text-7xl md:text-8xl font-black tracking-tighter tabular-nums">{coins.toLocaleString()}</h2>
-                           <span className="text-xl font-bold text-slate-500 uppercase tracking-widest">Coins</span>
+                        <p className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.4em] mb-4 md:mb-6">Main Earning Vault</p>
+                        <div className="flex items-baseline gap-4 mb-6 md:mb-8">
+                           <h2 className="text-5xl sm:text-7xl md:text-8xl font-black tracking-tighter tabular-nums">{coins.toLocaleString()}</h2>
+                           <span className="text-lg md:text-xl font-bold text-slate-500 uppercase tracking-widest">Coins</span>
                         </div>
                         <div className="flex flex-wrap items-center gap-4">
-                           <div className="px-6 py-3 bg-white/5 rounded-2xl border border-white/10 text-sm font-black shadow-inner flex items-center gap-3">
+                           <div className="px-5 md:px-6 py-3 bg-white/5 rounded-2xl border border-white/10 text-xs md:text-sm font-black shadow-inner flex items-center gap-3">
                               <i className="fa-solid fa-dollar-sign text-emerald-400"></i>
-                              {(coins / WITHDRAW_RATE).toFixed(2)} <span className="opacity-40 text-[10px]">USD</span>
+                              {(coins / WITHDRAW_RATE).toFixed(2)} <span className="opacity-40 text-[9px] md:text-[10px]">USD</span>
                            </div>
-                           <div className="px-6 py-3 bg-indigo-600/20 rounded-2xl border border-indigo-500/20 text-[10px] font-black uppercase tracking-widest text-indigo-300">
+                           <div className="px-5 md:px-6 py-3 bg-indigo-600/20 rounded-2xl border border-indigo-500/20 text-[9px] md:text-[10px] font-black uppercase tracking-widest text-indigo-300">
                               Status: Operational
                            </div>
                         </div>
                      </div>
 
-                     <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-white/5 p-8 rounded-[2.5rem] border border-white/5 backdrop-blur-md text-center">
-                           <p className="text-[8px] font-black uppercase text-slate-500 mb-3 tracking-widest">Tasks Finalized</p>
-                           <p className="text-3xl font-black">{transactions.filter(t => t.type === 'earn' && t.status === 'success').length}</p>
+                     <div className="grid grid-cols-2 gap-3 md:gap-4">
+                        <div className="bg-white/5 p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border border-white/5 backdrop-blur-md text-center">
+                           <p className="text-[7px] md:text-[8px] font-black uppercase text-slate-500 mb-2 md:mb-3 tracking-widest">Tasks Finalized</p>
+                           <p className="text-2xl md:text-3xl font-black">{transactions.filter(t => t.type === 'earn' && t.status === 'success').length}</p>
                         </div>
-                        <div className="bg-white/5 p-8 rounded-[2.5rem] border border-white/5 backdrop-blur-md text-center">
-                           <p className="text-[8px] font-black uppercase text-slate-500 mb-3 tracking-widest">Deposit Bal</p>
-                           <p className="text-3xl font-black tabular-nums">{depositBalance.toLocaleString()}</p>
+                        <div className="bg-white/5 p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border border-white/5 backdrop-blur-md text-center">
+                           <p className="text-[7px] md:text-[8px] font-black uppercase text-slate-500 mb-2 md:mb-3 tracking-widest">Deposit Bal</p>
+                           <p className="text-2xl md:text-3xl font-black tabular-nums">{depositBalance.toLocaleString()}</p>
                         </div>
                      </div>
                   </div>
-                  <i className="fa-solid fa-vault absolute -right-20 -bottom-20 text-[30rem] text-white/5 -rotate-12 pointer-events-none"></i>
+                  <i className="fa-solid fa-vault absolute -right-20 -bottom-20 text-[20rem] md:text-[30rem] text-white/5 -rotate-12 pointer-events-none"></i>
                </div>
 
-               <div className="lg:col-span-4 bg-white p-12 rounded-[4rem] border border-slate-200 shadow-sm flex flex-col relative overflow-hidden">
+               <div className="lg:col-span-4 bg-white p-8 md:p-12 rounded-[3rem] md:rounded-[4rem] border border-slate-200 shadow-sm flex flex-col relative overflow-hidden">
                   <div className="relative z-10">
-                     <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">Currency Matrix</h3>
-                     <div className="space-y-6">
+                     <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-6 md:mb-8">Currency Matrix</h3>
+                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6">
                         {currencyValuations.map(cur => (
                            <div key={cur.code} className="flex items-center justify-between group cursor-pointer">
                               <div className="flex items-center gap-4">
@@ -304,9 +304,9 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
             </div>
 
             {/* Transaction Terminal */}
-            <div className="bg-white rounded-[5rem] border border-slate-200 shadow-sm overflow-hidden">
-               <div className="p-8 md:p-16">
-                  <div className="flex bg-slate-100 p-2 rounded-[2.5rem] border border-slate-200 mb-16 max-w-2xl mx-auto">
+            <div className="bg-white rounded-[3rem] md:rounded-[5rem] border border-slate-200 shadow-sm overflow-hidden">
+               <div className="p-6 sm:p-10 md:p-16">
+                  <div className="flex bg-slate-100 p-2 rounded-[2rem] md:rounded-[2.5rem] border border-slate-200 mb-10 md:mb-16 max-w-2xl mx-auto">
                      <button
                         onClick={() => setActiveTab('deposit')}
                         className={`flex-1 py-5 rounded-[2rem] font-black text-[11px] uppercase tracking-[0.2em] transition-all ${activeTab === 'deposit' ? 'bg-white text-emerald-600 shadow-2xl' : 'text-slate-400 hover:text-slate-600'}`}
@@ -358,14 +358,14 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                               </div>
                            </div>
                            <div className="px-6 flex justify-between items-center text-[9px] font-black uppercase tracking-widest">
-                              <span className="text-slate-400">Min {activeTab}: {activeTab === 'deposit' ? '6,000' : '5,000'} Units</span>
+                              <span className="text-slate-400">Min {activeTab}: {activeTab === 'deposit' ? '6,000' : '4,000'} Units</span>
                               <span className="text-indigo-600">Node Sync Active</span>
                            </div>
                         </div>
                      </div>
 
-                     <div className={`p-10 rounded-[3rem] border transition-all duration-500 ${activeTab === 'deposit' ? 'bg-emerald-50 border-emerald-100' : 'bg-slate-50 border-slate-100'}`}>
-                        <div className="flex flex-col md:flex-row items-center gap-10">
+                     <div className={`p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] border transition-all duration-500 ${activeTab === 'deposit' ? 'bg-emerald-50 border-emerald-100' : 'bg-slate-50 border-slate-100'}`}>
+                        <div className="flex flex-col md:flex-row items-center gap-6 md:gap-10">
                            <div className={`w-20 h-20 rounded-[2rem] flex items-center justify-center text-3xl shadow-xl ${activeTab === 'deposit' ? 'bg-emerald-600 text-white' : 'bg-white text-indigo-600 border border-slate-100'}`}>
                               <i className={`fa-solid ${(GATEWAY_DETAILS as any)[method].icon}`}></i>
                            </div>
