@@ -93,10 +93,10 @@ const Referrals: React.FC<ReferralsProps> = ({ user, onClaim }) => {
             Affiliate Growth Center
           </div>
           <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter leading-none mb-4">
-            Recruit & <span className="text-indigo-600">Claim 50</span>
+            Recruit & <span className="text-indigo-600">Claim 200</span>
           </h1>
           <p className="text-slate-500 font-medium text-lg leading-relaxed">
-            Expand your earning network. Every authorized sign-up via your ID yields 50 instant coins. Use the claim hub below to finalize your rewards.
+            Expand your earning network. Every authorized sign-up via your ID yields {REFERRAL_REWARD} instant coins. Reach milestones for bonuses up to 200 extra coins.
           </p>
         </div>
 
@@ -148,7 +148,11 @@ const Referrals: React.FC<ReferralsProps> = ({ user, onClaim }) => {
                 <div className="text-center md:text-left">
                   <p className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.4em] mb-4">Total Referral Assets</p>
                   <div className="flex items-baseline gap-4 mb-4 justify-center md:justify-start">
-                    <h2 className="text-7xl md:text-9xl font-black tracking-tighter leading-none tabular-nums">{claimedCount * REFERRAL_REWARD + (user.claimedReferrals?.includes('milestone_3_bonus') ? 50 : 0)}</h2>
+                    <h2 className="text-7xl md:text-9xl font-black tracking-tighter leading-none tabular-nums">
+                      {claimedCount * REFERRAL_REWARD +
+                        (user.claimedReferrals?.includes('milestone_3_bonus') ? 150 : 0) +
+                        (user.claimedReferrals?.includes('milestone_5_bonus') ? 200 : 0)}
+                    </h2>
                     <span className="text-xl font-bold text-slate-500 uppercase tracking-widest">Coins</span>
                   </div>
                   <p className="text-xs font-bold text-slate-400 italic">Global bonuses successfully claimed and added to your balance.</p>
@@ -161,7 +165,7 @@ const Referrals: React.FC<ReferralsProps> = ({ user, onClaim }) => {
               <i className="fa-solid fa-gift absolute -right-20 -bottom-20 text-[25rem] text-white/5 -rotate-12 pointer-events-none"></i>
             </div>
 
-            {/* Network Milestones */}
+            {/* Squad Milestone (3 Partners) */}
             <div className="bg-white rounded-[3.5rem] p-10 md:p-12 border border-slate-100 shadow-sm relative overflow-hidden group">
               <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
                 <div className="flex items-center gap-6">
@@ -197,8 +201,8 @@ const Referrals: React.FC<ReferralsProps> = ({ user, onClaim }) => {
                       onClick={() => handleClaimReward('milestone_3_bonus')}
                       disabled={refCount < 3 || claimingId === 'milestone_3_bonus'}
                       className={`px-12 py-6 rounded-[2rem] font-black text-[11px] uppercase tracking-[0.3em] transition-all duration-500 flex items-center gap-4 shadow-2xl ${refCount >= 3
-                          ? 'bg-slate-900 text-white hover:bg-indigo-600 active:scale-95'
-                          : 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
+                        ? 'bg-slate-900 text-white hover:bg-indigo-600 active:scale-95'
+                        : 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
                         }`}
                     >
                       {claimingId === 'milestone_3_bonus' ? (
@@ -206,12 +210,66 @@ const Referrals: React.FC<ReferralsProps> = ({ user, onClaim }) => {
                       ) : (
                         <i className="fa-solid fa-gift"></i>
                       )}
-                      {claimingId === 'milestone_3_bonus' ? 'SYNCING...' : 'CLAIM 50 COINS'}
+                      {claimingId === 'milestone_3_bonus' ? 'SYNCING...' : 'CLAIM 150 COINS'}
                     </button>
                   )}
                 </div>
               </div>
               <div className={`absolute top-0 right-0 w-32 h-32 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2 transition-colors duration-1000 ${refCount >= 3 ? 'bg-indigo-500/20' : 'bg-slate-100/10'
+                }`}></div>
+            </div>
+
+            {/* Elite Milestone (5 Partners) */}
+            <div className="bg-slate-900 rounded-[3.5rem] p-10 md:p-12 border border-slate-800 shadow-2xl relative overflow-hidden group">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+                <div className="flex items-center gap-6">
+                  <div className={`w-20 h-20 rounded-[2rem] flex items-center justify-center text-3xl shadow-2xl transition-all duration-500 ${refCount >= 5 ? 'bg-amber-500 text-white animate-pulse' : 'bg-slate-800 text-slate-600'
+                    }`}>
+                    <i className="fa-solid fa-crown"></i>
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-black text-white tracking-tighter uppercase">Elite Milestone</h3>
+                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">Recruit 5 Partners for Bonus</p>
+                    <div className="mt-4 flex items-center gap-2">
+                      <div className="flex -space-x-3">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <div key={i} className={`w-8 h-8 rounded-full border-2 border-slate-900 flex items-center justify-center text-[10px] font-black ${refCount >= i ? 'bg-amber-500 text-white' : 'bg-slate-800 text-slate-600'
+                            }`}>
+                            {refCount >= i ? <i className="fa-solid fa-check"></i> : i}
+                          </div>
+                        ))}
+                      </div>
+                      <span className="text-[10px] font-black text-slate-400 ml-2">{Math.min(refCount, 5)} / 5 JOINED</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  {user.claimedReferrals?.includes('milestone_5_bonus') ? (
+                    <div className="px-10 py-5 bg-emerald-500/10 text-emerald-500 text-[11px] font-black rounded-2xl uppercase tracking-[0.2em] border border-emerald-500/20 flex items-center gap-3">
+                      <i className="fa-solid fa-circle-check"></i>
+                      Elite Reward Secured
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => handleClaimReward('milestone_5_bonus')}
+                      disabled={refCount < 5 || claimingId === 'milestone_5_bonus'}
+                      className={`px-12 py-6 rounded-[2rem] font-black text-[11px] uppercase tracking-[0.3em] transition-all duration-500 flex items-center gap-4 shadow-2xl ${refCount >= 5
+                        ? 'bg-amber-500 text-white hover:bg-amber-600 active:scale-95'
+                        : 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700'
+                        }`}
+                    >
+                      {claimingId === 'milestone_5_bonus' ? (
+                        <i className="fa-solid fa-spinner fa-spin"></i>
+                      ) : (
+                        <i className="fa-solid fa-gem"></i>
+                      )}
+                      {claimingId === 'milestone_5_bonus' ? 'SYNCING...' : 'CLAIM 200 COINS'}
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div className={`absolute top-0 right-0 w-32 h-32 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2 transition-colors duration-1000 ${refCount >= 5 ? 'bg-amber-500/20' : 'bg-slate-800/10'
                 }`}></div>
             </div>
 
@@ -293,9 +351,10 @@ const Referrals: React.FC<ReferralsProps> = ({ user, onClaim }) => {
               <h3 className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.4em] mb-10">Affiliate Rules</h3>
               <div className="space-y-10">
                 {[
-                  { t: 'Instant Bounty', d: `Claim ${REFERRAL_REWARD} Coins for every successful referral as soon as they join.`, i: 'fa-bolt' },
-                  { t: 'Manual Claims', d: 'Rewards must be manually initialized via the Directory Hub.', i: 'fa-hand-pointer' },
-                  { t: 'Lifetime Access', d: 'No limits on how many partners you can recruit to the network.', i: 'fa-infinity' }
+                  { t: 'Instant Bounty', d: `Claim 50 Coins for every successful referral as soon as they join.`, i: 'fa-bolt' },
+                  { t: 'Squad Milestone', d: 'Reach 3 successful referrals to claim an extra 150 Bonus Coins.', i: 'fa-trophy' },
+                  { t: 'Elite Milestone', d: 'Reach 5 successful referrals to claim an extra 200 Bonus Coins.', i: 'fa-crown' },
+                  { t: 'Manual Claims', d: 'Rewards must be manually initialized via the Directory Hub.', i: 'fa-hand-pointer' }
                 ].map((rule, i) => (
                   <div key={i} className="flex gap-6">
                     <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-indigo-600 border border-slate-100 shrink-0">

@@ -142,7 +142,7 @@ const App: React.FC = () => {
 
   const handleClaimReferral = async (referredUserId: string) => {
     if (user.claimedReferrals?.includes(referredUserId)) return;
-    const REWARD = 50;
+    const REWARD = referredUserId === 'milestone_5_bonus' ? 200 : (referredUserId === 'milestone_3_bonus' ? 150 : 50);
     const updatedUser = {
       ...user,
       coins: user.coins + REWARD,
