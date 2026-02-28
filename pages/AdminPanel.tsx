@@ -319,12 +319,36 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
                       </td>
                       <td className="px-10 py-6 text-right space-x-2">
                         {tx.proofImage && (
-                          <a href={tx.proofImage} target="_blank" rel="noreferrer" className="inline-block px-4 py-2 bg-indigo-50 text-indigo-600 text-[9px] font-black uppercase rounded-lg">Proof</a>
+                          <button
+                            onClick={() => setPreviewImages([tx.proofImage])}
+                            className="inline-block px-4 py-2 bg-indigo-50 text-indigo-600 text-[9px] font-black uppercase rounded-lg hover:bg-indigo-600 hover:text-white transition-all shadow-sm"
+                          >
+                            Proof
+                          </button>
                         )}
                         {tx.status === 'pending' && (
                           <>
-                            <button onClick={async () => { await storage.updateGlobalTransaction(tx.id, { status: 'success' }); refreshActiveData(); }} className="px-4 py-2 bg-emerald-500 text-white text-[9px] font-black uppercase rounded-lg">Approve</button>
-                            <button onClick={async () => { await storage.updateGlobalTransaction(tx.id, { status: 'failed' }); refreshActiveData(); }} className="px-4 py-2 bg-rose-500 text-white text-[9px] font-black uppercase rounded-lg">Reject</button>
+                            <button
+                              onClick={async () => {
+                                // 1. Update Transaction
+                                await storage.updateGlobalTransaction(tx.id, { status: 'success' });
+
+                                // 2. Credit User
+                                if (tx.type === 'deposit') {
+                                  const user = users.find(u => u.id === tx.userId);
+                                  if (user) {
+                                    const newDepositBal = (Number(user.depositBalance) || 0) + Number(tx.amount);
+                                    await storage.updateUserInCloud(user.id, { depositBalance: newDepositBal });
+                                  }
+                                }
+
+                                refreshActiveData();
+                              }}
+                              className="px-4 py-2 bg-emerald-500 text-white text-[9px] font-black uppercase rounded-lg shadow-lg shadow-emerald-100 active:scale-95 transition-all"
+                            >
+                              Approve
+                            </button>
+                            <button onClick={async () => { await storage.updateGlobalTransaction(tx.id, { status: 'failed' }); refreshActiveData(); }} className="px-4 py-2 bg-rose-500 text-white text-[9px] font-black uppercase rounded-lg shadow-lg shadow-rose-100 active:scale-95 transition-all">Reject</button>
                           </>
                         )}
                       </td>

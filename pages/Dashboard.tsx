@@ -32,7 +32,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
   const progressToNextDollar = ((earnings.total % COIN_RATE) / COIN_RATE) * 100;
 
   const ledgerList = useMemo(() => {
-    let filtered = transactions.filter(tx => ['earn', 'spin', 'referral_claim', 'math_reward'].includes(tx.type));
+    let filtered = transactions.filter(tx => ['earn', 'spin', 'referral_claim', 'math_reward', 'deposit', 'withdraw'].includes(tx.type));
     if (ledgerTab === 'pending') filtered = filtered.filter(tx => tx.status === 'pending');
     else if (ledgerTab === 'verified') filtered = filtered.filter(tx => tx.status === 'success');
 
@@ -59,6 +59,8 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
     if (type === 'spin') return 'fa-clover text-emerald-500';
     if (type === 'referral_claim') return 'fa-users text-blue-500';
     if (type === 'math_reward') return 'fa-calculator text-indigo-500';
+    if (type === 'deposit') return 'fa-building-columns text-emerald-600';
+    if (type === 'withdraw') return 'fa-wallet text-rose-500';
     return 'fa-coins text-amber-500';
   };
 
@@ -131,10 +133,14 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 w-full sm:w-auto">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 w-full sm:w-auto">
                   <div className="bg-white/5 p-6 rounded-[2rem] border border-white/5 backdrop-blur-md flex flex-col justify-center text-center">
                     <p className="text-[8px] font-black uppercase text-slate-500 mb-2 tracking-widest">Vault Units</p>
-                    <p className="text-3xl font-black">{earnings.total.toLocaleString()}</p>
+                    <p className="text-3xl font-black tabular-nums">{earnings.total.toLocaleString()}</p>
+                  </div>
+                  <div className="bg-emerald-500/10 p-6 rounded-[2rem] border border-emerald-500/20 backdrop-blur-md flex flex-col justify-center text-center">
+                    <p className="text-[8px] font-black uppercase text-emerald-400 mb-2 tracking-widest">Ad Credits</p>
+                    <p className="text-3xl font-black tabular-nums text-emerald-400">{user.depositBalance?.toLocaleString() || 0}</p>
                   </div>
                   <div className="bg-white/5 p-6 rounded-[2rem] border border-white/5 backdrop-blur-md flex flex-col justify-center text-center">
                     <p className="text-[8px] font-black uppercase text-slate-500 mb-2 tracking-widest">Ref Partners</p>
@@ -235,7 +241,9 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-lg font-black text-slate-900 tabular-nums">+{tx.amount.toLocaleString()}</span>
+                        <span className="text-lg font-black text-slate-900 tabular-nums">
+                          {tx.type === 'withdraw' ? '-' : '+'}{tx.amount.toLocaleString()}
+                        </span>
                         <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Coins</span>
                       </div>
                       <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest truncate max-w-[150px]">{tx.date}</p>
