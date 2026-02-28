@@ -201,18 +201,18 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                         <h3 className="text-indigo-400 text-[10px] font-black uppercase tracking-[0.3em] mb-8">Withdrawal Protocol</h3>
                         <div className="flex items-center gap-6">
                            <div className="text-center px-6 py-4 bg-white/5 rounded-2xl border border-white/10">
-                              <p className="text-3xl font-black text-white">4,000</p>
+                              <p className="text-3xl font-black text-white">6,000</p>
                               <p className="text-[9px] font-black text-slate-500 uppercase">Coins</p>
                            </div>
                            <i className="fa-solid fa-equals text-indigo-500 text-xl"></i>
                            <div className="text-center px-6 py-4 bg-indigo-600 rounded-2xl shadow-xl shadow-indigo-900/40">
-                              <p className="text-3xl font-black text-white">$1.00</p>
+                              <p className="text-3xl font-black text-white">$1.5</p>
                               <p className="text-[9px] font-black text-indigo-200 uppercase">USD Rate</p>
                            </div>
                         </div>
                      </div>
                      <p className="mt-10 text-[10px] font-medium text-slate-400 uppercase tracking-widest leading-relaxed">
-                        Minimum withdrawal: 1 Node ($1.00). Coins are converted to your preferred gateway currency at verified global rates.
+                        Minimum withdrawal: 1 Node ($1.5). Coins are converted to your preferred gateway currency at verified global rates.
                      </p>
                   </div>
                   <i className="fa-solid fa-arrow-up-from-bracket absolute -right-12 -bottom-12 text-[15rem] text-white/5 -rotate-12 transition-transform group-hover:scale-110 duration-700"></i>
