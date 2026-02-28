@@ -66,7 +66,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
   const filteredUsers = useMemo(() => {
     const s = searchQuery.toLowerCase().trim();
     if (!s) return users;
-    return users.filter(u => u?.username?.toLowerCase().includes(s) || u?.id?.toLowerCase().includes(s));
+    return users.filter(u => u?.username?.toLowerCase().includes(s) || u?.id?.toLowerCase().includes(s) || u?.email?.toLowerCase().includes(s));
   }, [users, searchQuery]);
 
   const tabs = [
@@ -133,7 +133,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
             <div className="overflow-x-auto">
               <table className="w-full text-left min-w-[800px]">
                 <thead className="bg-slate-50 text-[10px] font-black uppercase text-slate-400 border-b border-slate-100">
-                  <tr><th className="px-10 py-6">Identity</th><th className="px-6 py-6">Vaults</th><th className="px-10 py-6 text-right">Ops</th></tr>
+                  <tr><th className="px-10 py-6">Identity</th><th className="px-6 py-6">Email</th><th className="px-6 py-6">Vaults</th><th className="px-10 py-6 text-right">Ops</th></tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
                   {filteredUsers.map(u => (
@@ -144,6 +144,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
                           {u.status === 'banned' && <span className="bg-rose-100 text-rose-600 text-[7px] px-1.5 py-0.5 rounded uppercase">Banned</span>}
                         </p>
                         <p className="text-[10px] text-indigo-400 font-mono">{u.id}</p>
+                      </td>
+                      <td className="px-6 py-6">
+                        <p className="text-xs font-bold text-slate-600">{u.email}</p>
                       </td>
                       <td className="px-6 py-6 font-black text-slate-900"><p>{u.coins?.toLocaleString() || 0} C (Earn)</p><p className="text-indigo-500">{u.depositBalance?.toLocaleString() || 0} C (Dep)</p></td>
                       <td className="px-10 py-6 text-right"><button onClick={() => setEditingUserId(u.id)} className="px-4 py-2 bg-slate-900 text-white text-[9px] font-black uppercase rounded-lg hover:bg-indigo-600 transition-all">Manage</button></td>
@@ -184,6 +187,42 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
                     </div>
 
                     <div className="space-y-8">
+                      <div>
+                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-4 px-2">Account Credentials</label>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <label className="text-[8px] font-black text-slate-400 uppercase tracking-widest px-2">Full Name</label>
+                            <input
+                              type="text"
+                              defaultValue={user.username}
+                              className="w-full px-5 py-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500 transition-all"
+                              onBlur={async (e) => {
+                                if (e.target.value !== user.username) {
+                                  await storage.updateUserInCloud(user.id, { username: e.target.value });
+                                  refreshActiveData();
+                                }
+                              }}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[8px] font-black text-slate-400 uppercase tracking-widest px-2">Email Hash / ID</label>
+                            <input
+                              type="email"
+                              defaultValue={user.email}
+                              className="w-full px-5 py-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500 transition-all"
+                              onBlur={async (e) => {
+                                if (e.target.value !== user.email) {
+                                  await storage.updateUserInCloud(user.id, { email: e.target.value });
+                                  refreshActiveData();
+                                }
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="h-px bg-slate-100"></div>
+
                       <div>
                         <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-4 px-2">Modify Wallet Balance (Earning)</label>
                         <div className="grid grid-cols-2 gap-4">
