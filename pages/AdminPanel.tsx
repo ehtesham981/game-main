@@ -4,7 +4,7 @@ import { User, Task, Transaction } from '../types';
 import { storage } from '../services/storage';
 
 interface AdminPanelProps {
-  initialView?: 'overview' | 'users' | 'history' | 'tasks' | 'finance' | 'reviews' | 'seo' | 'create-task';
+  initialView?: 'overview' | 'users' | 'history' | 'tasks' | 'finance' | 'reviews' | 'seo' | 'create-task' | 'freelance';
 }
 
 const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => {
@@ -43,6 +43,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
           const allTasks = await storage.getTasks();
           setTasks(allTasks || []);
         }
+        if (view === 'freelance') {
+          const allUsers = await storage.getAllUsers();
+          setUsers(allUsers || []);
+        }
       }
     } catch (err) {
       console.error("Sync error:", err);
@@ -74,6 +78,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
     { id: 'users', label: 'Users', icon: 'fa-users' },
     { id: 'reviews', label: 'Reviews', icon: 'fa-camera-retro', badge: stats.pendingTasks },
     { id: 'tasks', label: 'Campaigns', icon: 'fa-list-check', badge: stats.pendingTasksCount },
+    { id: 'freelance', label: 'Freelance Hub', icon: 'fa-briefcase' },
     { id: 'finance', label: 'Finance', icon: 'fa-wallet', badge: stats.pendingFinance },
     { id: 'create-task', label: 'Create Task', icon: 'fa-plus' },
     { id: 'history', label: 'Logs', icon: 'fa-clock' }
@@ -465,6 +470,76 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
             </div>
           </div>
         )}
+        {view === 'freelance' && (
+          <div className="bg-white rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
+            <div className="p-10 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center bg-slate-50/30 gap-6">
+              <h2 className="text-2xl font-black text-slate-900 uppercase">Freelance Pro Registry</h2>
+              <input type="text" placeholder="Search Identity..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full sm:w-80 px-6 py-4 bg-white border border-slate-200 rounded-2xl text-[11px] font-bold outline-none" />
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left min-w-[800px]">
+                <thead className="bg-slate-50 text-[10px] font-black uppercase text-slate-400 border-b border-slate-100">
+                  <tr>
+                    <th className="px-10 py-6">Professional Identity</th>
+                    <th className="px-6 py-6">Specializations</th>
+                    <th className="px-6 py-6">Metrics</th>
+                    <th className="px-10 py-6 text-right">Verification</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50">
+                  {users.filter(u => u.freelanceId).filter(u => !searchQuery || u.freelanceId?.toLowerCase().includes(searchQuery.toLowerCase()) || u.username.toLowerCase().includes(searchQuery.toLowerCase())).map(u => (
+                    <tr key={u.id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="px-10 py-6">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center text-white font-black text-xs uppercase">
+                            {u.username.charAt(0)}
+                          </div>
+                          <div>
+                            <p className="text-sm font-black text-slate-900">{u.username}</p>
+                            <p className="text-[10px] text-indigo-400 font-mono flex items-center gap-2">
+                              <i className="fa-solid fa-fingerprint"></i> {u.freelanceId}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-6">
+                        <div className="flex flex-wrap gap-2">
+                          {['writing', 'graphics', 'blog', 'seo'].map(skill => (
+                            <span key={skill} className="px-2 py-1 bg-slate-50 text-slate-400 border border-slate-100 rounded text-[7px] font-black uppercase tracking-tighter">
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
+                        <p className="text-[8px] font-bold text-slate-300 mt-2 uppercase tracking-widest italic">All nodes unlocked</p>
+                      </td>
+                      <td className="px-6 py-6">
+                        <div className="space-y-1">
+                          <p className="text-[10px] font-black text-slate-900 uppercase tracking-tighter">Level 0 Operator</p>
+                          <div className="w-24 h-1 bg-slate-100 rounded-full overflow-hidden">
+                            <div className="w-1/12 h-full bg-indigo-500 rounded-full"></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-10 py-6 text-right">
+                        <span className="px-4 py-2 bg-emerald-50 text-emerald-600 rounded-full text-[9px] font-black uppercase tracking-widest border border-emerald-100">
+                          Verified Hub Pro
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                  {users.filter(u => u.freelanceId).length === 0 && (
+                    <tr>
+                      <td colSpan={4} className="px-10 py-20 text-center">
+                        <i className="fa-solid fa-briefcase text-5xl text-slate-100 mb-6 block"></i>
+                        <p className="text-sm font-black text-slate-400 uppercase tracking-widest">No professional identities registered on mainnet</p>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
         {view === 'tasks' && (
           <div className="bg-white rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
             <div className="p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
@@ -564,6 +639,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
                         <option value="Websites">Websites</option>
                         <option value="Apps">Apps</option>
                         <option value="Social Media">Social Media</option>
+                        <option value="Content Writing">Content Writing</option>
+                        <option value="Graphics Designing">Graphics Designing</option>
+                        <option value="Blog Development">Blog Development</option>
+                        <option value="SEO">SEO</option>
                       </select>
                     </div>
                     <div className="space-y-4">

@@ -1,5 +1,5 @@
 
-export type TaskType = 'YouTube' | 'Websites' | 'Apps' | 'Social Media';
+export type TaskType = 'YouTube' | 'Websites' | 'Apps' | 'Social Media' | 'Content Writing' | 'Graphics Designing' | 'Blog Development' | 'SEO';
 
 export interface Task {
   id: string;

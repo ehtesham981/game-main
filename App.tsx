@@ -292,11 +292,40 @@ const App: React.FC = () => {
           {currentPage === 'freelance-figma' && user.isLoggedIn && (
             <FreelanceFigma
               user={user}
+              tasks={tasks}
               onBack={() => navigateTo('dashboard')}
               onUpdateUser={async (updatedData: Partial<User>) => {
                 const updatedUser = { ...user, ...updatedData };
                 setUser(updatedUser);
                 await storage.setUser(updatedUser);
+                await refreshUserBalance();
+              }}
+              onComplete={async (taskId, img1, img2, date, msg) => {
+                const task = tasks.find(t => t.id === taskId);
+                if (!task) return;
+
+                const tx: Transaction = {
+                  id: `TASK-${Math.random().toString(36).substr(2, 6).toUpperCase()}-${Date.now()}`,
+                  userId: user.id,
+                  taskId: taskId,
+                  amount: task.reward,
+                  type: 'earn',
+                  method: `${task.type} | ${task.title}`,
+                  proofImage: img1,
+                  proofImage2: img2,
+                  message: msg,
+                  status: 'pending',
+                  date: date || new Date().toLocaleString()
+                };
+
+                const updatedUser = {
+                  ...user,
+                  completedTasks: [...(user.completedTasks || []), taskId]
+                };
+
+                await storage.addTransaction(tx);
+                await storage.setUser(updatedUser);
+                setUser(updatedUser);
                 await refreshUserBalance();
               }}
             />

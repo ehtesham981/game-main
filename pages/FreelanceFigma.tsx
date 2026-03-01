@@ -1,47 +1,38 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { User } from '../types';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { User, Task, TaskType } from '../types';
 
 interface FreelanceFigmaProps {
     user: User;
+    tasks: Task[];
     onBack: () => void;
     onUpdateUser: (data: Partial<User>) => Promise<void>;
+    onComplete: (taskId: string, img1?: string, img2?: string, date?: string, msg?: string) => Promise<void>;
 }
 
-const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, onBack, onUpdateUser }) => {
+const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, tasks, onBack, onUpdateUser, onComplete }) => {
     const [isClient, setIsClient] = useState(false);
     const [isInitializing, setIsInitializing] = useState(false);
     const [activeCategory, setActiveCategory] = useState<string | null>(null);
+
+    // Task Submission States
+    const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+    const [isSubmittingProof, setIsSubmittingProof] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
+    const [isCompressing, setIsCompressing] = useState<number | null>(null);
+    const [proof1, setProof1] = useState<string | null>(null);
+    const [proof2, setProof2] = useState<string | null>(null);
+    const [submissionMessage, setSubmissionMessage] = useState('');
+
+    const fileInputRef1 = useRef<HTMLInputElement>(null);
+    const fileInputRef2 = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         setIsClient(true);
     }, []);
 
-    const categoryJobs = {
-        writing: [
-            { id: 'W1', title: 'Cybersecurity Blog Post', client: 'TechGuard', reward: 120, time: '2 days' },
-            { id: 'W2', title: 'Ad Copy for SaaS Landing Page', client: 'FlowStack', reward: 85, time: '24h' },
-            { id: 'W3', title: 'Technical Documentation: API V2', client: 'DevNexus', reward: 200, time: '5 days' }
-        ],
-        graphics: [
-            { id: 'G1', title: 'Neo-Gothic Brand Identity', client: 'Aether Studios', reward: 450, time: '7 days' },
-            { id: 'G2', title: 'Instagram Campaign Assets (x10)', client: 'VibeCheck', reward: 150, time: '3 days' },
-            { id: 'G3', title: 'E-commerce Mobile App Mockup', client: 'ShopSwift', reward: 300, time: '4 days' }
-        ],
-        blog: [
-            { id: 'B1', title: 'Full WordPress Setup + SEO', client: 'GreenRoot', reward: 1200, time: '10 days' },
-            { id: 'B2', title: 'Next.js Blog with Sanity CMS', client: 'BlogVerse', reward: 1800, time: '14 days' },
-            { id: 'B3', title: 'Ghost CMS Custom Theme Deployment', client: 'GhostWriter', reward: 900, time: '7 days' }
-        ],
-        seo: [
-            { id: 'S1', title: 'Full Domain Backlink Audit', client: 'TrustRank', reward: 500, time: '5 days' },
-            { id: 'S2', title: 'On-Page SEO Optimization (50 pages)', client: 'MarketScale', reward: 800, time: '12 days' },
-            { id: 'S3', title: 'Google Search Console Cleanup', client: 'DataFlow', reward: 350, time: '3 days' }
-        ]
-    };
-
     const categories = [
         {
-            id: 'writing',
+            id: 'Content Writing',
             title: 'Content Writing',
             icon: 'fa-pen-nib',
             color: 'bg-emerald-500',
@@ -49,7 +40,7 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, onBack, onUpdateU
             yield: '40-200 Coins/Task'
         },
         {
-            id: 'graphics',
+            id: 'Graphics Designing',
             title: 'Graphics Designing',
             icon: 'fa-palette',
             color: 'bg-indigo-500',
@@ -57,7 +48,7 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, onBack, onUpdateU
             yield: '100-500 Coins/Task'
         },
         {
-            id: 'blog',
+            id: 'Blog Development',
             title: 'Blog Development',
             icon: 'fa-laptop-code',
             color: 'bg-amber-500',
@@ -65,7 +56,7 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, onBack, onUpdateU
             yield: '500-2000 Coins/Task'
         },
         {
-            id: 'seo',
+            id: 'SEO',
             title: 'SEO Specialist',
             icon: 'fa-arrow-up-right-dots',
             color: 'bg-rose-500',
@@ -76,6 +67,11 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, onBack, onUpdateU
 
     const currentCategory = useMemo(() => categories.find(c => c.id === activeCategory), [activeCategory]);
 
+    const activeTasks = useMemo(() => {
+        if (!activeCategory) return [];
+        return tasks.filter(t => t.type === activeCategory && t.status === 'active' && !user.completedTasks?.includes(t.id));
+    }, [tasks, activeCategory, user.completedTasks]);
+
     const handleInitialize = async () => {
         setIsInitializing(true);
         const newId = 'FL-' + Math.random().toString(36).substr(2, 6).toUpperCase();
@@ -83,6 +79,69 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, onBack, onUpdateU
             await onUpdateUser({ freelanceId: newId });
             setIsInitializing(false);
         }, 1500);
+    };
+
+    const compressImage = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            const objectUrl = URL.createObjectURL(file);
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 1200;
+                let width = img.width;
+                let height = img.height;
+                if (width > MAX_WIDTH) {
+                    height *= MAX_WIDTH / width;
+                    width = MAX_WIDTH;
+                }
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx?.drawImage(img, 0, 0, width, height);
+                resolve(canvas.toDataURL('image/jpeg', 0.8));
+                URL.revokeObjectURL(objectUrl);
+            };
+            img.onerror = reject;
+            img.src = objectUrl;
+        });
+    };
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, slot: 1 | 2) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setIsCompressing(slot);
+            try {
+                const compressed = await compressImage(file);
+                if (slot === 1) setProof1(compressed);
+                else setProof2(compressed);
+            } catch (err) {
+                alert("Failed to process image.");
+            } finally {
+                setIsCompressing(null);
+            }
+        }
+    };
+
+    const handleFinalSubmit = async () => {
+        if (!selectedTask) return;
+        const req = selectedTask.requiredScreenshots || 1;
+        if (req === 1 && !proof1) return alert("Please upload proof.");
+        if (req === 2 && (!proof1 || !proof2)) return alert("Please upload both proofs.");
+
+        setIsUploading(true);
+        try {
+            await onComplete(selectedTask.id, proof1 || undefined, proof2 || undefined, new Date().toLocaleString(), submissionMessage);
+            setSelectedTask(null);
+            setIsSubmittingProof(false);
+            setProof1(null);
+            setProof2(null);
+            setSubmissionMessage('');
+            alert("Application submitted for review!");
+        } catch (err) {
+            alert("Submission failed.");
+        } finally {
+            setIsUploading(false);
+        }
     };
 
     if (!isClient) return null;
@@ -184,8 +243,8 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, onBack, onUpdateU
                                 </div>
 
                                 <div className="grid grid-cols-1 gap-6">
-                                    {categoryJobs[activeCategory as keyof typeof categoryJobs].map((job: any) => (
-                                        <div key={job.id} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 group">
+                                    {activeTasks.length > 0 ? activeTasks.map((job) => (
+                                        <div key={job.id} onClick={() => setSelectedTask(job)} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 group cursor-pointer">
                                             <div className="flex items-center gap-6">
                                                 <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 group-hover:bg-indigo-600 group-hover:text-white transition-all">
                                                     <i className="fa-solid fa-briefcase"></i>
@@ -193,9 +252,9 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, onBack, onUpdateU
                                                 <div>
                                                     <h4 className="text-lg font-black text-slate-900 mb-1">{job.title}</h4>
                                                     <div className="flex items-center gap-4">
-                                                        <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">{job.client}</span>
+                                                        <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">ID: {job.id}</span>
                                                         <span className="w-1 h-1 bg-slate-200 rounded-full"></span>
-                                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{job.time} limit</span>
+                                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Active Node</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -205,11 +264,16 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, onBack, onUpdateU
                                                     <p className="text-xl font-black text-indigo-600">{job.reward} <span className="text-[10px] uppercase">Coins</span></p>
                                                 </div>
                                                 <button className="px-8 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-lg active:scale-95">
-                                                    Accept Node
+                                                    Enter Node
                                                 </button>
                                             </div>
                                         </div>
-                                    ))}
+                                    )) : (
+                                        <div className="py-20 text-center bg-white rounded-[3rem] border-2 border-dashed border-slate-100">
+                                            <i className="fa-solid fa-folder-open text-5xl text-slate-100 mb-4 block"></i>
+                                            <p className="text-sm font-black text-slate-400 uppercase tracking-widest">No active nodes in this sector</p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         ) : (
@@ -239,7 +303,7 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, onBack, onUpdateU
                                                     onClick={() => setActiveCategory(cat.id)}
                                                     className="px-6 py-3 bg-slate-900 text-white rounded-xl text-[9px] font-black uppercase tracking-widest group-hover:bg-indigo-600 transition-colors shadow-lg"
                                                 >
-                                                    Enter Node
+                                                    Access Node
                                                 </button>
                                             </div>
                                             <div className={`absolute -right-8 -bottom-8 text-8xl ${cat.color} opacity-5 -rotate-12 transition-transform group-hover:scale-110`}>
@@ -266,13 +330,13 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, onBack, onUpdateU
                                     <div className="w-full h-3 bg-slate-200 rounded-full overflow-hidden shadow-inner p-1">
                                         <div className="h-full bg-indigo-500 rounded-full" style={{ width: '5%' }}></div>
                                     </div>
-                                    <p className="mt-4 text-[9px] font-bold text-slate-400 text-center uppercase tracking-widest">Authorize first task to progress</p>
+                                    <p className="mt-4 text-[9px] font-bold text-slate-400 text-center uppercase tracking-widest">Authorize tasks to progress rank</p>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="bg-white p-6 rounded-2xl border border-slate-100 text-center">
                                         <p className="text-[8px] font-black text-slate-400 uppercase mb-2">Projects</p>
-                                        <p className="text-2xl font-black text-slate-900">0</p>
+                                        <p className="text-2xl font-black text-slate-900">{user.completedTasks?.length || 0}</p>
                                     </div>
                                     <div className="bg-white p-6 rounded-2xl border border-slate-100 text-center">
                                         <p className="text-[8px] font-black text-slate-400 uppercase mb-2">Rating</p>
@@ -307,6 +371,90 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, onBack, onUpdateU
                     </div>
                 </div>
             </div>
+
+            {/* Task Detail & Verification Modal */}
+            {selectedTask && (
+                <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-2xl animate-in fade-in duration-300">
+                    <div className="bg-white w-full max-w-2xl rounded-[3rem] md:rounded-[4rem] shadow-3xl overflow-hidden relative flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-300">
+                        <div className="p-8 md:p-10 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
+                            <div className="flex items-center gap-6">
+                                <div className={`w-14 h-14 ${currentCategory?.color} text-white rounded-2xl flex items-center justify-center text-xl shadow-lg`}>
+                                    <i className={`fa-solid ${currentCategory?.icon}`}></i>
+                                </div>
+                                <div>
+                                    <h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">{selectedTask.title}</h3>
+                                    <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">Yield: {selectedTask.reward} Coins</p>
+                                </div>
+                            </div>
+                            <button onClick={() => setSelectedTask(null)} className="w-12 h-12 bg-white rounded-2xl text-slate-400 hover:text-slate-900 transition-all flex items-center justify-center shadow-sm">
+                                <i className="fa-solid fa-xmark text-xl"></i>
+                            </button>
+                        </div>
+
+                        <div className="p-8 md:p-10 overflow-y-auto no-scrollbar space-y-8 flex-grow">
+                            <div className="space-y-4">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 font-mono">Mission Resource</label>
+                                <a href={selectedTask.link} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-6 bg-slate-900 text-white rounded-3xl hover:bg-indigo-600 transition-all group shadow-xl">
+                                    <span className="text-xs font-black truncate max-w-[80%] opacity-80">{selectedTask.link}</span>
+                                    <i className="fa-solid fa-arrow-up-right-from-square group-hover:scale-110 transition-transform"></i>
+                                </a>
+                            </div>
+
+                            <div className="space-y-4">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 font-mono">Mission Brief</label>
+                                <div className="p-8 bg-slate-50 rounded-[2.5rem] border border-slate-100 text-slate-600 text-sm font-medium leading-relaxed whitespace-pre-line shadow-inner">
+                                    {selectedTask.description}
+                                </div>
+                            </div>
+
+                            {isSubmittingProof ? (
+                                <div className="space-y-8 animate-in slide-in-from-bottom-6">
+                                    <label className="text-[10px] font-black text-indigo-600 uppercase tracking-widest px-4 block text-center font-mono">Verification Nodes Required: {selectedTask.requiredScreenshots || 1}</label>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                        <div className="relative">
+                                            <input type="file" ref={fileInputRef1} onChange={e => handleFileChange(e, 1)} className="hidden" accept="image/*" />
+                                            <button onClick={() => fileInputRef1.current?.click()} className={`w-full py-10 rounded-[2.5rem] border-4 border-dashed flex flex-col items-center justify-center gap-4 transition-all ${proof1 ? 'border-emerald-500 bg-emerald-50/20 text-emerald-600' : 'border-slate-100 bg-slate-50 text-slate-300 hover:border-indigo-400 hover:text-indigo-400'}`}>
+                                                {isCompressing === 1 ? <i className="fa-solid fa-spinner fa-spin text-2xl"></i> : <i className={`fa-solid ${proof1 ? 'fa-check-circle' : 'fa-camera-retro'} text-3xl`}></i>}
+                                                <span className="text-[9px] font-black uppercase tracking-widest">{proof1 ? 'Entry Captured' : 'Primary Node'}</span>
+                                            </button>
+                                        </div>
+                                        {selectedTask.requiredScreenshots === 2 && (
+                                            <div className="relative">
+                                                <input type="file" ref={fileInputRef2} onChange={e => handleFileChange(e, 2)} className="hidden" accept="image/*" />
+                                                <button onClick={() => fileInputRef2.current?.click()} className={`w-full py-10 rounded-[2.5rem] border-4 border-dashed flex flex-col items-center justify-center gap-4 transition-all ${proof2 ? 'border-emerald-500 bg-emerald-50/20 text-emerald-600' : 'border-slate-100 bg-slate-50 text-slate-300 hover:border-indigo-400 hover:text-indigo-400'}`}>
+                                                    {isCompressing === 2 ? <i className="fa-solid fa-spinner fa-spin text-2xl"></i> : <i className={`fa-solid ${proof2 ? 'fa-check-circle' : 'fa-camera-retro'} text-3xl`}></i>}
+                                                    <span className="text-[9px] font-black uppercase tracking-widest">{proof2 ? 'Entry Captured' : 'Secondary Node'}</span>
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        <label className="text-[10px] font-black text-indigo-600 uppercase tracking-widest px-4 block font-mono">Operator Decryption (Message)</label>
+                                        <textarea value={submissionMessage} onChange={e => setSubmissionMessage(e.target.value)} placeholder="Attach additional mission data..." className="w-full p-8 bg-slate-50 border border-slate-200 rounded-[2.5rem] text-sm font-medium focus:ring-4 focus:ring-indigo-100 transition-all min-h-[140px] resize-none outline-none shadow-inner" />
+                                    </div>
+
+                                    <div className="flex gap-4">
+                                        <button onClick={() => setIsSubmittingProof(false)} className="flex-1 py-6 bg-slate-50 text-slate-400 font-black rounded-3xl text-[10px] uppercase tracking-widest hover:bg-slate-100 transition-all">Backtrack</button>
+                                        <button onClick={handleFinalSubmit} disabled={(selectedTask.requiredScreenshots === 2 ? (!proof1 || !proof2) : !proof1) || isUploading} className="flex-[2] py-6 bg-slate-900 text-white font-black rounded-3xl text-[10px] uppercase tracking-[0.3em] shadow-2xl hover:bg-indigo-600 transition-all flex items-center justify-center gap-4 disabled:opacity-50 active:scale-95">
+                                            {isUploading ? <i className="fa-solid fa-spinner fa-spin"></i> : <><i className="fa-solid fa-terminal"></i> Commit Node</>}
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <button onClick={() => setIsSubmittingProof(true)} className="w-full py-8 bg-slate-900 text-white rounded-[2.5rem] font-black text-xs uppercase tracking-[0.5em] shadow-2xl hover:bg-indigo-600 transition-all active:scale-95 flex items-center justify-center gap-4">
+                                    Initialize Audit Sequence <i className="fa-solid fa-bolt"></i>
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            <style>{`
+                .no-scrollbar::-webkit-scrollbar { display: none; }
+                .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+            `}</style>
         </div>
     );
 };
