@@ -35,7 +35,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
           const allTxs = await storage.getAllGlobalTransactions();
           setTransactions(allTxs || []);
         }
-        if (view === 'users') {
+        if (['users', 'reviews', 'finance', 'history'].includes(view)) {
           const allUsers = await storage.getAllUsers();
           setUsers(allUsers || []);
         }
@@ -368,95 +368,98 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
               <table className="w-full text-left min-w-[800px]">
                 <thead className="bg-slate-50 text-[10px] font-black uppercase text-slate-400 border-b border-slate-100">
                   <tr>
-                    <th className="px-10 py-6">Task ID</th>
-                    <th className="px-6 py-6">User / Amount</th>
+                    <th className="px-10 py-6">User / Task</th>
+                    <th className="px-6 py-6">Email / Amount</th>
                     <th className="px-6 py-6">Proofs</th>
                     <th className="px-10 py-6 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
-                  {transactions.filter(tx => tx.type === 'earn').map(tx => (
-                    <tr key={tx.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-10 py-6">
-                        <p className="text-xs font-black text-slate-900 line-clamp-1">{tx.method || 'Task Completion'}</p>
-                        <p className="font-mono text-[9px] text-indigo-400 mt-1">{tx.taskId || tx.id}</p>
-                      </td>
-                      <td className="px-6 py-6 text-xs font-black text-slate-900">
-                        {tx.userId}
-                        <p className="text-emerald-600 mt-1">+{tx.amount} C</p>
-                        {tx.message && (
-                          <div className="mt-2 p-3 bg-slate-50 border border-slate-100 rounded-xl font-medium text-[10px] text-slate-500 max-w-[200px] break-words">
-                            <i className="fa-solid fa-message mr-1 text-indigo-400"></i> {tx.message}
+                  {transactions.filter(tx => tx.type === 'earn').map(tx => {
+                    const reviewUser = users.find(u => u.id === tx.userId);
+                    return (
+                      <tr key={tx.id} className="hover:bg-slate-50/50 transition-colors">
+                        <td className="px-10 py-6">
+                          <p className="text-sm font-black text-slate-900 line-clamp-1">{reviewUser?.username || 'Unknown User'}</p>
+                          <p className="text-[10px] text-indigo-400 font-bold uppercase mt-1">{tx.method || 'Task Completion'}</p>
+                        </td>
+                        <td className="px-6 py-6 text-xs font-black text-slate-900">
+                          <p className="text-slate-500 font-mono text-[10px] mb-1">{reviewUser?.email || tx.userId}</p>
+                          <p className="text-emerald-600">+{tx.amount} C</p>
+                          {tx.message && (
+                            <div className="mt-2 p-3 bg-slate-50 border border-slate-100 rounded-xl font-medium text-[10px] text-slate-500 max-w-[200px] break-words">
+                              <i className="fa-solid fa-message mr-1 text-indigo-400"></i> {tx.message}
+                            </div>
+                          )}
+                          <p className={`text-[9px] font-black uppercase tracking-widest mt-1 ${tx.status === 'pending' ? 'text-amber-500' : tx.status === 'success' ? 'text-emerald-500' : 'text-rose-500'}`}>{tx.status}</p>
+                        </td>
+                        <td className="px-6 py-6">
+                          <div className="flex gap-2">
+                            {tx.proofImage && (
+                              <button
+                                onClick={() => setPreviewImages([tx.proofImage])}
+                                className="w-12 h-12 rounded-xl overflow-hidden border border-slate-200 hover:border-indigo-500 transition-all shadow-sm"
+                              >
+                                <img src={tx.proofImage} alt="Proof 1" className="w-full h-full object-cover" />
+                              </button>
+                            )}
+                            {tx.proofImage2 && (
+                              <button
+                                onClick={() => setPreviewImages(tx.proofImage ? [tx.proofImage, tx.proofImage2] : [tx.proofImage2])}
+                                className="w-12 h-12 rounded-xl overflow-hidden border border-slate-200 hover:border-indigo-500 transition-all shadow-sm"
+                              >
+                                <img src={tx.proofImage2} alt="Proof 2" className="w-full h-full object-cover" />
+                              </button>
+                            )}
+                            {!tx.proofImage && !tx.proofImage2 && <span className="text-[10px] text-slate-300 italic">No proof provided</span>}
                           </div>
-                        )}
-                        <p className={`text-[9px] font-black uppercase tracking-widest mt-1 ${tx.status === 'pending' ? 'text-amber-500' : tx.status === 'success' ? 'text-emerald-500' : 'text-rose-500'}`}>{tx.status}</p>
-                      </td>
-                      <td className="px-6 py-6">
-                        <div className="flex gap-2">
-                          {tx.proofImage && (
-                            <button
-                              onClick={() => setPreviewImages([tx.proofImage])}
-                              className="w-12 h-12 rounded-xl overflow-hidden border border-slate-200 hover:border-indigo-500 transition-all shadow-sm"
-                            >
-                              <img src={tx.proofImage} alt="Proof 1" className="w-full h-full object-cover" />
-                            </button>
-                          )}
-                          {tx.proofImage2 && (
-                            <button
-                              onClick={() => setPreviewImages(tx.proofImage ? [tx.proofImage, tx.proofImage2] : [tx.proofImage2])}
-                              className="w-12 h-12 rounded-xl overflow-hidden border border-slate-200 hover:border-indigo-500 transition-all shadow-sm"
-                            >
-                              <img src={tx.proofImage2} alt="Proof 2" className="w-full h-full object-cover" />
-                            </button>
-                          )}
-                          {!tx.proofImage && !tx.proofImage2 && <span className="text-[10px] text-slate-300 italic">No proof provided</span>}
-                        </div>
-                      </td>
-                      <td className="px-10 py-6 text-right space-x-2">
-                        {tx.status === 'pending' && (
-                          <>
-                            <button
-                              onClick={async () => {
-                                // 1. Update Transaction
-                                await storage.updateGlobalTransaction(tx.id, { status: 'success' });
+                        </td>
+                        <td className="px-10 py-6 text-right space-x-2">
+                          {tx.status === 'pending' && (
+                            <>
+                              <button
+                                onClick={async () => {
+                                  // 1. Update Transaction
+                                  await storage.updateGlobalTransaction(tx.id, { status: 'success' });
 
-                                // 2. Credit User
-                                const user = users.find(u => u.id === tx.userId);
-                                if (user) {
-                                  await storage.updateUserInCloud(user.id, { coins: (user.coins || 0) + tx.amount });
-                                }
-
-                                // 3. Update Task Progress
-                                if (tx.taskId) {
-                                  const task = tasks.find(t => t.id === tx.taskId);
-                                  if (task) {
-                                    const newCount = (task.completedCount || 0) + 1;
-                                    const newStatus = newCount >= task.totalWorkers ? 'completed' : task.status;
-                                    await storage.updateTaskInCloud(task.id, {
-                                      completedCount: newCount,
-                                      status: newStatus as any
-                                    });
+                                  // 2. Credit User
+                                  const user = users.find(u => u.id === tx.userId);
+                                  if (user) {
+                                    await storage.updateUserInCloud(user.id, { coins: (user.coins || 0) + tx.amount });
                                   }
-                                }
 
-                                refreshActiveData();
-                              }}
-                              className="px-4 py-2 bg-emerald-500 text-white text-[9px] font-black uppercase rounded-lg shadow-lg shadow-emerald-100 active:scale-95 transition-all"
-                            >
-                              Approve
-                            </button>
-                            <button
-                              onClick={async () => { await storage.updateGlobalTransaction(tx.id, { status: 'failed' }); refreshActiveData(); }}
-                              className="px-4 py-2 bg-rose-500 text-white text-[9px] font-black uppercase rounded-lg shadow-lg shadow-rose-100 active:scale-95 transition-all"
-                            >
-                              Reject
-                            </button>
-                          </>
-                        )}
-                        {tx.status !== 'pending' && <span className="text-[9px] font-black text-slate-300 uppercase">Archived</span>}
-                      </td>
-                    </tr>
-                  ))}
+                                  // 3. Update Task Progress
+                                  if (tx.taskId) {
+                                    const task = tasks.find(t => t.id === tx.taskId);
+                                    if (task) {
+                                      const newCount = (task.completedCount || 0) + 1;
+                                      const newStatus = newCount >= task.totalWorkers ? 'completed' : task.status;
+                                      await storage.updateTaskInCloud(task.id, {
+                                        completedCount: newCount,
+                                        status: newStatus as any
+                                      });
+                                    }
+                                  }
+
+                                  refreshActiveData();
+                                }}
+                                className="px-4 py-2 bg-emerald-500 text-white text-[9px] font-black uppercase rounded-lg shadow-lg shadow-emerald-100 active:scale-95 transition-all"
+                              >
+                                Approve
+                              </button>
+                              <button
+                                onClick={async () => { await storage.updateGlobalTransaction(tx.id, { status: 'failed' }); refreshActiveData(); }}
+                                className="px-4 py-2 bg-rose-500 text-white text-[9px] font-black uppercase rounded-lg shadow-lg shadow-rose-100 active:scale-95 transition-all"
+                              >
+                                Reject
+                              </button>
+                            </>
+                          )}
+                          {tx.status !== 'pending' && <span className="text-[9px] font-black text-slate-300 uppercase">Archived</span>}
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
