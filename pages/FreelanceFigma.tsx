@@ -8,7 +8,13 @@ interface FreelanceFigmaProps {
 }
 
 const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, onBack, onUpdateUser }) => {
+    const [isClient, setIsClient] = useState(false);
+    const [isInitializing, setIsInitializing] = useState(false);
     const [activeCategory, setActiveCategory] = useState<string | null>(null);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     const categoryJobs = {
         writing: [
