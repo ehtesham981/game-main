@@ -8,12 +8,30 @@ interface FreelanceFigmaProps {
 }
 
 const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, onBack, onUpdateUser }) => {
-    const [isClient, setIsClient] = useState(false);
-    const [isInitializing, setIsInitializing] = useState(false);
+    const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
+    const categoryJobs = {
+        writing: [
+            { id: 'W1', title: 'Cybersecurity Blog Post', client: 'TechGuard', reward: 120, time: '2 days' },
+            { id: 'W2', title: 'Ad Copy for SaaS Landing Page', client: 'FlowStack', reward: 85, time: '24h' },
+            { id: 'W3', title: 'Technical Documentation: API V2', client: 'DevNexus', reward: 200, time: '5 days' }
+        ],
+        graphics: [
+            { id: 'G1', title: 'Neo-Gothic Brand Identity', client: 'Aether Studios', reward: 450, time: '7 days' },
+            { id: 'G2', title: 'Instagram Campaign Assets (x10)', client: 'VibeCheck', reward: 150, time: '3 days' },
+            { id: 'G3', title: 'E-commerce Mobile App Mockup', client: 'ShopSwift', reward: 300, time: '4 days' }
+        ],
+        blog: [
+            { id: 'B1', title: 'Full WordPress Setup + SEO', client: 'GreenRoot', reward: 1200, time: '10 days' },
+            { id: 'B2', title: 'Next.js Blog with Sanity CMS', client: 'BlogVerse', reward: 1800, time: '14 days' },
+            { id: 'B3', title: 'Ghost CMS Custom Theme Deployment', client: 'GhostWriter', reward: 900, time: '7 days' }
+        ],
+        seo: [
+            { id: 'S1', title: 'Full Domain Backlink Audit', client: 'TrustRank', reward: 500, time: '5 days' },
+            { id: 'S2', title: 'On-Page SEO Optimization (50 pages)', client: 'MarketScale', reward: 800, time: '12 days' },
+            { id: 'S3', title: 'Google Search Console Cleanup', client: 'DataFlow', reward: 350, time: '3 days' }
+        ]
+    };
 
     const categories = [
         {
@@ -49,6 +67,8 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, onBack, onUpdateU
             yield: '200-1000 Coins/Task'
         }
     ];
+
+    const currentCategory = useMemo(() => categories.find(c => c.id === activeCategory), [activeCategory]);
 
     const handleInitialize = async () => {
         setIsInitializing(true);
@@ -137,38 +157,95 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, onBack, onUpdateU
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                     {/* Marketplace Grid */}
                     <div className="lg:col-span-8 space-y-10">
-                        <div>
-                            <h2 className="text-2xl font-black text-slate-900 tracking-tighter uppercase mb-2">Service Marketplace</h2>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Select your specialization node</p>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            {categories.map((cat) => (
-                                <div key={cat.id} className="group bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 flex flex-col justify-between h-full relative overflow-hidden">
-                                    <div className="relative z-10">
-                                        <div className={`w-16 h-16 ${cat.color} rounded-2xl flex items-center justify-center text-white text-2xl mb-8 shadow-xl group-hover:scale-110 transition-transform`}>
-                                            <i className={`fa-solid ${cat.icon}`}></i>
-                                        </div>
-                                        <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-4">{cat.title}</h3>
-                                        <p className="text-slate-500 font-medium text-sm leading-relaxed mb-10">{cat.desc}</p>
-                                    </div>
-
-                                    <div className="relative z-10 border-t border-slate-50 pt-8 flex items-center justify-between">
-                                        <div>
-                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Base Yield</p>
-                                            <p className="text-sm font-black text-emerald-600">{cat.yield}</p>
-                                        </div>
-                                        <button className="px-6 py-3 bg-slate-900 text-white rounded-xl text-[9px] font-black uppercase tracking-widest group-hover:bg-indigo-600 transition-colors shadow-lg">
-                                            Enter Node
+                        {activeCategory ? (
+                            <div className="space-y-8 animate-in slide-in-from-right duration-500">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-6">
+                                        <button
+                                            onClick={() => setActiveCategory(null)}
+                                            className="w-12 h-12 bg-white rounded-2xl border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-all shadow-sm"
+                                        >
+                                            <i className="fa-solid fa-chevron-left"></i>
                                         </button>
+                                        <div>
+                                            <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">{currentCategory?.title} Jobs</h2>
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Global active assignments</p>
+                                        </div>
                                     </div>
-                                    <div className={`absolute -right-8 -bottom-8 text-8xl ${cat.color} opacity-5 -rotate-12 transition-transform group-hover:scale-110`}>
-                                        <i className={`fa-solid ${cat.icon}`}></i>
+                                    <div className={`w-14 h-14 ${currentCategory?.color} rounded-2xl flex items-center justify-center text-white text-xl shadow-lg`}>
+                                        <i className={`fa-solid ${currentCategory?.icon}`}></i>
                                     </div>
                                 </div>
-                            ))}
-                        </div>
+
+                                <div className="grid grid-cols-1 gap-6">
+                                    {categoryJobs[activeCategory as keyof typeof categoryJobs].map((job: any) => (
+                                        <div key={job.id} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 group">
+                                            <div className="flex items-center gap-6">
+                                                <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                                                    <i className="fa-solid fa-briefcase"></i>
+                                                </div>
+                                                <div>
+                                                    <h4 className="text-lg font-black text-slate-900 mb-1">{job.title}</h4>
+                                                    <div className="flex items-center gap-4">
+                                                        <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">{job.client}</span>
+                                                        <span className="w-1 h-1 bg-slate-200 rounded-full"></span>
+                                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{job.time} limit</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-8">
+                                                <div className="text-right">
+                                                    <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Potential Yield</p>
+                                                    <p className="text-xl font-black text-indigo-600">{job.reward} <span className="text-[10px] uppercase">Coins</span></p>
+                                                </div>
+                                                <button className="px-8 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-lg active:scale-95">
+                                                    Accept Node
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                <div>
+                                    <h2 className="text-2xl font-black text-slate-900 tracking-tighter uppercase mb-2">Service Marketplace</h2>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Select your specialization node</p>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    {categories.map((cat) => (
+                                        <div key={cat.id} className="group bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 flex flex-col justify-between h-full relative overflow-hidden">
+                                            <div className="relative z-10">
+                                                <div className={`w-16 h-16 ${cat.color} rounded-2xl flex items-center justify-center text-white text-2xl mb-8 shadow-xl group-hover:scale-110 transition-transform`}>
+                                                    <i className={`fa-solid ${cat.icon}`}></i>
+                                                </div>
+                                                <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-4">{cat.title}</h3>
+                                                <p className="text-slate-500 font-medium text-sm leading-relaxed mb-10">{cat.desc}</p>
+                                            </div>
+
+                                            <div className="relative z-10 border-t border-slate-50 pt-8 flex items-center justify-between">
+                                                <div>
+                                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Base Yield</p>
+                                                    <p className="text-sm font-black text-emerald-600">{cat.yield}</p>
+                                                </div>
+                                                <button
+                                                    onClick={() => setActiveCategory(cat.id)}
+                                                    className="px-6 py-3 bg-slate-900 text-white rounded-xl text-[9px] font-black uppercase tracking-widest group-hover:bg-indigo-600 transition-colors shadow-lg"
+                                                >
+                                                    Enter Node
+                                                </button>
+                                            </div>
+                                            <div className={`absolute -right-8 -bottom-8 text-8xl ${cat.color} opacity-5 -rotate-12 transition-transform group-hover:scale-110`}>
+                                                <i className={`fa-solid ${cat.icon}`}></i>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </>
+                        )}
                     </div>
+
 
                     {/* Sidebar Area */}
                     <div className="lg:col-span-4 space-y-8">
