@@ -38,6 +38,7 @@ export interface User {
   status?: 'active' | 'banned';
   referredBy?: string;
   currentSessionId?: string;
+  advertiseId?: string;
 }
 
 export interface Transaction {

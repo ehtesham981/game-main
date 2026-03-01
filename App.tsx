@@ -23,6 +23,7 @@ const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const TermsConditions = lazy(() => import('./pages/TermsConditions'));
 const Disclaimer = lazy(() => import('./pages/Disclaimer'));
 const FreelanceFigma = lazy(() => import('./pages/FreelanceFigma'));
+const Advertise = lazy(() => import('./pages/Advertise'));
 
 
 const PageLoader = () => (
@@ -223,7 +224,9 @@ const App: React.FC = () => {
                 await refreshUserBalance();
               }}
             />
-          )}          {currentPage === 'create-task' && user.isLoggedIn && <CreateTask user={user} tasks={tasks} userDepositBalance={user.depositBalance} onDeleteTask={async () => { }} onUpdateTask={async () => { }} onCreate={() => { }} navigateTo={navigateTo} />}
+          )}
+          {currentPage === 'advertise' && user.isLoggedIn && <Advertise user={user} onRefresh={() => refreshUserBalance()} onNavigate={navigateTo} />}
+          {currentPage === 'create-task' && user.isLoggedIn && <CreateTask user={user} tasks={tasks} userDepositBalance={user.depositBalance} onDeleteTask={async () => { }} onUpdateTask={async () => { }} onCreate={() => { }} navigateTo={navigateTo} />}
           {currentPage === 'my-campaigns' && user.isLoggedIn && <MyCampaigns user={user} tasks={tasks} transactions={transactions} onDeleteTask={() => { }} onUpdateTask={() => { }} onNavigate={navigateTo} />}
           {currentPage === 'math-solver' && user.isLoggedIn && (
             <MathSolver

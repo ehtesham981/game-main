@@ -11,8 +11,9 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLogout }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [isTaskDropdownOpen, setIsTaskDropdownOpen] = useState(false);
+  const [isAdvertiseDropdownOpen, setIsAdvertiseDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isGeneratingId, setIsGeneratingId] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,8 +26,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
   const authLinks = [
     { name: 'Dashboard', id: 'dashboard', icon: 'fa-chart-pie' },
     { name: 'Tasks', id: 'tasks', icon: 'fa-tasks' },
-    { name: 'Create Task', id: 'create-task', icon: 'fa-plus' },
-    { name: 'Campaigns', id: 'my-campaigns', icon: 'fa-bullhorn' },
+    { name: 'Advertise', id: 'advertise', icon: 'fa-bullhorn' },
     { name: 'Freelance Figma', id: 'freelance-figma', icon: 'fa-pen-nib' },
     { name: 'Math Solver', id: 'math-solver', icon: 'fa-calculator' },
     { name: 'Spin', id: 'spin', icon: 'fa-clover' },
@@ -118,42 +118,67 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
                 // If it's one of the items we want to hide from the main list
                 if (link.id === 'create-task' || link.id === 'my-campaigns') return null;
 
-                // Handle 'Tasks' as a dropdown if it's the one we want to turn into a dropdown
-                if (link.id === 'tasks') {
-                  const taskSubLinks = [
-                    { name: 'Create Task', id: 'create-task', icon: 'fa-plus' },
-                    { name: 'My Campaigns', id: 'my-campaigns', icon: 'fa-bullhorn' },
+                // Handle 'Advertise' as a dropdown
+                if (link.id === 'advertise') {
+                  const adSubLinks = [
+                    { name: 'Create Advertisement', id: 'create-task', icon: 'fa-plus' },
+                    { name: 'Active Ads', id: 'my-campaigns', icon: 'fa-bullhorn' },
                   ];
 
                   return (
                     <div
-                      key="tasks-dropdown"
+                      key="advertise-dropdown"
                       className="relative"
-                      onMouseLeave={() => setIsTaskDropdownOpen(false)}
+                      onMouseLeave={() => setIsAdvertiseDropdownOpen(false)}
                     >
                       <button
-                        onMouseEnter={() => setIsTaskDropdownOpen(true)}
-                        onClick={() => handleNavClick('tasks')}
-                        className={`px-5 py-3 rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-300 whitespace-nowrap flex items-center gap-2.5 ${currentPage === 'tasks' || currentPage === 'create-task' || currentPage === 'my-campaigns'
+                        onMouseEnter={() => setIsAdvertiseDropdownOpen(true)}
+                        onClick={() => handleNavClick('advertise')}
+                        className={`px-5 py-3 rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-300 whitespace-nowrap flex items-center gap-2.5 ${currentPage === 'advertise' || currentPage === 'create-task' || currentPage === 'my-campaigns'
                           ? 'text-indigo-600 bg-white shadow-lg shadow-slate-200/50 ring-1 ring-slate-100'
                           : 'text-slate-500 hover:text-slate-900 hover:bg-white/40'
                           }`}
                       >
-                        <i className={`fa-solid ${link.icon} text-[10px] ${currentPage === 'tasks' ? 'opacity-100' : 'opacity-40'}`}></i>
+                        <i className={`fa-solid ${link.icon} text-[10px] ${currentPage === 'create-task' || currentPage === 'my-campaigns' ? 'opacity-100' : 'opacity-40'}`}></i>
                         {link.name}
-                        <i className={`fa-solid fa-chevron-down text-[8px] transition-transform duration-300 ${isTaskDropdownOpen ? 'rotate-180' : ''}`}></i>
+                        <i className={`fa-solid fa-chevron-down text-[8px] transition-transform duration-300 ${isAdvertiseDropdownOpen ? 'rotate-180' : ''}`}></i>
                       </button>
 
-                      {isTaskDropdownOpen && (
+                      {isAdvertiseDropdownOpen && (
                         <div
-                          className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl border border-slate-200 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] p-2 z-[150]"
+                          className="absolute top-full left-0 mt-2 w-64 bg-white rounded-2xl border border-slate-200 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] p-2 z-[150]"
                         >
-                          {taskSubLinks.map(subLink => (
+                          {/* Advertise ID Button */}
+                          <div className="px-3 py-3 mb-2 border-b border-slate-50">
+                            <button
+                              onClick={() => {
+                                if (!user.advertiseId) {
+                                  // This would typically involve a call to storage to update the user
+                                  alert("Visit your profile to generate an Advertiser ID");
+                                } else {
+                                  navigator.clipboard.writeText(user.advertiseId);
+                                  alert("Advertiser ID copied!");
+                                }
+                              }}
+                              className="w-full flex items-center justify-between px-4 py-2 bg-slate-900 rounded-xl text-white group overflow-hidden relative"
+                            >
+                              <div className="flex flex-col items-start">
+                                <span className="text-[6px] font-black uppercase tracking-widest text-indigo-400">Node ID</span>
+                                <span className="text-[9px] font-black tracking-widest font-mono truncate max-w-[120px]">
+                                  {user.advertiseId || "NOT INITIALIZED"}
+                                </span>
+                              </div>
+                              <i className="fa-solid fa-copy text-[10px] opacity-40 group-hover:opacity-100 transition-opacity"></i>
+                              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_2s_infinite]"></div>
+                            </button>
+                          </div>
+
+                          {adSubLinks.map(subLink => (
                             <button
                               key={subLink.id}
                               onClick={() => {
                                 handleNavClick(subLink.id);
-                                setIsTaskDropdownOpen(false);
+                                setIsAdvertiseDropdownOpen(false);
                               }}
                               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${currentPage === subLink.id
                                 ? 'bg-indigo-50 text-indigo-600 shadow-sm'
@@ -344,8 +369,16 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
           </div>
         </div>
       )}
+      <style>{styles}</style>
     </>
   );
 };
+
+const styles = `
+  @keyframes shimmer { 
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+`;
 
 export default Navbar;
