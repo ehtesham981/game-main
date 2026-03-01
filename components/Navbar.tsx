@@ -27,8 +27,8 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
   const authLinks = [
     { name: 'Dashboard', id: 'dashboard', icon: 'fa-chart-pie' },
     { name: 'MicroJobs', id: 'micro-jobs', icon: 'fa-briefcase' },
-    { name: 'Advertise', id: 'advertise', icon: 'fa-bullhorn' },
     { name: 'Freelance Figma', id: 'freelance-figma', icon: 'fa-pen-nib' },
+    { name: 'Advertise', id: 'advertise', icon: 'fa-bullhorn' },
     { name: 'Affiliate', id: 'referrals', icon: 'fa-users' },
     { name: 'Wallet', id: 'wallet', icon: 'fa-wallet' },
   ];
