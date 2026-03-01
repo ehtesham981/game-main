@@ -24,6 +24,7 @@ const TermsConditions = lazy(() => import('./pages/TermsConditions'));
 const Disclaimer = lazy(() => import('./pages/Disclaimer'));
 const FreelanceFigma = lazy(() => import('./pages/FreelanceFigma'));
 const Advertise = lazy(() => import('./pages/Advertise'));
+const MicroJobs = lazy(() => import('./pages/MicroJobs'));
 
 
 const PageLoader = () => (
@@ -190,6 +191,7 @@ const App: React.FC = () => {
           {currentPage === 'contact' && <Contact />}
           {currentPage === 'wallet' && <Wallet coins={user.coins} depositBalance={user.depositBalance} onAction={handleWalletAction} transactions={transactions} onRefresh={() => refreshUserBalance()} />}
           {currentPage === 'dashboard' && user.isLoggedIn && <Dashboard user={user} tasks={tasks} transactions={transactions} onDeleteTask={() => { }} onUpdateTask={() => { }} />}
+          {currentPage === 'micro-jobs' && user.isLoggedIn && <MicroJobs user={user} onNavigate={navigateTo} />}
           {currentPage === 'tasks' && user.isLoggedIn && (
             <Tasks
               user={user}

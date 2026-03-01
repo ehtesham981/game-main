@@ -12,6 +12,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isAdvertiseDropdownOpen, setIsAdvertiseDropdownOpen] = useState(false);
+  const [isMicroJobsDropdownOpen, setIsMicroJobsDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isGeneratingId, setIsGeneratingId] = useState(false);
 
@@ -25,6 +26,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
 
   const authLinks = [
     { name: 'Dashboard', id: 'dashboard', icon: 'fa-chart-pie' },
+    { name: 'MicroJobs', id: 'micro-jobs', icon: 'fa-briefcase' },
     { name: 'Tasks', id: 'tasks', icon: 'fa-tasks' },
     { name: 'Advertise', id: 'advertise', icon: 'fa-bullhorn' },
     { name: 'Freelance Figma', id: 'freelance-figma', icon: 'fa-pen-nib' },
@@ -116,7 +118,62 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
                 if (!link) return null;
 
                 // If it's one of the items we want to hide from the main list
-                if (link.id === 'create-task' || link.id === 'my-campaigns') return null;
+                if (link.id === 'create-task' || link.id === 'my-campaigns' || link.id === 'tasks' || link.id === 'math-solver' || link.id === 'spin') return null;
+
+                // Handle 'MicroJobs' as a dropdown
+                if (link.id === 'micro-jobs') {
+                  const microSubLinks = [
+                    { name: 'Task Marketplace', id: 'tasks', icon: 'fa-tasks' },
+                    { name: 'Math Solver', id: 'math-solver', icon: 'fa-calculator' },
+                    { name: 'Lucky Spin', id: 'spin', icon: 'fa-clover' },
+                  ];
+
+                  return (
+                    <div
+                      key="microjobs-dropdown"
+                      className="relative"
+                      onMouseLeave={() => setIsMicroJobsDropdownOpen(false)}
+                    >
+                      <button
+                        onMouseEnter={() => setIsMicroJobsDropdownOpen(true)}
+                        onClick={() => handleNavClick('micro-jobs')}
+                        className={`px-5 py-3 rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-300 whitespace-nowrap flex items-center gap-2.5 ${currentPage === 'micro-jobs' || currentPage === 'tasks' || currentPage === 'math-solver' || currentPage === 'spin'
+                          ? 'text-indigo-600 bg-white shadow-lg shadow-slate-200/50 ring-1 ring-slate-100'
+                          : 'text-slate-500 hover:text-slate-900 hover:bg-white/40'
+                          }`}
+                      >
+                        <i className={`fa-solid ${link.icon} text-[10px] ${currentPage === 'micro-jobs' || currentPage === 'tasks' || currentPage === 'math-solver' || currentPage === 'spin' ? 'opacity-100' : 'opacity-40'}`}></i>
+                        {link.name}
+                        <i className={`fa-solid fa-chevron-down text-[8px] transition-transform duration-300 ${isMicroJobsDropdownOpen ? 'rotate-180' : ''}`}></i>
+                      </button>
+
+                      {isMicroJobsDropdownOpen && (
+                        <div
+                          className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl border border-slate-200 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] p-2 z-[150]"
+                        >
+                          {microSubLinks.map(subLink => (
+                            <button
+                              key={subLink.id}
+                              onClick={() => {
+                                handleNavClick(subLink.id);
+                                setIsMicroJobsDropdownOpen(false);
+                              }}
+                              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${currentPage === subLink.id
+                                ? 'bg-indigo-50 text-indigo-600 shadow-sm'
+                                : 'text-slate-500 hover:bg-slate-50 hover:text-indigo-500'
+                                }`}
+                            >
+                              <div className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${currentPage === subLink.id ? 'bg-white text-indigo-600 shadow-sm' : 'bg-slate-50 text-slate-300'}`}>
+                                <i className={`fa-solid ${subLink.icon} text-[10px]`}></i>
+                              </div>
+                              {subLink.name}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
 
                 // Handle 'Advertise' as a dropdown
                 if (link.id === 'advertise') {
