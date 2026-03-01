@@ -29,7 +29,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
    const WITHDRAW_RATE = 4000; // 4000 Coins = $1
    const DEPOSIT_RATE = 6000;  // 6000 Coins = $2 ($1 per 3000 coins)
    const MIN_DEPOSIT = 6000;
-   const MIN_WITHDRAWAL = 4000;
+   const MIN_WITHDRAWAL = 6000;
 
    // External conversion multipliers (simulated live rates)
    const PKR_RATE = 280;
@@ -141,7 +141,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
          if (!account) return alert('Transaction ID (TxID) is required.');
          if (!proofImage) return alert('Payment proof screenshot is required.');
       } else {
-         if (isNaN(val) || val < MIN_WITHDRAWAL) return alert(`Minimum withdrawal amount: ${MIN_WITHDRAWAL.toLocaleString()} coins ($1.00)`);
+         if (isNaN(val) || val < MIN_WITHDRAWAL) return alert(`Minimum withdrawal amount: ${MIN_WITHDRAWAL.toLocaleString()} coins ($1.50)`);
          if (val > coins) return alert('Insufficient balance in your earning vault.');
          if (!withdrawName || !withdrawNumber) return alert('Complete account details are required.');
       }
@@ -358,7 +358,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                               </div>
                            </div>
                            <div className="px-6 flex justify-between items-center text-[9px] font-black uppercase tracking-widest">
-                              <span className="text-slate-400">Min {activeTab}: {activeTab === 'deposit' ? '6,000' : '4,000'} Units</span>
+                              <span className="text-slate-400">Min {activeTab}: {activeTab === 'deposit' ? MIN_DEPOSIT.toLocaleString() : MIN_WITHDRAWAL.toLocaleString()} Units</span>
                               <span className="text-indigo-600">Node Sync Active</span>
                            </div>
                         </div>
@@ -370,7 +370,9 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                               <i className={`fa-solid ${(GATEWAY_DETAILS as any)[method].icon}`}></i>
                            </div>
                            <div className="flex-1 text-center md:text-left">
-                              <h4 className="text-xl font-black text-slate-900 tracking-tight mb-2">{(GATEWAY_DETAILS as any)[method].address}</h4>
+                              {activeTab === 'deposit' && (
+                                 <h4 className="text-xl font-black text-slate-900 tracking-tight mb-2">{(GATEWAY_DETAILS as any)[method].address}</h4>
+                              )}
                               <p className="text-[11px] font-bold text-slate-500 leading-relaxed max-w-xl">{(GATEWAY_DETAILS as any)[method].step}</p>
                            </div>
                            {activeTab === 'deposit' && (
