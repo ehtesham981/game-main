@@ -36,13 +36,13 @@ const Advertise: React.FC<AdvertiseProps> = ({ user, onRefresh, onNavigate }) =>
                     <div className="max-w-3xl">
                         <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 border border-indigo-100 shadow-sm">
                             <i className="fa-solid fa-bullhorn"></i>
-                            Advertising Hub
+                            Advertising Section
                         </div>
                         <h1 className="text-4xl md:text-7xl font-black text-slate-900 tracking-tighter leading-[0.9] mb-6">
-                            Scale Your <span className="text-indigo-600">Influence</span>
+                            Scale Your <span className="text-indigo-600">Ads</span>
                         </h1>
                         <p className="text-slate-500 font-medium text-lg md:text-xl leading-relaxed max-w-2xl">
-                            Deploy micro-tasks to our global workforce and watch your digital presence grow in real-time.
+                            Earn micro-tasks to our global workforce and watch your digital presence grow in real-time.
                         </p>
                     </div>
 
@@ -78,13 +78,13 @@ const Advertise: React.FC<AdvertiseProps> = ({ user, onRefresh, onNavigate }) =>
                         </div>
                         <h3 className="text-2xl font-black text-slate-900 tracking-tighter mb-4 uppercase">New Campaign</h3>
                         <p className="text-slate-500 font-medium text-sm leading-relaxed mb-10">
-                            Initialize a new advertisement node and define your micro-task requirements.
+                            Initialize a new advertisement Run and define your micro-task requirements.
                         </p>
                         <button
                             onClick={() => onNavigate('create-task')}
                             className="w-full py-5 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-xl"
                         >
-                            Deploy Now
+                            Advertise Now
                         </button>
                         <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-600/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-indigo-600/10 transition-all"></div>
                     </div>
@@ -95,13 +95,13 @@ const Advertise: React.FC<AdvertiseProps> = ({ user, onRefresh, onNavigate }) =>
                         </div>
                         <h3 className="text-2xl font-black text-slate-900 tracking-tighter mb-4 uppercase">My Campaigns</h3>
                         <p className="text-slate-500 font-medium text-sm leading-relaxed mb-10">
-                            Monitor your active deployment nodes and track audit results in real-time.
+                            Monitor your active advertising Ad and track ad running results in real-time.
                         </p>
                         <button
                             onClick={() => onNavigate('my-campaigns')}
                             className="w-full py-5 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-xl"
                         >
-                            Management Hub
+                            Management Section
                         </button>
                     </div>
 
@@ -112,7 +112,7 @@ const Advertise: React.FC<AdvertiseProps> = ({ user, onRefresh, onNavigate }) =>
                             </div>
                             <h3 className="text-2xl font-black text-white tracking-tighter mb-4 uppercase">Node Balance</h3>
                             <p className="text-slate-400 font-bold text-sm leading-relaxed mb-6">
-                                Your advertising credits for deploying tasks.
+                                Your advertising credits for running tasks.
                             </p>
                             <div className="text-5xl font-black text-white tabular-nums mb-2">
                                 {user.depositBalance?.toLocaleString() || 0}
@@ -134,12 +134,12 @@ const Advertise: React.FC<AdvertiseProps> = ({ user, onRefresh, onNavigate }) =>
                     <div className="space-y-6">
                         <h4 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">Why Choose <span className="text-indigo-600">AdsPredia?</span></h4>
                         <p className="text-slate-500 font-medium leading-relaxed">
-                            Our network provides a unique synergy between advertisers and micro-task workers.
+                            Our network provides a unique trust between advertisers and micro-task workers.
                             By leveraging our dual-proof verification system, you ensure that every coin spent translates into real, verified engagement.
                         </p>
                         <ul className="space-y-4">
                             {[
-                                { icon: 'fa-bolt', text: 'Instant Deployment Nodes' },
+                                { icon: 'fa-bolt', text: 'Instant Advertise Run' },
                                 { icon: 'fa-check-double', text: 'Precision Proof Verification' },
                                 { icon: 'fa-globe', text: 'Global Workforce Access' }
                             ].map((item, idx) => (
@@ -162,7 +162,7 @@ const Advertise: React.FC<AdvertiseProps> = ({ user, onRefresh, onNavigate }) =>
                             onClick={() => onNavigate('create-task')}
                             className="px-12 py-5 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-900 transition-all shadow-xl shadow-indigo-100"
                         >
-                            Initialize Node
+                            Initialize AD
                         </button>
                     </div>
                 </div>
