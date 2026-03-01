@@ -4,7 +4,7 @@ import { User, Task, Transaction } from '../types';
 import { storage } from '../services/storage';
 
 interface AdminPanelProps {
-  initialView?: 'overview' | 'users' | 'history' | 'tasks' | 'finance' | 'reviews' | 'seo' | 'create-task' | 'freelance';
+  initialView?: 'overview' | 'users' | 'history' | 'tasks' | 'finance' | 'reviews' | 'seo' | 'create-task' | 'freelance' | 'create-freelance';
 }
 
 const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => {
@@ -79,6 +79,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
     { id: 'reviews', label: 'Reviews', icon: 'fa-camera-retro', badge: stats.pendingTasks },
     { id: 'tasks', label: 'Campaigns', icon: 'fa-list-check', badge: stats.pendingTasksCount },
     { id: 'freelance', label: 'Freelance Hub', icon: 'fa-briefcase' },
+    { id: 'create-freelance', label: 'Post Project', icon: 'fa-folder-plus' },
     { id: 'finance', label: 'Finance', icon: 'fa-wallet', badge: stats.pendingFinance },
     { id: 'create-task', label: 'Create Task', icon: 'fa-plus' },
     { id: 'history', label: 'Logs', icon: 'fa-clock' }
@@ -583,7 +584,94 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
             </div>
           </div>
         )}
+        {view === 'create-freelance' && (
+          <div className="max-w-[1000px] mx-auto animate-in fade-in slide-in-from-bottom-6 duration-700">
+            <div className="bg-slate-900 rounded-[3.5rem] p-10 md:p-14 border border-slate-800 shadow-2xl relative overflow-hidden">
+              <div className="relative z-10">
+                <div className="flex items-center gap-6 mb-12">
+                  <div className="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-2xl">
+                    <i className="fa-solid fa-briefcase"></i>
+                  </div>
+                  <div>
+                    <h2 className="text-3xl font-black text-white tracking-tighter uppercase">Deploy Freelance Project</h2>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Initiate high-precision project node</p>
+                  </div>
+                </div>
+
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.currentTarget);
+                    const newTask: Task = {
+                      id: `PRJ-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
+                      title: formData.get('title') as string,
+                      type: formData.get('type') as any,
+                      reward: parseInt(formData.get('reward') as string),
+                      description: formData.get('description') as string,
+                      creatorId: 'ADMIN-PRO',
+                      totalWorkers: parseInt(formData.get('totalWorkers') as string),
+                      completedCount: 0,
+                      status: 'active',
+                      link: formData.get('link') as string,
+                      requiredScreenshots: 2, // Default to high security for projects
+                      createdAt: new Date().toISOString()
+                    };
+
+                    try {
+                      const existingTasks = await storage.getTasks();
+                      await storage.setTasks([...existingTasks, newTask]);
+                      alert('Freelance Project deployed successfully!');
+                      setView('freelance');
+                    } catch (err) {
+                      alert('Failed to deploy project.');
+                    }
+                  }}
+                  className="space-y-10"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div className="space-y-4">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 font-mono">Project Title</label>
+                      <input name="title" required placeholder="e.g. Neo-Gothic Brand Identity" className="w-full px-8 py-5 bg-white/5 border border-white/10 rounded-2xl font-bold text-white shadow-inner focus:bg-white/10 transition-all outline-none" />
+                    </div>
+                    <div className="space-y-4">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 font-mono">Skill Category</label>
+                      <select name="type" required className="w-full px-8 py-5 bg-white/5 border border-white/10 rounded-2xl font-bold text-white shadow-inner focus:bg-white/10 transition-all outline-none appearance-none">
+                        <option value="Content Writing">Content Writing</option>
+                        <option value="Graphics Designing">Graphics Designing</option>
+                        <option value="Blog Development">Blog Development</option>
+                        <option value="SEO">SEO Specialist</option>
+                      </select>
+                    </div>
+                    <div className="space-y-4">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 font-mono">Project Yield (Coins)</label>
+                      <input name="reward" type="number" required placeholder="500" className="w-full px-8 py-5 bg-white/5 border border-white/10 rounded-2xl font-bold text-white shadow-inner focus:bg-white/10 transition-all outline-none" />
+                    </div>
+                    <div className="space-y-4">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 font-mono">Workforce Quota</label>
+                      <input name="totalWorkers" type="number" required placeholder="10" className="w-full px-8 py-5 bg-white/5 border border-white/10 rounded-2xl font-bold text-white shadow-inner focus:bg-white/10 transition-all outline-none" />
+                    </div>
+                    <div className="space-y-4 md:col-span-2">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 font-mono">Project Link / Documentation</label>
+                      <input name="link" required placeholder="https://..." className="w-full px-8 py-5 bg-white/5 border border-white/10 rounded-2xl font-bold text-white shadow-inner focus:bg-white/10 transition-all outline-none" />
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 font-mono">Project Scope & Brief</label>
+                    <textarea name="description" required rows={4} placeholder="Detailed project scope and instructions..." className="w-full px-8 py-6 bg-white/5 border border-white/10 rounded-[2rem] font-bold text-white shadow-inner focus:bg-white/10 transition-all outline-none resize-none"></textarea>
+                  </div>
+
+                  <button type="submit" className="w-full py-8 bg-emerald-600 text-white rounded-[2rem] font-black text-xs uppercase tracking-[0.5em] shadow-2xl hover:bg-emerald-500 transition-all active:scale-95">
+                    Commit Project to Hub
+                  </button>
+                </form>
+              </div>
+              <i className="fa-solid fa-briefcase absolute -right-20 -bottom-20 text-[25rem] text-white/5 -rotate-12 pointer-events-none"></i>
+            </div>
+          </div>
+        )}
         {view === 'create-task' && (
+
           <div className="max-w-[1000px] mx-auto animate-in fade-in slide-in-from-bottom-6 duration-700">
             <div className="bg-white rounded-[3.5rem] p-10 md:p-14 border border-slate-200 shadow-xl relative overflow-hidden">
               <div className="relative z-10">
