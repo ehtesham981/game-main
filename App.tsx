@@ -194,7 +194,7 @@ const App: React.FC = () => {
               user={user}
               tasks={tasks}
               transactions={transactions}
-              onComplete={async (taskId, img1, img2, date) => {
+              onComplete={async (taskId, img1, img2, date, msg) => {
                 const task = tasks.find(t => t.id === taskId);
                 if (!task) return;
 
@@ -207,6 +207,7 @@ const App: React.FC = () => {
                   method: `${task.type} | ${task.title}`,
                   proofImage: img1,
                   proofImage2: img2,
+                  message: msg,
                   status: 'pending',
                   date: date || new Date().toLocaleString()
                 };

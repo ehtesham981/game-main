@@ -384,6 +384,11 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
                       <td className="px-6 py-6 text-xs font-black text-slate-900">
                         {tx.userId}
                         <p className="text-emerald-600 mt-1">+{tx.amount} C</p>
+                        {tx.message && (
+                          <div className="mt-2 p-3 bg-slate-50 border border-slate-100 rounded-xl font-medium text-[10px] text-slate-500 max-w-[200px] break-words">
+                            <i className="fa-solid fa-message mr-1 text-indigo-400"></i> {tx.message}
+                          </div>
+                        )}
                         <p className={`text-[9px] font-black uppercase tracking-widest mt-1 ${tx.status === 'pending' ? 'text-amber-500' : tx.status === 'success' ? 'text-emerald-500' : 'text-rose-500'}`}>{tx.status}</p>
                       </td>
                       <td className="px-6 py-6">

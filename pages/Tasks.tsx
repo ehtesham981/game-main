@@ -5,7 +5,7 @@ interface TasksProps {
   user: User;
   tasks: Task[];
   transactions: Transaction[];
-  onComplete: (taskId: string, proofImage?: string, proofImage2?: string, timestamp?: string) => Promise<void> | void;
+  onComplete: (taskId: string, proofImage?: string, proofImage2?: string, timestamp?: string, message?: string) => Promise<void> | void;
 }
 
 export default function Tasks({ user, tasks, transactions, onComplete }: TasksProps) {
@@ -18,6 +18,7 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
   const [isCompressing, setIsCompressing] = useState<number | null>(null);
   const [proof1, setProof1] = useState<string | null>(null);
   const [proof2, setProof2] = useState<string | null>(null);
+  const [submissionMessage, setSubmissionMessage] = useState('');
   const [viewingHistoryScreenshots, setViewingHistoryScreenshots] = useState<string[] | null>(null);
 
   const fileInputRef1 = useRef<HTMLInputElement>(null);
@@ -139,7 +140,7 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
 
     setIsUploading(true);
     try {
-      await onComplete(selectedTask.id, proof1 || undefined, proof2 || undefined, new Date().toLocaleString());
+      await onComplete(selectedTask.id, proof1 || undefined, proof2 || undefined, new Date().toLocaleString(), submissionMessage);
       handleCloseModal();
     } catch (error) {
       console.error("Submission failed:", error);
@@ -155,6 +156,7 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
     setIsCompressing(null);
     setProof1(null);
     setProof2(null);
+    setSubmissionMessage('');
   };
 
   const getIcon = (type: string) => {
@@ -309,6 +311,12 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
                         <div className="text-[10px] font-black text-slate-500 uppercase">{tx.date}</div>
                       </div>
                     </div>
+                    {tx.message && (
+                      <div className="mt-6 p-4 bg-slate-50 border border-slate-100 rounded-2xl text-[10px] font-medium text-slate-500 leading-relaxed italic break-words">
+                        <i className="fa-solid fa-message mr-2 text-indigo-400"></i>
+                        "{tx.message}"
+                      </div>
+                    )}
                   </div>
                   <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">ID: {tx.id.substring(0, 8)}</span>
@@ -404,6 +412,17 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
                       </div>
                     )}
                   </div>
+
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black text-indigo-600 uppercase tracking-widest px-4 block">Additional Message (Optional)</label>
+                    <textarea
+                      value={submissionMessage}
+                      onChange={(e) => setSubmissionMessage(e.target.value)}
+                      placeholder="Type your message here..."
+                      className="w-full p-6 bg-slate-50 border border-slate-200 rounded-3xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 transition-all min-h-[120px] resize-none"
+                    />
+                  </div>
+
                   <div className="flex gap-4">
                     <button onClick={() => setIsSubmittingProof(false)} className="flex-1 py-6 bg-slate-100 text-slate-500 font-black rounded-3xl text-[10px] uppercase tracking-widest hover:bg-slate-200 transition-all">Back</button>
                     <button

@@ -51,6 +51,7 @@ export interface Transaction {
   account?: string;
   proofImage?: string;
   proofImage2?: string; // Support for dual-verification
+  message?: string; // User message/comment
   status: 'pending' | 'success' | 'failed';
   date: string;
 }
