@@ -358,7 +358,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                               </div>
                            </div>
                            <div className="px-6 flex justify-between items-center text-[9px] font-black uppercase tracking-widest">
-                              <span className="text-slate-400">Min {activeTab}: {activeTab === 'deposit' ? MIN_DEPOSIT.toLocaleString() : MIN_WITHDRAWAL.toLocaleString()} Units</span>
+                              <span className="text-slate-400">Min {activeTab}: {activeTab === 'deposit' ? MIN_DEPOSIT.toLocaleString() : MIN_WITHDRAWAL.toLocaleString()} Coins</span>
                               <span className="text-indigo-600">Node Sync Active</span>
                            </div>
                         </div>
