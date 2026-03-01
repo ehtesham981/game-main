@@ -30,7 +30,7 @@ const MicroJobs: React.FC<MicroJobsProps> = ({ user, onNavigate }) => {
         {
             id: 'spin',
             title: 'Lucky Spin',
-            description: 'Try your luck at the spin wheel for a chance to win up to 1,000 vault units every day.',
+            description: 'Try your luck at the spin wheel for a chance to win up to 1,000 vault coins every day.',
             icon: 'fa-clover',
             color: 'amber',
             reward: 'Luck Based',
@@ -52,7 +52,7 @@ const MicroJobs: React.FC<MicroJobsProps> = ({ user, onNavigate }) => {
                         Earning <span className="text-indigo-600">Simplified</span>
                     </h1>
                     <p className="text-slate-500 font-medium text-lg md:text-xl leading-relaxed max-w-2xl">
-                        Choose from a variety of authorized micro-jobs and start accumulating vault units across our verified partner network.
+                        Choose from a variety of authorized micro-jobs and start accumulating vault coins across our verified partner network.
                     </p>
                 </div>
 
@@ -100,7 +100,7 @@ const MicroJobs: React.FC<MicroJobsProps> = ({ user, onNavigate }) => {
                             </p>
                             <div className="flex flex-wrap gap-6">
                                 <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-6 rounded-3xl min-w-[140px]">
-                                    <span className="block text-[8px] font-black text-indigo-400 uppercase tracking-widest mb-1">Total Units</span>
+                                    <span className="block text-[8px] font-black text-indigo-400 uppercase tracking-widest mb-1">Total Coins</span>
                                     <span className="text-2xl font-black text-white tabular-nums">{user.coins.toLocaleString()}</span>
                                 </div>
                                 <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-6 rounded-3xl min-w-[140px]">

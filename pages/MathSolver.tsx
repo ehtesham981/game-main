@@ -229,7 +229,7 @@ const MathSolver: React.FC<MathSolverProps> = ({ user, onSolve, transactions, on
             Math <span className="text-indigo-600">Solver</span>
           </h1>
           <p className="text-slate-500 font-medium text-lg leading-relaxed">
-            Solve easy equations to generate unit yield. Each correct calculation credits 5 coins to your vault instantly.
+            Solve easy equations to generate coin yield. Each correct calculation credits 5 coins to your vault instantly.
           </p>
         </div>
 
@@ -286,7 +286,7 @@ const MathSolver: React.FC<MathSolverProps> = ({ user, onSolve, transactions, on
                   <span className="text-3xl font-black tabular-nums">{mathHistory.length}</span>
                   <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Calculations</span>
                 </div>
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Total Math Yield: <span className="text-emerald-400">+{mathHistory.reduce((sum, tx) => sum + tx.amount, 0)} Units</span></p>
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Total Math Yield: <span className="text-emerald-400">+{mathHistory.reduce((sum, tx) => sum + tx.amount, 0)} Coins</span></p>
               </div>
               <i className="fa-solid fa-bolt absolute -right-4 -bottom-4 text-6xl text-white/5 -rotate-12"></i>
             </div>

@@ -135,7 +135,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
 
                 <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 w-full sm:w-auto">
                   <div className="bg-white/5 p-6 rounded-[2rem] border border-white/5 backdrop-blur-md flex flex-col justify-center text-center">
-                    <p className="text-[8px] font-black uppercase text-slate-500 mb-2 tracking-widest">Vault Units</p>
+                    <p className="text-[8px] font-black uppercase text-slate-500 mb-2 tracking-widest">Vault Coins</p>
                     <p className="text-3xl font-black tabular-nums">{earnings.total.toLocaleString()}</p>
                   </div>
                   <div className="bg-emerald-500/10 p-6 rounded-[2rem] border border-emerald-500/20 backdrop-blur-md flex flex-col justify-center text-center">

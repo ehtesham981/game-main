@@ -212,7 +212,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                         </div>
                      </div>
                      <p className="mt-10 text-[10px] font-medium text-slate-400 uppercase tracking-widest leading-relaxed">
-                        Minimum withdrawal: 1 Node ($1.5). Coins are converted to your preferred gateway currency at verified global rates.
+                        Minimum withdrawal: 1 Coin ($1.5). Coins are converted to your preferred gateway currency at verified global rates.
                      </p>
                   </div>
                   <i className="fa-solid fa-arrow-up-from-bracket absolute -right-12 -bottom-12 text-[15rem] text-white/5 -rotate-12 transition-transform group-hover:scale-110 duration-700"></i>
@@ -235,7 +235,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                         </div>
                      </div>
                      <p className="mt-10 text-[10px] font-medium text-slate-500 uppercase tracking-widest leading-relaxed">
-                        Minimum deposit: 2 Nodes ($2.00). Ad credits are synchronized instantly upon TxID verification.
+                        Minimum deposit: 2 Coins ($2.00). Ad credits are synchronized instantly upon TxID verification.
                      </p>
                   </div>
                   <i className="fa-solid fa-bullhorn absolute -right-12 -bottom-12 text-[15rem] text-slate-50 rotate-12 transition-transform group-hover:scale-110 duration-700"></i>
@@ -341,7 +341,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                         </div>
 
                         <div className="space-y-6">
-                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 block">2. Input Unit Volume (Coins)</label>
+                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 block">2. Input Coin Volume (Coins)</label>
                            <div className="relative">
                               <input
                                  type="number"
@@ -366,7 +366,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
 
                      <div className={`p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] border transition-all duration-500 ${activeTab === 'deposit' ? 'bg-emerald-50 border-emerald-100' : 'bg-slate-50 border-slate-100'}`}>
                         <div className="flex flex-col md:flex-row items-center gap-6 md:gap-10">
-                           <div className={`w-20 h-20 rounded-[2rem] flex items-center justify-center text-3xl shadow-xl ${activeTab === 'deposit' ? 'bg-emerald-600 text-white' : 'bg-white text-indigo-600 border border-slate-100'}`}>
+                           <div className={`w-20 h-20 bg-slate-900 rounded-[1.75rem] flex items-center justify-center text-white text-3xl shadow-xl mx-auto mb-10`}>
                               <i className={`fa-solid ${(GATEWAY_DETAILS as any)[method].icon}`}></i>
                            </div>
                            <div className="flex-1 text-center md:text-left">
@@ -451,7 +451,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                         <tr>
                            <th className="px-10 py-6">Identity</th>
                            <th className="px-6 py-6">Operation</th>
-                           <th className="px-6 py-6">Unit Volume</th>
+                           <th className="px-6 py-6">Coin Volume</th>
                            <th className="px-6 py-6">Verification</th>
                            <th className="px-10 py-6 text-right">Timestamp</th>
                         </tr>
@@ -507,7 +507,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                            <span className={`px-3 py-1 rounded-lg ${activeTab === 'deposit' ? 'text-emerald-600 bg-emerald-100/50' : 'text-indigo-600 bg-indigo-100/50'}`}>{activeTab}</span>
                         </div>
                         <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                           <span>Unit Volume</span>
+                           <span>Coin Volume</span>
                            <span className="text-slate-900 font-black text-xl">{amount} Coins</span>
                         </div>
                         <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest">

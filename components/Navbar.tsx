@@ -279,7 +279,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
                 <div className="flex items-center gap-3">
                   <div onClick={() => handleNavClick('wallet')} className="hidden sm:flex flex-col items-end pr-4 cursor-pointer group">
                     <span className="text-[13px] font-black text-slate-900 group-hover:text-indigo-600 tabular-nums">{user.coins.toLocaleString()}</span>
-                    <span className="text-[7px] font-black uppercase tracking-widest text-slate-400">Vault Units</span>
+                    <span className="text-[7px] font-black uppercase tracking-widest text-slate-400">Vault Coins</span>
                   </div>
 
                   <div className="relative">
@@ -376,7 +376,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
                   <div className="flex items-center justify-between pt-4 border-t border-white/10">
                     <div>
                       <p className="text-[14px] font-black tabular-nums">{user.coins.toLocaleString()}</p>
-                      <p className="text-[8px] font-black uppercase tracking-widest mt-1 opacity-70">Units Earned</p>
+                      <p className="text-[8px] font-black uppercase tracking-widest mt-1 opacity-70">Coins Earned</p>
                     </div>
                     <button onClick={() => handleNavClick('wallet')} className="px-4 py-2 bg-white/10 rounded-xl text-[8px] font-black uppercase tracking-widest border border-white/20">
                       Vault Hub

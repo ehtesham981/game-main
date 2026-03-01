@@ -307,8 +307,8 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
                         <div className="text-2xl md:text-3xl font-black text-slate-900">+{tx.amount}</div>
                       </div>
                       <div className="text-right">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Submission Date</p>
-                        <div className="text-[10px] font-black text-slate-500 uppercase">{tx.date}</div>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Coin Value</p>
+                        <div className="text-2xl md:text-3xl font-black text-slate-900">+{tx.amount}</div>
                       </div>
                     </div>
                     {tx.message && (

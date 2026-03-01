@@ -21,7 +21,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userCoins, onSpin, transactions }
     'bg-indigo-600', 'bg-slate-900', 'bg-indigo-500', 'bg-indigo-800',
     'bg-indigo-700', 'bg-emerald-500', 'bg-slate-400', 'bg-indigo-400'
   ];
-  
+
   const spinHistory = transactions.filter(tx => tx.type === 'spin');
   const canSpin = spinStats.count < DAILY_LIMIT && !isSpinning;
 
@@ -31,7 +31,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userCoins, onSpin, transactions }
       const parsed = JSON.parse(saved);
       const now = Date.now();
       const twentyFourHours = 24 * 60 * 60 * 1000;
-      
+
       if (now - parsed.lastTimestamp > twentyFourHours) {
         const initial = { count: 0, lastTimestamp: 0 };
         setSpinStats(initial);
@@ -79,24 +79,24 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userCoins, onSpin, transactions }
 
     const rewardIndex = Math.floor(Math.random() * REWARDS.length);
     const winAmount = REWARDS[rewardIndex];
-    
+
     const segmentAngle = 360 / REWARDS.length;
-    const extraTurns = 360 * 10; 
+    const extraTurns = 360 * 10;
     const targetAngle = 360 - (rewardIndex * segmentAngle);
     const newRotation = rotation + extraTurns + targetAngle - (rotation % 360);
-    
+
     setRotation(newRotation);
 
     setTimeout(() => {
       setIsSpinning(false);
       setResult(winAmount);
-      
+
       const now = Date.now();
       const newStats = {
         count: spinStats.count + 1,
         lastTimestamp: spinStats.count === 0 ? now : spinStats.lastTimestamp
       };
-      
+
       setSpinStats(newStats);
       localStorage.setItem('spin_stats', JSON.stringify(newStats));
       onSpin(winAmount, SPIN_COST);
@@ -106,7 +106,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userCoins, onSpin, transactions }
   return (
     <div className="pt-28 pb-20 min-h-screen bg-slate-50">
       <div className="max-w-[1600px] mx-auto px-6 md:px-12">
-        
+
         {/* Header Section */}
         <div className="text-center mb-20 max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-3 px-5 py-2 bg-yellow-100 text-yellow-700 rounded-full text-[10px] font-black uppercase tracking-[0.4em] mb-6 border border-yellow-200 shadow-sm">
@@ -117,7 +117,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userCoins, onSpin, transactions }
             The <span className="text-indigo-600">Grand</span> Vault Wheel
           </h1>
           <p className="text-slate-500 font-medium text-lg leading-relaxed">
-            Synchronize your luck with our global reward node. Zero-cost entry, maximum unit potential. Reset occurs every 24 operational hours.
+            Synchronize your luck with our global reward node. Zero-cost entry, maximum Coin potential. Reset occurs every 24 operational hours.
           </p>
         </div>
 
@@ -127,14 +127,14 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userCoins, onSpin, transactions }
             <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-xl shadow-slate-200/40 relative overflow-hidden group">
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-8">Daily Quota Access</p>
               <div className="flex items-center justify-between mb-6">
-                 <span className="text-sm font-black text-slate-900 uppercase">Available</span>
-                 <span className="text-2xl font-black text-indigo-600 tabular-nums">{DAILY_LIMIT - spinStats.count} <span className="text-[10px] opacity-40">/ {DAILY_LIMIT}</span></span>
+                <span className="text-sm font-black text-slate-900 uppercase">Available</span>
+                <span className="text-2xl font-black text-indigo-600 tabular-nums">{DAILY_LIMIT - spinStats.count} <span className="text-[10px] opacity-40">/ {DAILY_LIMIT}</span></span>
               </div>
               <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden shadow-inner">
-                 <div 
-                   className="h-full bg-indigo-600 transition-all duration-1000 shadow-[0_0_15px_rgba(79,70,229,0.3)]" 
-                   style={{ width: `${((DAILY_LIMIT - spinStats.count) / DAILY_LIMIT) * 100}%` }}
-                 ></div>
+                <div
+                  className="h-full bg-indigo-600 transition-all duration-1000 shadow-[0_0_15px_rgba(79,70,229,0.3)]"
+                  style={{ width: `${((DAILY_LIMIT - spinStats.count) / DAILY_LIMIT) * 100}%` }}
+                ></div>
               </div>
               <i className="fa-solid fa-bolt absolute -right-6 -bottom-6 text-7xl text-slate-50 group-hover:text-indigo-50 transition-all"></i>
             </div>
@@ -148,10 +148,10 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userCoins, onSpin, transactions }
               </div>
               {spinStats.count >= DAILY_LIMIT && (
                 <div className="mt-8 flex items-center gap-3 p-4 bg-white/5 rounded-2xl border border-white/5">
-                   <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse"></div>
-                   <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-relaxed">
-                     Quota exhausted. Global reset in progress.
-                   </p>
+                  <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse"></div>
+                  <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-relaxed">
+                    Quota exhausted. Global reset in progress.
+                  </p>
                 </div>
               )}
             </div>
@@ -171,20 +171,20 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userCoins, onSpin, transactions }
               <div className="relative w-80 h-80 md:w-[500px] md:h-[500px] rounded-full p-6 md:p-10 bg-slate-900 border-[16px] border-slate-900 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.6)] group">
                 {/* Visual Depth Decoration */}
                 <div className="absolute inset-4 md:inset-8 rounded-full border-4 border-white/5 pointer-events-none z-10 shadow-inner"></div>
-                
-                <div 
+
+                <div
                   className="w-full h-full rounded-full relative overflow-hidden transition-transform duration-[4500ms] cubic-bezier(0.1, 0, 0.1, 1)"
                   style={{ transform: `rotate(${rotation}deg)` }}
                 >
                   {REWARDS.map((rew, i) => (
-                    <div 
+                    <div
                       key={i}
                       className="absolute w-full h-full origin-center"
                       style={{ transform: `rotate(${(360 / REWARDS.length) * i}deg)` }}
                     >
-                      <div 
+                      <div
                         className={`absolute top-0 left-1/2 -translate-x-1/2 h-1/2 w-[45%] flex flex-col items-center pt-12 md:pt-20 font-black ${COLORS[i % COLORS.length]} text-white border-r border-white/5`}
-                        style={{ 
+                        style={{
                           clipPath: 'polygon(50% 100%, 0 0, 100% 0)',
                           transformOrigin: 'bottom center'
                         }}
@@ -198,9 +198,9 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userCoins, onSpin, transactions }
 
                 {/* Core Hub Module */}
                 <div className="absolute inset-0 m-auto w-24 h-24 md:w-32 md:h-32 bg-slate-900 rounded-full z-30 border-[8px] border-slate-800 shadow-3xl flex items-center justify-center">
-                   <div className="w-14 h-14 md:w-20 md:h-20 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-full flex items-center justify-center shadow-2xl border-4 border-white/10 group-hover:scale-110 transition-transform">
-                      <i className="fa-solid fa-bolt-lightning text-white text-2xl md:text-4xl animate-pulse"></i>
-                   </div>
+                  <div className="w-14 h-14 md:w-20 md:h-20 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-full flex items-center justify-center shadow-2xl border-4 border-white/10 group-hover:scale-110 transition-transform">
+                    <i className="fa-solid fa-bolt-lightning text-white text-2xl md:text-4xl animate-pulse"></i>
+                  </div>
                 </div>
               </div>
             </div>
@@ -209,20 +209,19 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userCoins, onSpin, transactions }
               {result !== null && !isSpinning && (
                 <div className="mb-12 animate-in zoom-in duration-500">
                   <div className={`text-5xl font-black tracking-tighter ${result > 0 ? 'text-emerald-500' : 'text-slate-400 opacity-50'}`}>
-                    {result > 0 ? `+${result} UNITS` : '0 UNITS'}
+                    {result > 0 ? `+${result} COINS` : '0 COINS'}
                   </div>
                   <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mt-3">Vault Synchronization Successful</div>
                 </div>
               )}
 
-              <button 
+              <button
                 onClick={handleSpin}
                 disabled={!canSpin}
-                className={`relative w-full py-8 rounded-[2.5rem] font-black text-xs uppercase tracking-[0.5em] transition-all overflow-hidden ${
-                  !canSpin 
-                    ? 'bg-slate-200 text-slate-400 cursor-not-allowed' 
+                className={`relative w-full py-8 rounded-[2.5rem] font-black text-xs uppercase tracking-[0.5em] transition-all overflow-hidden ${!canSpin
+                    ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
                     : 'bg-slate-900 text-white hover:bg-indigo-600 active:scale-95 shadow-3xl shadow-slate-300'
-                }`}
+                  }`}
               >
                 <span className="relative z-10">{isSpinning ? 'CALCULATING NODE...' : 'INITIALIZE SPIN'}</span>
                 {canSpin && (
@@ -242,7 +241,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userCoins, onSpin, transactions }
                 </div>
                 <i className="fa-solid fa-receipt text-slate-100 text-3xl"></i>
               </div>
-              
+
               <div className="divide-y divide-slate-50 max-h-[500px] overflow-y-auto no-scrollbar">
                 {spinHistory.length === 0 ? (
                   <div className="p-20 text-center">
