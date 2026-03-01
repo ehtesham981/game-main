@@ -39,6 +39,7 @@ export interface User {
   referredBy?: string;
   currentSessionId?: string;
   advertiseId?: string;
+  freelanceId?: string;
 }
 
 export interface Transaction {

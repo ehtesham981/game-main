@@ -289,7 +289,18 @@ const App: React.FC = () => {
           {currentPage === 'privacy-policy' && <PrivacyPolicy />}
           {currentPage === 'terms-conditions' && <TermsConditions />}
           {currentPage === 'disclaimer' && <Disclaimer />}
-          {currentPage === 'freelance-figma' && user.isLoggedIn && <FreelanceFigma user={user} onBack={() => navigateTo('dashboard')} />}
+          {currentPage === 'freelance-figma' && user.isLoggedIn && (
+            <FreelanceFigma
+              user={user}
+              onBack={() => navigateTo('dashboard')}
+              onUpdateUser={async (updatedData: Partial<User>) => {
+                const updatedUser = { ...user, ...updatedData };
+                setUser(updatedUser);
+                await storage.setUser(updatedUser);
+                await refreshUserBalance();
+              }}
+            />
+          )}
 
           {currentPage.startsWith('admin-') && user.isAdmin && <AdminPanel initialView={currentPage.slice(6) as any} />}
         </Suspense>

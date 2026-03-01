@@ -1,183 +1,232 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { User } from '../types';
 
 interface FreelanceFigmaProps {
     user: User;
     onBack: () => void;
+    onUpdateUser: (data: Partial<User>) => Promise<void>;
 }
 
-const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, onBack }) => {
+const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, onBack, onUpdateUser }) => {
     const [isClient, setIsClient] = useState(false);
+    const [isInitializing, setIsInitializing] = useState(false);
 
     useEffect(() => {
         setIsClient(true);
     }, []);
 
+    const categories = [
+        {
+            id: 'writing',
+            title: 'Content Writing',
+            icon: 'fa-pen-nib',
+            color: 'bg-emerald-500',
+            desc: 'Draft high-impact articles, ad copy, and technical documentation.',
+            yield: '40-200 Coins/Task'
+        },
+        {
+            id: 'graphics',
+            title: 'Graphics Designing',
+            icon: 'fa-palette',
+            color: 'bg-indigo-500',
+            desc: 'Create branding, social media assets, and professional UI mockups.',
+            yield: '100-500 Coins/Task'
+        },
+        {
+            id: 'blog',
+            title: 'Blog Development',
+            icon: 'fa-laptop-code',
+            color: 'bg-amber-500',
+            desc: 'Configure and deploy SEO-optimized WordPress/Next.js blogs.',
+            yield: '500-2000 Coins/Task'
+        },
+        {
+            id: 'seo',
+            title: 'SEO Specialist',
+            icon: 'fa-arrow-up-right-dots',
+            color: 'bg-rose-500',
+            desc: 'Optimize site rankings through backlink audits and technical SEO.',
+            yield: '200-1000 Coins/Task'
+        }
+    ];
+
+    const handleInitialize = async () => {
+        setIsInitializing(true);
+        const newId = 'FL-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+        setTimeout(async () => {
+            await onUpdateUser({ freelanceId: newId });
+            setIsInitializing(false);
+        }, 1500);
+    };
+
     if (!isClient) return null;
 
-    return (
-        <div className="pt-24 pb-20 min-h-screen bg-slate-50 relative overflow-hidden">
-            {/* Coming Soon Overlay */}
-            <div className="fixed inset-0 z-[150] flex items-center justify-center p-6 bg-slate-50/10 backdrop-blur-[6px] pointer-events-none">
-                <div className="bg-white/80 backdrop-blur-3xl border border-white shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] p-12 md:p-20 rounded-[4rem] text-center animate-in zoom-in-95 duration-500 pointer-events-auto">
-                    <div className="w-24 h-24 bg-indigo-600 rounded-[2rem] flex items-center justify-center text-white mx-auto mb-10 shadow-2xl shadow-indigo-200 animate-bounce">
-                        <i className="fa-brands fa-figma text-4xl"></i>
+    if (!user.freelanceId) {
+        return (
+            <div className="pt-24 pb-20 min-h-screen bg-slate-50 flex items-center justify-center p-6">
+                <div className="max-w-xl w-full bg-white rounded-[4rem] border border-slate-200 shadow-3xl p-12 md:p-16 text-center animate-in zoom-in-95 duration-500">
+                    <div className="w-24 h-24 bg-indigo-600 rounded-[2.5rem] flex items-center justify-center text-white mx-auto mb-10 shadow-2xl animate-bounce">
+                        <i className="fa-solid fa-briefcase text-4xl"></i>
                     </div>
-                    <h2 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter mb-6 uppercase">
-                        Coming <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-indigo-400">Soon</span>
-                    </h2>
-                    <p className="text-slate-500 font-bold text-lg max-w-sm mx-auto leading-relaxed mb-10">
-                        Our specialized Figma marketplace is currently under development. Get your portfolios ready!
+                    <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter mb-6 uppercase">
+                        Freelance <span className="text-indigo-600">Gateway</span>
+                    </h1>
+                    <p className="text-slate-500 font-medium text-lg mb-10 leading-relaxed">
+                        Authorize your professional identity to access our specialized freelance marketplace. Each account requires a unique Freelance ID for secure payouts.
                     </p>
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <div className="inline-flex items-center gap-4 px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.3em]">
-                            <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                            Alpha Launch Approaching
-                        </div>
-                        <button
-                            onClick={onBack}
-                            className="inline-flex items-center gap-4 px-8 py-4 bg-white border border-slate-200 text-slate-900 rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] hover:bg-slate-50 transition-all shadow-sm active:scale-95"
-                        >
-                            <i className="fa-solid fa-arrow-left"></i>
-                            Return to Dashboard
-                        </button>
-                    </div>
+                    <button
+                        onClick={handleInitialize}
+                        disabled={isInitializing}
+                        className="w-full py-6 bg-slate-900 text-white rounded-3xl font-black text-xs uppercase tracking-[0.4em] shadow-2xl hover:bg-indigo-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50"
+                    >
+                        {isInitializing ? (
+                            <>
+                                <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                                Registering ID...
+                            </>
+                        ) : (
+                            <>
+                                <i className="fa-solid fa-id-card"></i>
+                                Initialize Freelance ID
+                            </>
+                        )}
+                    </button>
+                    <button onClick={onBack} className="mt-6 text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-900 transition-all">
+                        Return to Dashboard
+                    </button>
                 </div>
             </div>
+        );
+    }
 
-            <div className="max-w-[1600px] mx-auto px-4 sm:px-8 space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700 opacity-40 grayscale-[0.5]">
+    return (
+        <div className="pt-24 pb-20 min-h-screen bg-slate-50">
+            <div className="max-w-[1600px] mx-auto px-4 sm:px-8 space-y-12 animate-in fade-in duration-700">
 
-                {/* Header Section */}
-                <header className="bg-white p-8 md:p-12 rounded-[2.5rem] border border-slate-200/60 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative overflow-hidden">
-                    <div className="relative z-10">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-100">
-                                <i className="fa-brands fa-figma text-xl"></i>
-                            </div>
-                            <span className="px-3 py-1 bg-indigo-50 text-indigo-600 text-[8px] font-black uppercase tracking-widest rounded-lg border border-indigo-100 shadow-sm">Premium Creative Hub</span>
+                {/* Header Profile Section */}
+                <header className="bg-slate-900 p-10 md:p-14 rounded-[3.5rem] text-white flex flex-col md:flex-row items-center justify-between gap-10 relative overflow-hidden shadow-3xl">
+                    <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
+                        <div className="w-24 h-24 bg-white/10 backdrop-blur-md rounded-[2.5rem] flex items-center justify-center text-4xl font-black border border-white/10">
+                            {user.username.charAt(0).toUpperCase()}
                         </div>
-                        <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter mb-4">Freelance Figma</h1>
-                        <p className="text-slate-500 max-w-2xl font-medium text-lg">
-                            Monetize your design skills. Connect with premium clients and deliver world-class Figma prototypes.
-                        </p>
+                        <div className="text-center md:text-left">
+                            <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-2">
+                                <h1 className="text-3xl md:text-5xl font-black tracking-tighter">Freelance Dashboard</h1>
+                                <span className="px-4 py-1.5 bg-indigo-500 text-white text-[9px] font-black uppercase tracking-widest rounded-full border border-indigo-400">Verified Pro</span>
+                            </div>
+                            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
+                                <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest flex items-center gap-3">
+                                    <i className="fa-solid fa-fingerprint"></i>
+                                    Identity ID: <span className="text-white font-mono">{user.freelanceId}</span>
+                                </p>
+                                <span className="w-1 h-1 bg-white/20 rounded-full hidden md:block"></span>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Operator: {user.username} {user.lastName}</p>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="relative z-10 flex items-center gap-4">
-                        <div className="bg-slate-900 px-8 py-4 rounded-2xl text-white shadow-xl shadow-slate-200 flex items-center gap-4 group cursor-pointer hover:bg-indigo-600 transition-all">
-                            <div className="flex flex-col">
-                                <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Ready to Design?</span>
-                                <span className="text-sm font-black">Submit Portfolio</span>
-                            </div>
-                            <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                        </div>
+                    <div className="relative z-10 flex gap-4">
+                        <button onClick={onBack} className="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all text-[10px] font-black uppercase tracking-widest text-white flex items-center gap-3">
+                            <i className="fa-solid fa-arrow-left"></i> Hub
+                        </button>
                     </div>
 
-                    {/* Decorative Elements */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
                 </header>
 
-                {/* Content Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-                    {/* Main Content Area */}
-                    <div className="lg:col-span-2 space-y-8">
-                        <div className="bg-white p-8 md:p-10 rounded-[3rem] border border-slate-200 shadow-sm">
-                            <div className="flex items-center justify-between mb-10">
-                                <div>
-                                    <h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">Available Projects</h3>
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Curated design opportunities</p>
-                                </div>
-                                <div className="flex gap-2">
-                                    <button className="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-slate-50 transition-all">
-                                        <i className="fa-solid fa-filter text-xs"></i>
-                                    </button>
-                                    <button className="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-slate-50 transition-all">
-                                        <i className="fa-solid fa-magnifying-glass text-xs"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Empty State / Placeholder */}
-                            <div className="py-20 text-center">
-                                <div className="w-24 h-24 bg-slate-50 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 text-slate-200 group-hover:scale-110 transition-transform">
-                                    <i className="fa-solid fa-pen-nib text-4xl"></i>
-                                </div>
-                                <h4 className="text-xl font-black text-slate-900 tracking-tighter mb-2">No active projects matching your profile</h4>
-                                <p className="text-slate-500 max-w-xs mx-auto text-sm font-medium">Projects are being manually reviewed by our creative directors. Check back shortly for new listings.</p>
-                            </div>
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                    {/* Marketplace Grid */}
+                    <div className="lg:col-span-8 space-y-10">
+                        <div>
+                            <h2 className="text-2xl font-black text-slate-900 tracking-tighter uppercase mb-2">Service Marketplace</h2>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Select your specialization node</p>
                         </div>
 
-                        {/* How it Works */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="bg-slate-900 p-8 rounded-[2.5rem] text-white overflow-hidden relative group">
-                                <i className="fa-solid fa-bolt-lightning absolute -right-4 -top-4 text-8xl opacity-5 group-hover:scale-110 transition-transform duration-700"></i>
-                                <h4 className="text-lg font-black uppercase tracking-widest mb-4">Fast Payouts</h4>
-                                <p className="text-slate-400 text-sm leading-relaxed mb-6">Receive your earnings in your vault tokens immediately after project approval.</p>
-                                <div className="flex items-center gap-2 text-indigo-400 font-black text-[10px] uppercase tracking-widest">
-                                    <span>Learn more</span>
-                                    <i className="fa-solid fa-arrow-right"></i>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {categories.map((cat) => (
+                                <div key={cat.id} className="group bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 flex flex-col justify-between h-full relative overflow-hidden">
+                                    <div className="relative z-10">
+                                        <div className={`w-16 h-16 ${cat.color} rounded-2xl flex items-center justify-center text-white text-2xl mb-8 shadow-xl group-hover:scale-110 transition-transform`}>
+                                            <i className={`fa-solid ${cat.icon}`}></i>
+                                        </div>
+                                        <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-4">{cat.title}</h3>
+                                        <p className="text-slate-500 font-medium text-sm leading-relaxed mb-10">{cat.desc}</p>
+                                    </div>
+
+                                    <div className="relative z-10 border-t border-slate-50 pt-8 flex items-center justify-between">
+                                        <div>
+                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Base Yield</p>
+                                            <p className="text-sm font-black text-emerald-600">{cat.yield}</p>
+                                        </div>
+                                        <button className="px-6 py-3 bg-slate-900 text-white rounded-xl text-[9px] font-black uppercase tracking-widest group-hover:bg-indigo-600 transition-colors shadow-lg">
+                                            Enter Node
+                                        </button>
+                                    </div>
+                                    <div className={`absolute -right-8 -bottom-8 text-8xl ${cat.color} opacity-5 -rotate-12 transition-transform group-hover:scale-110`}>
+                                        <i className={`fa-solid ${cat.icon}`}></i>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="bg-indigo-600 p-8 rounded-[2.5rem] text-white overflow-hidden relative group shadow-xl shadow-indigo-100">
-                                <i className="fa-solid fa-shield-halved absolute -right-4 -top-4 text-8xl opacity-10 group-hover:scale-110 transition-transform duration-700"></i>
-                                <h4 className="text-lg font-black uppercase tracking-widest mb-4">Secure Contracts</h4>
-                                <p className="text-white/80 text-sm leading-relaxed mb-6">All projects are backed by our escrow system ensuring you get paid for your work.</p>
-                                <div className="flex items-center gap-2 text-white font-black text-[10px] uppercase tracking-widest">
-                                    <span>View Policy</span>
-                                    <i className="fa-solid fa-arrow-right"></i>
-                                </div>
-                            </div>
+                            ))}
                         </div>
                     </div>
 
                     {/* Sidebar Area */}
-                    <div className="space-y-8">
-                        <div className="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm">
-                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-6">Designer Profile</h3>
-                            <div className="flex items-center gap-4 mb-8">
-                                <div className="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center text-white font-black text-xl">
-                                    {user.username.charAt(0).toUpperCase()}
-                                </div>
-                                <div>
-                                    <p className="text-lg font-black text-slate-900 tracking-tighter leading-none mb-2">{user.username}</p>
-                                    <span className="text-[10px] font-bold text-slate-400 flex items-center gap-2">
-                                        <span className="w-2 h-2 bg-slate-200 rounded-full"></span>
-                                        Level 0 Designer
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="space-y-4">
-                                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                    <div className="flex justify-between items-center mb-1">
-                                        <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Skill Verification</span>
-                                        <span className="text-[9px] font-black text-indigo-600">0%</span>
+                    <div className="lg:col-span-4 space-y-8">
+                        <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-xl shadow-slate-200/40">
+                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-8">Performance Index</h3>
+                            <div className="space-y-8">
+                                <div className="p-6 bg-slate-50 rounded-[2rem] border border-slate-100">
+                                    <div className="flex justify-between items-center mb-6">
+                                        <span className="text-[10px] font-black text-slate-900 uppercase">Pro Status</span>
+                                        <span className="text-[10px] font-black text-indigo-600">Level 0</span>
                                     </div>
-                                    <div className="w-full h-1.5 bg-slate-200 rounded-full">
-                                        <div className="h-full bg-indigo-500 rounded-full" style={{ width: '0%' }}></div>
+                                    <div className="w-full h-3 bg-slate-200 rounded-full overflow-hidden shadow-inner p-1">
+                                        <div className="h-full bg-indigo-500 rounded-full" style={{ width: '5%' }}></div>
+                                    </div>
+                                    <p className="mt-4 text-[9px] font-bold text-slate-400 text-center uppercase tracking-widest">Authorize first task to progress</p>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="bg-white p-6 rounded-2xl border border-slate-100 text-center">
+                                        <p className="text-[8px] font-black text-slate-400 uppercase mb-2">Projects</p>
+                                        <p className="text-2xl font-black text-slate-900">0</p>
+                                    </div>
+                                    <div className="bg-white p-6 rounded-2xl border border-slate-100 text-center">
+                                        <p className="text-[8px] font-black text-slate-400 uppercase mb-2">Rating</p>
+                                        <p className="text-2xl font-black text-slate-900">N/A</p>
                                     </div>
                                 </div>
-                                <button className="w-full py-4 bg-slate-50 border border-slate-200 rounded-2xl text-[9px] font-black text-slate-600 uppercase tracking-widest hover:bg-slate-100 transition-all">
-                                    Take Skill Test
+
+                                <button className="w-full py-5 bg-indigo-50 text-indigo-600 rounded-2xl font-black text-[10px] uppercase tracking-widest border border-indigo-100 hover:bg-indigo-600 hover:text-white transition-all">
+                                    Manage Portfolio
                                 </button>
                             </div>
                         </div>
 
-                        <div className="bg-gradient-to-br from-indigo-600 to-indigo-800 p-8 rounded-[2.5rem] text-white shadow-2xl shadow-indigo-200 relative overflow-hidden">
+                        <div className="bg-indigo-600 p-10 rounded-[3rem] text-white relative overflow-hidden shadow-2xl shadow-indigo-100">
                             <div className="relative z-10">
-                                <h4 className="text-xl font-black tracking-tight mb-2">Need a Custom Design?</h4>
-                                <p className="text-indigo-100 text-xs font-medium mb-6 opacity-80 leading-relaxed">Looking for a designer for your project? Post a brief and let artists bid.</p>
-                                <button className="px-6 py-3 bg-white text-indigo-600 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-lg hover:scale-105 active:scale-95 transition-all">
-                                    Post a Gig
+                                <h4 className="text-2xl font-black tracking-tight mb-4">Enterprise Hub</h4>
+                                <p className="text-indigo-100 text-[10px] font-bold uppercase tracking-widest mb-10 leading-relaxed opacity-80">Looking for custom solutions? Post a global brief here.</p>
+                                <button className="w-full py-5 bg-white text-indigo-600 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl active:scale-95 transition-all">
+                                    Post Enterprise Request
                                 </button>
                             </div>
-                            <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                            <i className="fa-solid fa-rocket absolute -right-4 -bottom-4 text-7xl text-white/10 -rotate-12"></i>
+                        </div>
+
+                        <div className="bg-white p-8 rounded-[3rem] border border-slate-100 text-center">
+                            <p className="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">Network Compliance</p>
+                            <div className="flex items-center justify-center gap-2 mb-2">
+                                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                                <span className="text-[10px] font-black text-slate-900 uppercase">Operational</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     );
 };
 
 export default FreelanceFigma;
+
