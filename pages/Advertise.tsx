@@ -110,7 +110,7 @@ const Advertise: React.FC<AdvertiseProps> = ({ user, onRefresh, onNavigate }) =>
                             <div className="w-20 h-20 bg-white/10 rounded-[2rem] flex items-center justify-center text-3xl text-white mb-8">
                                 <i className="fa-solid fa-shield-halved"></i>
                             </div>
-                            <h3 className="text-2xl font-black text-white tracking-tighter mb-4 uppercase">Node Balance</h3>
+                            <h3 className="text-2xl font-black text-white tracking-tighter mb-4 uppercase">advertise Balance</h3>
                             <p className="text-slate-400 font-bold text-sm leading-relaxed mb-6">
                                 Your advertising credits for running tasks.
                             </p>
@@ -123,7 +123,7 @@ const Advertise: React.FC<AdvertiseProps> = ({ user, onRefresh, onNavigate }) =>
                             onClick={() => onNavigate('wallet')}
                             className="relative z-10 w-full py-5 bg-white text-slate-900 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500 hover:text-white transition-all shadow-xl"
                         >
-                            Add Hub Credits
+                            Add Credits For Ads
                         </button>
                         <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2"></div>
                     </div>
