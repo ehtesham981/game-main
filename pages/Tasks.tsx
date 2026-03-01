@@ -35,16 +35,8 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
     const safeTasks = Array.isArray(tasks) ? tasks : [];
     const today = new Date().toISOString().split('T')[0];
     const now = Date.now();
-    const twentyFourHoursAgo = now - (24 * 60 * 60 * 1000);
-
     return safeTasks.filter(t => {
       if (!t) return false;
-
-      // 24-hour freshness filter: Only show tasks created within the last 24 hours
-      if (t.createdAt) {
-        const createdTime = new Date(t.createdAt).getTime();
-        if (createdTime < twentyFourHoursAgo) return false;
-      }
 
       const isSubmitted = user.completedTasks?.includes(t.id);
       if (isSubmitted) return false;
