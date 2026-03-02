@@ -18,13 +18,14 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, tasks, onBack, on
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
     const [isSubmittingProof, setIsSubmittingProof] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
-    const [isCompressing, setIsCompressing] = useState<number | null>(null);
-    const [proof1, setProof1] = useState<string | null>(null);
-    const [proof2, setProof2] = useState<string | null>(null);
     const [submissionMessage, setSubmissionMessage] = useState('');
+    const [textProof1, setTextProof1] = useState('');
+    const [textProof2, setTextProof2] = useState('');
+    const [textProof3, setTextProof3] = useState('');
+    const [pdfProof, setPdfProof] = useState<string | null>(null);
+    const [pdfName, setPdfName] = useState<string | null>(null);
 
-    const fileInputRef1 = useRef<HTMLInputElement>(null);
-    const fileInputRef2 = useRef<HTMLInputElement>(null);
+    const pdfInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         setIsClient(true);
@@ -81,60 +82,53 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, tasks, onBack, on
         }, 1500);
     };
 
-    const compressImage = (file: File): Promise<string> => {
-        return new Promise((resolve, reject) => {
-            const img = new Image();
-            const objectUrl = URL.createObjectURL(file);
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const MAX_WIDTH = 1200;
-                let width = img.width;
-                let height = img.height;
-                if (width > MAX_WIDTH) {
-                    height *= MAX_WIDTH / width;
-                    width = MAX_WIDTH;
-                }
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx?.drawImage(img, 0, 0, width, height);
-                resolve(canvas.toDataURL('image/jpeg', 0.8));
-                URL.revokeObjectURL(objectUrl);
-            };
-            img.onerror = reject;
-            img.src = objectUrl;
-        });
-    };
-
-    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, slot: 1 | 2) => {
+    const handlePdfChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            setIsCompressing(slot);
-            try {
-                const compressed = await compressImage(file);
-                if (slot === 1) setProof1(compressed);
-                else setProof2(compressed);
-            } catch (err) {
-                alert("Failed to process image.");
-            } finally {
-                setIsCompressing(null);
+            if (file.type !== 'application/pdf') {
+                return alert("Please upload a PDF file.");
             }
+            if (file.size > 2 * 1024 * 1024) {
+                return alert("PDF size must be under 2MB.");
+            }
+
+            setPdfName(file.name);
+            setIsUploading(true);
+            const reader = new FileReader();
+            reader.onload = (upload) => {
+                setPdfProof(upload.target?.result as string);
+                setIsUploading(false);
+            };
+            reader.onerror = () => {
+                alert("Failed to process PDF.");
+                setIsUploading(false);
+            };
+            reader.readAsDataURL(file);
         }
     };
 
     const handleFinalSubmit = async () => {
         if (!selectedTask) return;
-        const req = selectedTask.requiredScreenshots || 1;
-        if (req === 1 && !proof1) return alert("Please upload proof.");
-        if (req === 2 && (!proof1 || !proof2)) return alert("Please upload both proofs.");
+
+        if (!textProof1 || !textProof2) {
+            return alert("Please fill at least the first two text proof fields.");
+        }
+
+        if (!pdfProof) {
+            return alert("Please upload the required PDF proof.");
+        }
 
         setIsUploading(true);
         try {
-            await onComplete(selectedTask.id, proof1 || undefined, proof2 || undefined, new Date().toLocaleString(), submissionMessage);
+            const combinedMessage = `Text Proof 1: ${textProof1}\nText Proof 2: ${textProof2}\nText Proof 3: ${textProof3}\n\nUser Message: ${submissionMessage}`;
+            await onComplete(selectedTask.id, pdfProof || undefined, undefined, new Date().toLocaleString(), combinedMessage);
             setSelectedTask(null);
             setIsSubmittingProof(false);
-            setProof1(null);
-            setProof2(null);
+            setTextProof1('');
+            setTextProof2('');
+            setTextProof3('');
+            setPdfProof(null);
+            setPdfName(null);
             setSubmissionMessage('');
             alert("Application submitted for review!");
         } catch (err) {
@@ -409,34 +403,63 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, tasks, onBack, on
 
                             {isSubmittingProof ? (
                                 <div className="space-y-8 animate-in slide-in-from-bottom-6">
-                                    <label className="text-[10px] font-black text-indigo-600 uppercase tracking-widest px-4 block text-center font-mono">Verification Nodes Required: {selectedTask.requiredScreenshots || 1}</label>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                        <div className="relative">
-                                            <input type="file" ref={fileInputRef1} onChange={e => handleFileChange(e, 1)} className="hidden" accept="image/*" />
-                                            <button onClick={() => fileInputRef1.current?.click()} className={`w-full py-10 rounded-[2.5rem] border-4 border-dashed flex flex-col items-center justify-center gap-4 transition-all ${proof1 ? 'border-emerald-500 bg-emerald-50/20 text-emerald-600' : 'border-slate-100 bg-slate-50 text-slate-300 hover:border-indigo-400 hover:text-indigo-400'}`}>
-                                                {isCompressing === 1 ? <i className="fa-solid fa-spinner fa-spin text-2xl"></i> : <i className={`fa-solid ${proof1 ? 'fa-check-circle' : 'fa-camera-retro'} text-3xl`}></i>}
-                                                <span className="text-[9px] font-black uppercase tracking-widest">{proof1 ? 'Entry Captured' : 'Primary Node'}</span>
+                                    <div className="space-y-6">
+                                        <label className="text-[10px] font-black text-indigo-600 uppercase tracking-widest px-4 block font-mono text-center">Verification Data Required</label>
+
+                                        <div className="space-y-4">
+                                            <div className="relative">
+                                                <input
+                                                    type="text"
+                                                    value={textProof1}
+                                                    onChange={e => setTextProof1(e.target.value)}
+                                                    placeholder="Enter Text Proof 1 (Required)"
+                                                    className="w-full px-8 py-5 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:ring-4 focus:ring-indigo-100 transition-all"
+                                                />
+                                            </div>
+                                            <div className="relative">
+                                                <input
+                                                    type="text"
+                                                    value={textProof2}
+                                                    onChange={e => setTextProof2(e.target.value)}
+                                                    placeholder="Enter Text Proof 2 (Required)"
+                                                    className="w-full px-8 py-5 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:ring-4 focus:ring-indigo-100 transition-all"
+                                                />
+                                            </div>
+                                            <div className="relative">
+                                                <input
+                                                    type="text"
+                                                    value={textProof3}
+                                                    onChange={e => setTextProof3(e.target.value)}
+                                                    placeholder="Enter Text Proof 3 (Optional)"
+                                                    className="w-full px-8 py-5 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none focus:ring-4 focus:ring-indigo-100 transition-all"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="pt-4">
+                                            <label className="text-[10px] font-black text-indigo-600 uppercase tracking-widest px-4 block mb-4 font-mono">PDF Submission Section</label>
+                                            <input type="file" ref={pdfInputRef} onChange={handlePdfChange} className="hidden" accept="application/pdf" />
+                                            <button
+                                                onClick={() => pdfInputRef.current?.click()}
+                                                className={`w-full py-10 rounded-[2.5rem] border-4 border-dashed flex flex-col items-center justify-center gap-4 transition-all ${pdfProof ? 'border-emerald-500 bg-emerald-50/20 text-emerald-600' : 'border-slate-100 bg-slate-50 text-slate-300 hover:border-indigo-400 hover:text-indigo-400'}`}
+                                            >
+                                                {isUploading ? <i className="fa-solid fa-spinner fa-spin text-2xl"></i> : <i className={`fa-solid ${pdfProof ? 'fa-file-pdf' : 'fa-cloud-arrow-up'} text-3xl`}></i>}
+                                                <div className="text-center">
+                                                    <span className="text-[9px] font-black uppercase tracking-widest block">{pdfProof ? 'PDF Document Attached' : 'Upload Final PDF Report'}</span>
+                                                    {pdfName && <span className="text-[8px] font-mono opacity-60 mt-1 block">{pdfName}</span>}
+                                                </div>
                                             </button>
                                         </div>
-                                        {selectedTask.requiredScreenshots === 2 && (
-                                            <div className="relative">
-                                                <input type="file" ref={fileInputRef2} onChange={e => handleFileChange(e, 2)} className="hidden" accept="image/*" />
-                                                <button onClick={() => fileInputRef2.current?.click()} className={`w-full py-10 rounded-[2.5rem] border-4 border-dashed flex flex-col items-center justify-center gap-4 transition-all ${proof2 ? 'border-emerald-500 bg-emerald-50/20 text-emerald-600' : 'border-slate-100 bg-slate-50 text-slate-300 hover:border-indigo-400 hover:text-indigo-400'}`}>
-                                                    {isCompressing === 2 ? <i className="fa-solid fa-spinner fa-spin text-2xl"></i> : <i className={`fa-solid ${proof2 ? 'fa-check-circle' : 'fa-camera-retro'} text-3xl`}></i>}
-                                                    <span className="text-[9px] font-black uppercase tracking-widest">{proof2 ? 'Entry Captured' : 'Secondary Node'}</span>
-                                                </button>
-                                            </div>
-                                        )}
                                     </div>
 
                                     <div className="space-y-4">
-                                        <label className="text-[10px] font-black text-indigo-600 uppercase tracking-widest px-4 block font-mono">Operator Decryption (Message)</label>
-                                        <textarea value={submissionMessage} onChange={e => setSubmissionMessage(e.target.value)} placeholder="Attach additional mission data..." className="w-full p-8 bg-slate-50 border border-slate-200 rounded-[2.5rem] text-sm font-medium focus:ring-4 focus:ring-indigo-100 transition-all min-h-[140px] resize-none outline-none shadow-inner" />
+                                        <label className="text-[10px] font-black text-indigo-600 uppercase tracking-widest px-4 block font-mono">Submission Note</label>
+                                        <textarea value={submissionMessage} onChange={e => setSubmissionMessage(e.target.value)} placeholder="Attach additional comments or notes..." className="w-full p-8 bg-slate-50 border border-slate-200 rounded-[2.5rem] text-sm font-medium focus:ring-4 focus:ring-indigo-100 transition-all min-h-[140px] resize-none outline-none shadow-inner" />
                                     </div>
 
                                     <div className="flex gap-4">
                                         <button onClick={() => setIsSubmittingProof(false)} className="flex-1 py-6 bg-slate-50 text-slate-400 font-black rounded-3xl text-[10px] uppercase tracking-widest hover:bg-slate-100 transition-all">Backtrack</button>
-                                        <button onClick={handleFinalSubmit} disabled={(selectedTask.requiredScreenshots === 2 ? (!proof1 || !proof2) : !proof1) || isUploading} className="flex-[2] py-6 bg-slate-900 text-white font-black rounded-3xl text-[10px] uppercase tracking-[0.3em] shadow-2xl hover:bg-indigo-600 transition-all flex items-center justify-center gap-4 disabled:opacity-50 active:scale-95">
+                                        <button onClick={handleFinalSubmit} disabled={!textProof1 || !textProof2 || !pdfProof || isUploading} className="flex-[2] py-6 bg-slate-900 text-white font-black rounded-3xl text-[10px] uppercase tracking-[0.3em] shadow-2xl hover:bg-indigo-600 transition-all flex items-center justify-center gap-4 disabled:opacity-50 active:scale-95">
                                             {isUploading ? <i className="fa-solid fa-spinner fa-spin"></i> : <><i className="fa-solid fa-terminal"></i> Commit Node</>}
                                         </button>
                                     </div>

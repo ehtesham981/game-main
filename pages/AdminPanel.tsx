@@ -393,7 +393,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
                           <p className="text-slate-500 font-mono text-[10px] mb-1">{reviewUser?.email || tx.userId}</p>
                           <p className="text-emerald-600">+{tx.amount} C</p>
                           {tx.message && (
-                            <div className="mt-2 p-3 bg-slate-50 border border-slate-100 rounded-xl font-medium text-[10px] text-slate-500 max-w-[200px] break-words">
+                            <div className="mt-2 p-3 bg-slate-50 border border-slate-100 rounded-xl font-medium text-[10px] text-slate-500 max-w-[350px] break-words whitespace-pre-line">
                               <i className="fa-solid fa-message mr-1 text-indigo-400"></i> {tx.message}
                             </div>
                           )}
@@ -404,17 +404,25 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
                             {tx.proofImage && (
                               <button
                                 onClick={() => setPreviewImages([tx.proofImage])}
-                                className="w-12 h-12 rounded-xl overflow-hidden border border-slate-200 hover:border-indigo-500 transition-all shadow-sm"
+                                className="w-12 h-12 rounded-xl overflow-hidden border border-slate-200 hover:border-indigo-500 transition-all shadow-sm flex items-center justify-center bg-slate-50"
                               >
-                                <img src={tx.proofImage} alt="Proof 1" className="w-full h-full object-cover" />
+                                {tx.proofImage.startsWith('data:application/pdf') ? (
+                                  <i className="fa-solid fa-file-pdf text-rose-500 text-xl"></i>
+                                ) : (
+                                  <img src={tx.proofImage} alt="Proof 1" className="w-full h-full object-cover" />
+                                )}
                               </button>
                             )}
                             {tx.proofImage2 && (
                               <button
                                 onClick={() => setPreviewImages(tx.proofImage ? [tx.proofImage, tx.proofImage2] : [tx.proofImage2])}
-                                className="w-12 h-12 rounded-xl overflow-hidden border border-slate-200 hover:border-indigo-500 transition-all shadow-sm"
+                                className="w-12 h-12 rounded-xl overflow-hidden border border-slate-200 hover:border-indigo-500 transition-all shadow-sm flex items-center justify-center bg-slate-50"
                               >
-                                <img src={tx.proofImage2} alt="Proof 2" className="w-full h-full object-cover" />
+                                {tx.proofImage2.startsWith('data:application/pdf') ? (
+                                  <i className="fa-solid fa-file-pdf text-rose-500 text-xl"></i>
+                                ) : (
+                                  <img src={tx.proofImage2} alt="Proof 2" className="w-full h-full object-cover" />
+                                )}
                               </button>
                             )}
                             {!tx.proofImage && !tx.proofImage2 && <span className="text-[10px] text-slate-300 italic">No proof provided</span>}
@@ -817,7 +825,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
               {previewImages.map((src, idx) => (
                 <div key={idx} className="relative rounded-[3rem] overflow-hidden shadow-2xl border border-white/10 bg-white/5 p-4">
                   <p className="absolute top-8 left-8 z-10 px-4 py-1.5 bg-black/40 backdrop-blur-md rounded-lg text-[9px] font-black uppercase text-white border border-white/10">USER PROOF {idx + 1}</p>
-                  <img src={src} alt={`Proof ${idx + 1}`} className="w-full h-auto object-contain rounded-[2rem]" />
+                  {src.startsWith('data:application/pdf') ? (
+                    <div className="w-full h-[60vh] bg-white rounded-[2rem] overflow-hidden">
+                      <iframe src={src} className="w-full h-full" title={`Proof PDF ${idx + 1}`}></iframe>
+                    </div>
+                  ) : (
+                    <img src={src} alt={`Proof ${idx + 1}`} className="w-full h-auto object-contain rounded-[2rem]" />
+                  )}
                 </div>
               ))}
             </div>

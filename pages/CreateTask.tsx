@@ -43,7 +43,11 @@ const CreateTask: React.FC<CreateTaskProps> = ({ tasks, user, onDeleteTask, onUp
     { id: 'YouTube', icon: 'fa-youtube' },
     { id: 'Websites', icon: 'fa-globe' },
     { id: 'Apps', icon: 'fa-mobile-screen' },
-    { id: 'Social Media', icon: 'fa-share-nodes' }
+    { id: 'Social Media', icon: 'fa-share-nodes' },
+    { id: 'Content Writing', icon: 'fa-pen-nib' },
+    { id: 'Graphics Designing', icon: 'fa-palette' },
+    { id: 'Blog Development', icon: 'fa-laptop-code' },
+    { id: 'SEO', icon: 'fa-arrow-up-right-dots' }
   ];
 
   // Recently Created by this user
