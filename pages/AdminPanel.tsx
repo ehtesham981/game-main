@@ -17,6 +17,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
   const [previewImages, setPreviewImages] = useState<string[] | null>(null);
   const [editingFreelancerId, setEditingFreelancerId] = useState<string | null>(null);
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
 
   const refreshActiveData = useCallback(async () => {
     setIsSyncing(true);
@@ -82,7 +83,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
     { id: 'freelance', label: 'Freelance Hub', icon: 'fa-briefcase' },
     { id: 'create-freelance', label: 'Post Project', icon: 'fa-folder-plus' },
     { id: 'finance', label: 'Finance', icon: 'fa-wallet', badge: stats.pendingFinance },
-    { id: 'create-task', label: 'Create Task', icon: 'fa-plus' },
+    { id: 'create-task', label: 'Create Campaign', icon: 'fa-plus' },
     { id: 'history', label: 'Logs', icon: 'fa-clock' }
   ];
 
@@ -542,6 +543,86 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
               );
             })()}
 
+            {/* Campaign Edit Modal */}
+            {editingTaskId && (() => {
+              const task = tasks.find(t => t.id === editingTaskId);
+              if (!task) return null;
+              return (
+                <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-xl animate-in fade-in duration-300">
+                  <div className="bg-white rounded-[3.5rem] w-full max-w-2xl p-10 md:p-14 border border-slate-200 shadow-2xl animate-in zoom-in-95 duration-300 overflow-y-auto max-h-[90vh] no-scrollbar">
+                    <div className="flex justify-between items-start mb-10">
+                      <div>
+                        <h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">Edit Campaign</h3>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">Update credentials for {task.id}</p>
+                      </div>
+                      <button onClick={() => setEditingTaskId(null)} className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-all">
+                        <i className="fa-solid fa-xmark"></i>
+                      </button>
+                    </div>
+
+                    <form onSubmit={async (e) => {
+                      e.preventDefault();
+                      const formData = new FormData(e.currentTarget);
+                      const updates = {
+                        title: formData.get('title') as string,
+                        type: formData.get('type') as any,
+                        reward: parseInt(formData.get('reward') as string),
+                        totalWorkers: parseInt(formData.get('totalWorkers') as string),
+                        link: formData.get('link') as string,
+                        description: formData.get('description') as string,
+                        requiredScreenshots: parseInt(formData.get('screenshots') as string),
+                      };
+                      await storage.updateTaskInCloud(task.id, updates);
+                      setEditingTaskId(null);
+                      refreshActiveData();
+                      alert('Campaign updated successfully.');
+                    }} className="space-y-8">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Campaign Title</label>
+                          <input name="title" defaultValue={task.title} required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500" />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Node Type</label>
+                          <select name="type" defaultValue={task.type} required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500">
+                            {['YouTube', 'Websites', 'Apps', 'Social Media', 'Content Writing', 'Graphics Designing', 'Blog Development', 'SEO'].map(t => (
+                              <option key={t} value={t}>{t}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Reward (Coins)</label>
+                          <input name="reward" type="number" defaultValue={task.reward} required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500" />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Total Workers</label>
+                          <input name="totalWorkers" type="number" defaultValue={task.totalWorkers} required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500" />
+                        </div>
+                        <div className="md:col-span-2 space-y-2">
+                          <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Resource Link</label>
+                          <input name="link" defaultValue={task.link} required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500" />
+                        </div>
+                        <div className="md:col-span-2 space-y-2">
+                          <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Verification Complexity</label>
+                          <select name="screenshots" defaultValue={task.requiredScreenshots} className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500">
+                            <option value="1">1 Screenshot</option>
+                            <option value="2">2 Screenshots</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Instructions</label>
+                        <textarea name="description" defaultValue={task.description} rows={4} required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500 resize-none" />
+                      </div>
+                      <button type="submit" className="w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-900 transition-all active:scale-95 shadow-xl shadow-indigo-100">
+                        <i className="fa-solid fa-floppy-disk mr-2"></i> Commit Updates
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              );
+            })()}
+
             <div className="bg-white rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
               <div className="p-10 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center bg-slate-50/30 gap-6">
                 <div>
@@ -651,8 +732,26 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
         )}
         {view === 'tasks' && (
           <div className="bg-white rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
-            <div className="p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
-              <h2 className="text-2xl font-black text-slate-900 uppercase">Campaigns Management</h2>
+            <div className="p-10 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center bg-slate-50/30 gap-6">
+              <div>
+                <h2 className="text-2xl font-black text-slate-900 uppercase">Campaigns Management</h2>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">{tasks.length} active nodes</p>
+              </div>
+              <div className="flex items-center gap-4 w-full sm:w-auto">
+                <input
+                  type="text"
+                  placeholder="Filter Campaigns..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className="w-full sm:w-64 px-6 py-4 bg-white border border-slate-200 rounded-2xl text-[11px] font-bold outline-none"
+                />
+                <button
+                  onClick={() => setView('create-task' as any)}
+                  className="flex items-center gap-2 px-6 py-4 bg-slate-900 text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-lg active:scale-95 whitespace-nowrap"
+                >
+                  <i className="fa-solid fa-plus"></i> Post Campaign
+                </button>
+              </div>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left min-w-[800px]">
@@ -665,28 +764,46 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
-                  {tasks.map(task => (
-                    <tr key={task.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-10 py-6">
-                        <p className="text-sm font-black text-slate-900">{task.title}</p>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase mt-1">{task.type} - {task.reward} Coins</p>
-                        <p className={`mt-1 text-[9px] font-black uppercase tracking-widest ${task.status === 'pending' ? 'text-amber-500' : task.status === 'active' ? 'text-emerald-500' : 'text-slate-400'}`}>{task.status}</p>
-                      </td>
-                      <td className="px-6 py-6 text-xs font-black text-slate-700">
-                        {task.completedCount} / {task.totalWorkers}
-                      </td>
-                      <td className="px-6 py-6 text-xs font-bold text-slate-700">{task.creatorId}</td>
-                      <td className="px-10 py-6 text-right space-x-2">
-                        {task.status === 'pending' && (
-                          <>
-                            <button onClick={async () => { await storage.updateTaskInCloud(task.id, { status: 'active' }); refreshActiveData(); }} className="px-4 py-2 bg-emerald-500 text-white text-[9px] font-black uppercase rounded-lg">Approve</button>
-                            <button onClick={async () => { await storage.updateTaskInCloud(task.id, { status: 'rejected' }); refreshActiveData(); }} className="px-4 py-2 bg-rose-500 text-white text-[9px] font-black uppercase rounded-lg">Reject</button>
-                          </>
-                        )}
-                        <button onClick={async () => { await storage.deleteTaskFromCloud(task.id); refreshActiveData(); }} className="px-4 py-2 bg-slate-900 text-white text-[9px] font-black uppercase rounded-lg">Delete</button>
-                      </td>
-                    </tr>
-                  ))}
+                  {tasks
+                    .filter(t => !searchQuery || t.title.toLowerCase().includes(searchQuery.toLowerCase()) || t.id.toLowerCase().includes(searchQuery.toLowerCase()))
+                    .map(task => (
+                      <tr key={task.id} className="hover:bg-slate-50/50 transition-colors">
+                        <td className="px-10 py-6">
+                          <p className="text-sm font-black text-slate-900">{task.title}</p>
+                          <p className="text-[10px] text-slate-400 font-bold uppercase mt-1">{task.type} - {task.reward} Coins</p>
+                          <p className={`mt-1 text-[9px] font-black uppercase tracking-widest ${task.status === 'pending' ? 'text-amber-500' : task.status === 'active' ? 'text-emerald-500' : 'text-slate-400'}`}>{task.status}</p>
+                        </td>
+                        <td className="px-6 py-6 text-xs font-black text-slate-700">
+                          {task.completedCount} / {task.totalWorkers}
+                        </td>
+                        <td className="px-6 py-6 text-xs font-bold text-slate-700">{task.creatorId}</td>
+                        <td className="px-10 py-6 text-right space-x-2">
+                          {task.status === 'pending' && (
+                            <>
+                              <button onClick={async () => { await storage.updateTaskInCloud(task.id, { status: 'active' }); refreshActiveData(); }} className="px-4 py-2 bg-emerald-500 text-white text-[9px] font-black uppercase rounded-lg shadow-sm hover:opacity-90">Approve</button>
+                              <button onClick={async () => { await storage.updateTaskInCloud(task.id, { status: 'rejected' }); refreshActiveData(); }} className="px-4 py-2 bg-rose-500 text-white text-[9px] font-black uppercase rounded-lg shadow-sm hover:opacity-90">Reject</button>
+                            </>
+                          )}
+                          <button
+                            onClick={() => setEditingTaskId(task.id)}
+                            className="px-4 py-2 bg-indigo-50 text-indigo-600 border border-indigo-100 text-[9px] font-black uppercase rounded-lg hover:bg-indigo-600 hover:text-white transition-all"
+                          >
+                            <i className="fa-solid fa-pen mr-1"></i> Edit
+                          </button>
+                          <button
+                            onClick={async () => {
+                              if (confirm('Permanently delete this campaign node?')) {
+                                await storage.deleteTaskFromCloud(task.id);
+                                refreshActiveData();
+                              }
+                            }}
+                            className="px-4 py-2 bg-slate-900 text-white text-[9px] font-black uppercase rounded-lg hover:bg-rose-600 transition-all shadow-sm"
+                          >
+                            <i className="fa-solid fa-trash mr-1"></i> Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>
