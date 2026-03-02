@@ -11,11 +11,10 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userCoins, onSpin, transactions }
   const [isSpinning, setIsSpinning] = useState(false);
   const [result, setResult] = useState<number | null>(null);
   const [rotation, setRotation] = useState(0);
-  const [timeLeft, setTimeLeft] = useState<string>('');
   const [spinStats, setSpinStats] = useState({ count: 0, lastTimestamp: 0 });
 
   const SPIN_COST = 0;
-  const DAILY_LIMIT = 3;
+  const DAILY_LIMIT = 5;
   const REWARDS = [25, 10, 50, 5, 100, 0, 15, 30];
   const COLORS = [
     'bg-indigo-600', 'bg-slate-900', 'bg-indigo-500', 'bg-indigo-800',
@@ -40,36 +39,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userCoins, onSpin, transactions }
         setSpinStats(parsed);
       }
     }
-
-    const timer = setInterval(updateCountdown, 1000);
-    return () => clearInterval(timer);
   }, []);
-
-  const updateCountdown = () => {
-    const saved = localStorage.getItem('spin_stats');
-    if (!saved) return;
-    const parsed = JSON.parse(saved);
-    if (parsed.count < DAILY_LIMIT) {
-      setTimeLeft('');
-      return;
-    }
-
-    const now = Date.now();
-    const target = parsed.lastTimestamp + (24 * 60 * 60 * 1000);
-    const diff = target - now;
-
-    if (diff <= 0) {
-      setTimeLeft('');
-      const resetStats = { count: 0, lastTimestamp: 0 };
-      setSpinStats(resetStats);
-      localStorage.setItem('spin_stats', JSON.stringify(resetStats));
-    } else {
-      const h = Math.floor(diff / (1000 * 60 * 60));
-      const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const s = Math.floor((diff % (1000 * 60)) / 1000);
-      setTimeLeft(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`);
-    }
-  };
 
   const handleSpin = () => {
     if (isSpinning || spinStats.count >= DAILY_LIMIT) return;
@@ -125,36 +95,31 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userCoins, onSpin, transactions }
           {/* Status & Analytics Column */}
           <div className="lg:col-span-3 space-y-8 order-2 lg:order-1">
             <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-xl shadow-slate-200/40 relative overflow-hidden group">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-8">Daily Quota Access</p>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-8">Access Logic</p>
               <div className="flex items-center justify-between mb-6">
-                <span className="text-sm font-black text-slate-900 uppercase">Available</span>
-                <span className="text-2xl font-black text-indigo-600 tabular-nums">{DAILY_LIMIT - spinStats.count} <span className="text-[10px] opacity-40">/ {DAILY_LIMIT}</span></span>
+                <span className="text-sm font-black text-slate-900 uppercase">Spin Used</span>
+                <span className="text-2xl font-black text-indigo-600 tabular-nums">{spinStats.count} <span className="text-[10px] opacity-40">/ {DAILY_LIMIT}</span></span>
               </div>
               <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden shadow-inner">
                 <div
                   className="h-full bg-indigo-600 transition-all duration-1000 shadow-[0_0_15px_rgba(79,70,229,0.3)]"
-                  style={{ width: `${((DAILY_LIMIT - spinStats.count) / DAILY_LIMIT) * 100}%` }}
+                  style={{ width: `${(spinStats.count / DAILY_LIMIT) * 100}%` }}
                 ></div>
               </div>
+              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-6">Total {spinStats.count}/{DAILY_LIMIT} spins used</p>
               <i className="fa-solid fa-bolt absolute -right-6 -bottom-6 text-7xl text-slate-50 group-hover:text-indigo-50 transition-all"></i>
             </div>
 
-            <div className={`p-10 rounded-[3rem] transition-all duration-700 border-2 ${spinStats.count >= DAILY_LIMIT ? 'bg-slate-900 border-indigo-500/30 shadow-3xl' : 'bg-white border-slate-100 shadow-xl'}`}>
-              <p className={`text-[10px] font-black uppercase tracking-[0.4em] mb-4 ${spinStats.count >= DAILY_LIMIT ? 'text-indigo-400' : 'text-slate-400'}`}>
-                Node Sync Reset
-              </p>
-              <div className={`text-5xl font-black tracking-tighter tabular-nums ${spinStats.count >= DAILY_LIMIT ? 'text-white' : 'text-slate-200'}`}>
-                {timeLeft || "READY"}
-              </div>
-              {spinStats.count >= DAILY_LIMIT && (
-                <div className="mt-8 flex items-center gap-3 p-4 bg-white/5 rounded-2xl border border-white/5">
+            {spinStats.count >= DAILY_LIMIT && (
+              <div className="p-10 rounded-[3rem] bg-slate-900 border-2 border-indigo-500/30 shadow-3xl">
+                <div className="flex items-center gap-3 p-4 bg-white/5 rounded-2xl border border-white/5">
                   <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse"></div>
-                  <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-relaxed">
+                  <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest leading-relaxed">
                     Quota exhausted. Global reset in progress.
                   </p>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
 
           {/* Central Spin Architecture */}
@@ -219,8 +184,8 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userCoins, onSpin, transactions }
                 onClick={handleSpin}
                 disabled={!canSpin}
                 className={`relative w-full py-8 rounded-[2.5rem] font-black text-xs uppercase tracking-[0.5em] transition-all overflow-hidden ${!canSpin
-                    ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                    : 'bg-slate-900 text-white hover:bg-indigo-600 active:scale-95 shadow-3xl shadow-slate-300'
+                  ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                  : 'bg-slate-900 text-white hover:bg-indigo-600 active:scale-95 shadow-3xl shadow-slate-300'
                   }`}
               >
                 <span className="relative z-10">{isSpinning ? 'CALCULATING NODE...' : 'INITIALIZE SPIN'}</span>
