@@ -74,7 +74,8 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, tasks, onBack, on
     }, [tasks, activeCategory, user.completedTasks]);
 
     const completedTasks = useMemo(() => {
-        return tasks.filter(t => user.completedTasks?.includes(t.id) || false);
+        const freelanceTypes = ['Content Writing', 'Graphics Designing', 'Blog Development', 'SEO'];
+        return tasks.filter(t => freelanceTypes.includes(t.type) && user.completedTasks?.includes(t.id));
     }, [tasks, user.completedTasks]);
 
     const handleInitialize = async () => {

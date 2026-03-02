@@ -42,16 +42,23 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
       const isSubmitted = user.completedTasks?.includes(t.id);
       if (isSubmitted) return false;
       if (t.dueDate && t.dueDate < today) return false;
-      const categoryMatch = categoryFilter === 'All' || t.type === categoryFilter;
+      const marketplaceTypes: TaskType[] = ['YouTube', 'Websites', 'Apps', 'Social Media'];
+      const categoryMatch = categoryFilter === 'All'
+        ? marketplaceTypes.includes(t.type)
+        : t.type === categoryFilter;
       return categoryMatch && t.status === 'active';
     });
   }, [tasks, user.completedTasks, categoryFilter]);
 
   const userHistoryItems = useMemo(() => {
     const safeTransactions = Array.isArray(transactions) ? transactions : [];
+    const marketplaceTypes = ['YouTube', 'Websites', 'Apps', 'Social Media'];
     return safeTransactions
-      .filter(tx => tx && tx.type === 'earn' && tx.userId === user.id)
       .filter(tx => {
+        if (!tx || tx.type !== 'earn' || tx.userId !== user.id) return false;
+        const methodType = tx.method?.split(' | ')[0] || '';
+        if (!marketplaceTypes.includes(methodType)) return false;
+
         if (historyFilter === 'All') return true;
         if (historyFilter === 'Pending') return tx.status === 'pending';
         if (historyFilter === 'Rejected') return tx.status === 'failed';
