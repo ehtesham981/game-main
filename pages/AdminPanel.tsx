@@ -16,6 +16,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
   const [searchQuery, setSearchQuery] = useState('');
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
   const [previewImages, setPreviewImages] = useState<string[] | null>(null);
+  const [editingFreelancerId, setEditingFreelancerId] = useState<string | null>(null);
 
   const refreshActiveData = useCallback(async () => {
     setIsSyncing(true);
@@ -480,72 +481,171 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
           </div>
         )}
         {view === 'freelance' && (
-          <div className="bg-white rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
-            <div className="p-10 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center bg-slate-50/30 gap-6">
-              <h2 className="text-2xl font-black text-slate-900 uppercase">Freelance Pro Registry</h2>
-              <input type="text" placeholder="Search Identity..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full sm:w-80 px-6 py-4 bg-white border border-slate-200 rounded-2xl text-[11px] font-bold outline-none" />
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left min-w-[800px]">
-                <thead className="bg-slate-50 text-[10px] font-black uppercase text-slate-400 border-b border-slate-100">
-                  <tr>
-                    <th className="px-10 py-6">Professional Identity</th>
-                    <th className="px-6 py-6">Specializations</th>
-                    <th className="px-6 py-6">Metrics</th>
-                    <th className="px-10 py-6 text-right">Verification</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-50">
-                  {users.filter(u => u.freelanceId).filter(u => !searchQuery || u.freelanceId?.toLowerCase().includes(searchQuery.toLowerCase()) || u.username.toLowerCase().includes(searchQuery.toLowerCase())).map(u => (
-                    <tr key={u.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-10 py-6">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center text-white font-black text-xs uppercase">
-                            {u.username.charAt(0)}
-                          </div>
-                          <div>
-                            <p className="text-sm font-black text-slate-900">{u.username}</p>
-                            <p className="text-[10px] text-indigo-400 font-mono flex items-center gap-2">
-                              <i className="fa-solid fa-fingerprint"></i> {u.freelanceId}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-6">
-                        <div className="flex flex-wrap gap-2">
-                          {['writing', 'graphics', 'blog', 'seo'].map(skill => (
-                            <span key={skill} className="px-2 py-1 bg-slate-50 text-slate-400 border border-slate-100 rounded text-[7px] font-black uppercase tracking-tighter">
-                              {skill}
-                            </span>
-                          ))}
-                        </div>
-                        <p className="text-[8px] font-bold text-slate-300 mt-2 uppercase tracking-widest italic">All nodes unlocked</p>
-                      </td>
-                      <td className="px-6 py-6">
-                        <div className="space-y-1">
-                          <p className="text-[10px] font-black text-slate-900 uppercase tracking-tighter">Level 0 Operator</p>
-                          <div className="w-24 h-1 bg-slate-100 rounded-full overflow-hidden">
-                            <div className="w-1/12 h-full bg-indigo-500 rounded-full"></div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-10 py-6 text-right">
-                        <span className="px-4 py-2 bg-emerald-50 text-emerald-600 rounded-full text-[9px] font-black uppercase tracking-widest border border-emerald-100">
-                          Verified Hub Pro
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                  {users.filter(u => u.freelanceId).length === 0 && (
+          <div className="space-y-6 animate-in fade-in duration-500">
+            {/* Freelance Edit Modal */}
+            {editingFreelancerId && (() => {
+              const fu = users.find(u => u.id === editingFreelancerId);
+              if (!fu) return null;
+              return (
+                <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-xl animate-in fade-in duration-300">
+                  <div className="bg-white rounded-[3.5rem] w-full max-w-lg p-10 md:p-14 border border-slate-200 shadow-2xl animate-in zoom-in-95 duration-300">
+                    <div className="flex justify-between items-start mb-10">
+                      <div>
+                        <h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">Edit Freelancer</h3>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">{fu.username}</p>
+                      </div>
+                      <button onClick={() => setEditingFreelancerId(null)} className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-all">
+                        <i className="fa-solid fa-xmark"></i>
+                      </button>
+                    </div>
+                    <div className="space-y-6">
+                      <div className="space-y-2">
+                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2 block">Freelance ID</label>
+                        <input
+                          type="text"
+                          defaultValue={fu.freelanceId || ''}
+                          id="edit-freelance-id-input"
+                          className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-900 outline-none focus:border-indigo-500 transition-all font-mono"
+                          placeholder="e.g. FL-ABC123"
+                        />
+                      </div>
+                      <div className="flex gap-4 pt-4">
+                        <button
+                          onClick={async () => {
+                            const input = document.getElementById('edit-freelance-id-input') as HTMLInputElement;
+                            const newId = input?.value?.trim();
+                            if (!newId) return alert('Freelance ID cannot be empty.');
+                            await storage.updateUserInCloud(fu.id, { freelanceId: newId });
+                            setEditingFreelancerId(null);
+                            refreshActiveData();
+                          }}
+                          className="flex-1 py-4 bg-indigo-600 text-white rounded-2xl font-black text-[9px] uppercase tracking-widest hover:bg-indigo-700 transition-all active:scale-95 shadow-lg shadow-indigo-100"
+                        >
+                          <i className="fa-solid fa-floppy-disk mr-2"></i>Save Changes
+                        </button>
+                        <button
+                          onClick={async () => {
+                            if (confirm(`Revoke freelance access for ${fu.username}? Their Freelance ID will be removed.`)) {
+                              await storage.updateUserInCloud(fu.id, { freelanceId: null });
+                              setEditingFreelancerId(null);
+                              refreshActiveData();
+                            }
+                          }}
+                          className="flex-1 py-4 bg-rose-50 text-rose-500 border border-rose-100 rounded-2xl font-black text-[9px] uppercase tracking-widest hover:bg-rose-500 hover:text-white transition-all active:scale-95"
+                        >
+                          <i className="fa-solid fa-ban mr-2"></i>Revoke Access
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            <div className="bg-white rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
+              <div className="p-10 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center bg-slate-50/30 gap-6">
+                <div>
+                  <h2 className="text-2xl font-black text-slate-900 uppercase">Freelance Pro Registry</h2>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">{users.filter(u => u.freelanceId).length} registered professionals</p>
+                </div>
+                <div className="flex items-center gap-4 w-full sm:w-auto">
+                  <input type="text" placeholder="Search Identity..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full sm:w-64 px-6 py-4 bg-white border border-slate-200 rounded-2xl text-[11px] font-bold outline-none" />
+                  <button
+                    onClick={() => setView('create-freelance' as any)}
+                    className="flex items-center gap-2 px-6 py-4 bg-slate-900 text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-lg active:scale-95 whitespace-nowrap"
+                  >
+                    <i className="fa-solid fa-plus"></i> Post Project
+                  </button>
+                </div>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left min-w-[900px]">
+                  <thead className="bg-slate-50 text-[10px] font-black uppercase text-slate-400 border-b border-slate-100">
                     <tr>
-                      <td colSpan={4} className="px-10 py-20 text-center">
-                        <i className="fa-solid fa-briefcase text-5xl text-slate-100 mb-6 block"></i>
-                        <p className="text-sm font-black text-slate-400 uppercase tracking-widest">No professional identities registered on mainnet</p>
-                      </td>
+                      <th className="px-10 py-6">Professional Identity</th>
+                      <th className="px-6 py-6">Specializations</th>
+                      <th className="px-6 py-6">Metrics</th>
+                      <th className="px-6 py-6">Status</th>
+                      <th className="px-10 py-6 text-right">Actions</th>
                     </tr>
-                  )}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-slate-50">
+                    {users.filter(u => u.freelanceId).filter(u => !searchQuery || u.freelanceId?.toLowerCase().includes(searchQuery.toLowerCase()) || u.username.toLowerCase().includes(searchQuery.toLowerCase())).map(u => (
+                      <tr key={u.id} className="hover:bg-slate-50/50 transition-colors">
+                        <td className="px-10 py-6">
+                          <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center text-white font-black text-xs uppercase">
+                              {u.username.charAt(0)}
+                            </div>
+                            <div>
+                              <p className="text-sm font-black text-slate-900">{u.username}</p>
+                              <p className="text-[10px] text-indigo-400 font-mono flex items-center gap-2">
+                                <i className="fa-solid fa-fingerprint"></i> {u.freelanceId}
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-6">
+                          <div className="flex flex-wrap gap-2">
+                            {['writing', 'graphics', 'blog', 'seo'].map(skill => (
+                              <span key={skill} className="px-2 py-1 bg-slate-50 text-slate-400 border border-slate-100 rounded text-[7px] font-black uppercase tracking-tighter">
+                                {skill}
+                              </span>
+                            ))}
+                          </div>
+                          <p className="text-[8px] font-bold text-slate-300 mt-2 uppercase tracking-widest italic">All nodes unlocked</p>
+                        </td>
+                        <td className="px-6 py-6">
+                          <div className="space-y-1">
+                            <p className="text-[10px] font-black text-slate-900 uppercase tracking-tighter">Level 0 Operator</p>
+                            <div className="w-24 h-1 bg-slate-100 rounded-full overflow-hidden">
+                              <div className="w-1/12 h-full bg-indigo-500 rounded-full"></div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-6">
+                          <span className="px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-full text-[9px] font-black uppercase tracking-widest border border-emerald-100">
+                            Verified Pro
+                          </span>
+                        </td>
+                        <td className="px-10 py-6 text-right space-x-2">
+                          <button
+                            onClick={() => setEditingFreelancerId(u.id)}
+                            className="px-4 py-2 bg-indigo-50 text-indigo-600 text-[9px] font-black uppercase rounded-lg hover:bg-indigo-600 hover:text-white transition-all border border-indigo-100"
+                          >
+                            <i className="fa-solid fa-pen mr-1"></i>Edit
+                          </button>
+                          <button
+                            onClick={async () => {
+                              if (confirm(`Delete freelance access for ${u.username}? This will remove their Freelance ID.`)) {
+                                await storage.updateUserInCloud(u.id, { freelanceId: null });
+                                refreshActiveData();
+                              }
+                            }}
+                            className="px-4 py-2 bg-rose-50 text-rose-500 text-[9px] font-black uppercase rounded-lg hover:bg-rose-500 hover:text-white transition-all border border-rose-100 active:scale-95"
+                          >
+                            <i className="fa-solid fa-trash mr-1"></i>Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                    {users.filter(u => u.freelanceId).length === 0 && (
+                      <tr>
+                        <td colSpan={5} className="px-10 py-20 text-center">
+                          <i className="fa-solid fa-briefcase text-5xl text-slate-100 mb-6 block"></i>
+                          <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-6">No professional identities registered on mainnet</p>
+                          <button
+                            onClick={() => setView('create-freelance' as any)}
+                            className="inline-flex items-center gap-2 px-8 py-4 bg-slate-900 text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-lg active:scale-95"
+                          >
+                            <i className="fa-solid fa-plus"></i> Post First Project
+                          </button>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         )}
