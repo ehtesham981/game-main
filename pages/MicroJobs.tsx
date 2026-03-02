@@ -35,6 +35,15 @@ const MicroJobs: React.FC<MicroJobsProps> = ({ user, onNavigate }) => {
             color: 'amber',
             reward: 'Luck Based',
             buttonText: 'Spin Now'
+        },
+        {
+            id: 'weekly-bonus',
+            title: 'Weekly Bonus',
+            description: 'Claim your exclusive weekly loyalty reward of $0.09 every 7 days.',
+            icon: 'fa-gift',
+            color: 'indigo',
+            reward: '$0.09 Reward',
+            buttonText: 'Access Hub'
         }
     ];
 

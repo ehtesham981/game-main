@@ -25,6 +25,7 @@ const Disclaimer = lazy(() => import('./pages/Disclaimer'));
 const FreelanceFigma = lazy(() => import('./pages/FreelanceFigma'));
 const Advertise = lazy(() => import('./pages/Advertise'));
 const MicroJobs = lazy(() => import('./pages/MicroJobs'));
+const WeeklyBonus = lazy(() => import('./pages/WeeklyBonus'));
 
 
 const PageLoader = () => (
@@ -165,6 +166,29 @@ const App: React.FC = () => {
     await refreshUserBalance();
   };
 
+  const handleClaimWeeklyBonus = async (reward: number) => {
+    const now = Date.now();
+    const updatedUser: User = {
+      ...user,
+      coins: user.coins + reward,
+      lastWeeklyBonusClaim: now
+    };
+    setUser(updatedUser);
+    await storage.setUser(updatedUser);
+
+    const tx: Transaction = {
+      id: `WKB-${Math.random().toString(36).substr(2, 6).toUpperCase()}-${now}`,
+      userId: user.id,
+      amount: reward,
+      type: 'weekly_bonus',
+      method: 'Weekly Bonus Claim',
+      status: 'success',
+      date: new Date().toLocaleString()
+    };
+    await storage.addTransaction(tx);
+    await refreshUserBalance();
+  };
+
   const navigateTo = (page: string) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -192,6 +216,14 @@ const App: React.FC = () => {
           {currentPage === 'wallet' && <Wallet coins={user.coins} depositBalance={user.depositBalance} onAction={handleWalletAction} transactions={transactions} onRefresh={() => refreshUserBalance()} />}
           {currentPage === 'dashboard' && user.isLoggedIn && <Dashboard user={user} tasks={tasks} transactions={transactions} onDeleteTask={() => { }} onUpdateTask={() => { }} />}
           {currentPage === 'micro-jobs' && user.isLoggedIn && <MicroJobs user={user} onNavigate={navigateTo} />}
+          {currentPage === 'weekly-bonus' && user.isLoggedIn && (
+            <WeeklyBonus
+              user={user}
+              transactions={transactions}
+              onClaim={handleClaimWeeklyBonus}
+              onBack={() => navigateTo('micro-jobs')}
+            />
+          )}
           {currentPage === 'tasks' && user.isLoggedIn && (
             <Tasks
               user={user}

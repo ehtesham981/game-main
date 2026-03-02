@@ -40,6 +40,7 @@ export interface User {
   currentSessionId?: string;
   advertiseId?: string;
   freelanceId?: string;
+  lastWeeklyBonusClaim?: number;
 }
 
 export interface Transaction {
@@ -48,7 +49,7 @@ export interface Transaction {
   taskId?: string;
   username?: string;
   amount: number;
-  type: 'deposit' | 'withdraw' | 'earn' | 'spend' | 'spin' | 'referral_claim' | 'math_reward';
+  type: 'deposit' | 'withdraw' | 'earn' | 'spend' | 'spin' | 'referral_claim' | 'math_reward' | 'weekly_bonus';
   method?: string;
   account?: string;
   proofImage?: string;
