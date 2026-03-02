@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Transaction } from '../types';
+import BackToDashboard from '../components/BackToDashboard';
 
 interface SpinWheelProps {
   userCoins: number;
   onSpin: (reward: number, cost: number) => void;
   transactions: Transaction[];
+  onNavigate?: (page: string) => void;
 }
 
-const SpinWheel: React.FC<SpinWheelProps> = ({ userCoins, onSpin, transactions }) => {
+const SpinWheel: React.FC<SpinWheelProps> = ({ userCoins, onSpin, transactions, onNavigate }) => {
   const [isSpinning, setIsSpinning] = useState(false);
   const [result, setResult] = useState<number | null>(null);
   const [rotation, setRotation] = useState(0);
@@ -77,8 +79,10 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userCoins, onSpin, transactions }
     <div className="pt-28 pb-20 min-h-screen bg-slate-50">
       <div className="max-w-[1600px] mx-auto px-6 md:px-12">
 
+        {onNavigate && <BackToDashboard onNavigate={onNavigate} />}
+
         {/* Header Section */}
-        <div className="text-center mb-20 max-w-2xl mx-auto">
+        <div className="text-center mb-20 max-w-2xl mx-auto mt-12">
           <div className="inline-flex items-center gap-3 px-5 py-2 bg-yellow-100 text-yellow-700 rounded-full text-[10px] font-black uppercase tracking-[0.4em] mb-6 border border-yellow-200 shadow-sm">
             <i className="fa-solid fa-crown"></i>
             Authorized Reward Logic

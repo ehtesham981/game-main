@@ -1,6 +1,8 @@
 
 import React, { useState, useMemo } from 'react';
 import { TaskType, Task, User } from '../types';
+import BackToDashboard from '../components/BackToDashboard';
+import NumericInput from '../components/NumericInput';
 
 interface CreateTaskProps {
   tasks: Task[];
@@ -21,6 +23,7 @@ interface CreateTaskProps {
 }
 
 const CreateTask: React.FC<CreateTaskProps> = ({ tasks, user, onDeleteTask, onUpdateTask, onCreate, userDepositBalance = 0, navigateTo }) => {
+
   const [formData, setFormData] = useState({
     title: '',
     link: '',
@@ -90,6 +93,8 @@ const CreateTask: React.FC<CreateTaskProps> = ({ tasks, user, onDeleteTask, onUp
   return (
     <div className="pt-28 pb-20 min-h-screen bg-slate-50">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-8 space-y-20">
+
+        <BackToDashboard onNavigate={navigateTo} />
 
         {/* Main Form Section */}
         <section>
@@ -169,32 +174,21 @@ const CreateTask: React.FC<CreateTaskProps> = ({ tasks, user, onDeleteTask, onUp
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="space-y-4">
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Reward / User</label>
-                      <div className="relative">
-                        <input
-                          type="number"
-                          min="5"
-                          value={formData.reward}
-                          onChange={e => setFormData({ ...formData, reward: parseInt(e.target.value) || 0 })}
-                          className="w-full px-8 py-6 bg-slate-50 border-2 border-transparent focus:border-indigo-100 rounded-3xl font-black text-slate-800 shadow-inner outline-none"
-                        />
-                        <span className="absolute right-8 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-300 uppercase tracking-widest pointer-events-none">Coins</span>
-                      </div>
-                    </div>
-                    <div className="space-y-4">
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Total Slot Quota</label>
-                      <div className="relative">
-                        <input
-                          type="number"
-                          min="1"
-                          value={formData.totalWorkers}
-                          onChange={e => setFormData({ ...formData, totalWorkers: parseInt(e.target.value) || 0 })}
-                          className="w-full px-8 py-6 bg-slate-50 border-2 border-transparent focus:border-indigo-100 rounded-3xl font-black text-slate-800 shadow-inner outline-none"
-                        />
-                        <span className="absolute right-8 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-300 uppercase tracking-widest pointer-events-none">Users</span>
-                      </div>
-                    </div>
+                    <NumericInput
+                      label="Reward / User"
+                      value={formData.reward}
+                      min={5}
+                      unitLabel="Coins"
+                      onChange={val => setFormData({ ...formData, reward: val })}
+                    />
+
+                    <NumericInput
+                      label="Total Slot Quota"
+                      value={formData.totalWorkers}
+                      min={1}
+                      unitLabel="Users"
+                      onChange={val => setFormData({ ...formData, totalWorkers: val })}
+                    />
                   </div>
 
                   <div className="space-y-4">
@@ -335,12 +329,12 @@ const CreateTask: React.FC<CreateTaskProps> = ({ tasks, user, onDeleteTask, onUp
                 />
               </div>
               <div className="space-y-4">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4">Quota Cap</label>
-                <input
-                  type="number"
+                <NumericInput
+                  label="Quota Cap"
                   value={editingTask.totalWorkers}
-                  onChange={e => setEditingTask({ ...editingTask, totalWorkers: parseInt(e.target.value) })}
-                  className="w-full px-8 py-5 bg-slate-50 border-none rounded-2xl font-bold text-slate-800 outline-none shadow-inner"
+                  onChange={val => setEditingTask({ ...editingTask, totalWorkers: val })}
+                  min={1}
+                  unitLabel="Users"
                 />
               </div>
               <div className="space-y-4">

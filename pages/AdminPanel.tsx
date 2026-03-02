@@ -2,12 +2,15 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { User, Task, Transaction } from '../types';
 import { storage } from '../services/storage';
+import BackToDashboard from '../components/BackToDashboard';
+import NumericInput from '../components/NumericInput';
 
 interface AdminPanelProps {
   initialView?: 'overview' | 'users' | 'history' | 'tasks' | 'finance' | 'reviews' | 'seo' | 'create-task' | 'freelance' | 'create-freelance';
+  onNavigate?: (page: string) => void;
 }
 
-const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => {
+const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNavigate }) => {
   const [view, setView] = useState(initialView);
   const [users, setUsers] = useState<User[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -18,6 +21,16 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
   const [previewImages, setPreviewImages] = useState<string[] | null>(null);
   const [editingFreelancerId, setEditingFreelancerId] = useState<string | null>(null);
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
+  const [editingTaskData, setEditingTaskData] = useState<Task | null>(null);
+
+  useEffect(() => {
+    if (editingTaskId) {
+      const task = tasks.find(t => t.id === editingTaskId);
+      if (task) setEditingTaskData(task);
+    } else {
+      setEditingTaskData(null);
+    }
+  }, [editingTaskId, tasks]);
 
   const refreshActiveData = useCallback(async () => {
     setIsSyncing(true);
@@ -90,7 +103,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
   return (
     <div className="min-h-screen bg-slate-50 pt-32 pb-20">
       <div className="max-w-[1600px] mx-auto px-6 mb-12">
-        <div className="bg-slate-900 rounded-[3rem] p-8 md:p-10 border border-slate-800 shadow-2xl flex flex-col xl:flex-row justify-between items-center gap-10 relative overflow-hidden">
+
+        {onNavigate && <BackToDashboard onNavigate={onNavigate} />}
+
+        <div className="bg-slate-900 rounded-[3rem] p-8 md:p-10 border border-slate-800 shadow-2xl flex flex-col xl:flex-row justify-between items-center gap-10 relative overflow-hidden mt-12">
           <div className="flex items-center gap-6 relative z-10">
             <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-2xl">
               <i className={`fa-solid ${isSyncing ? 'fa-sync fa-spin' : 'fa-user-shield'}`}></i>
@@ -355,84 +371,115 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
         })()}
 
         {/* Campaign Edit Modal */}
-        {editingTaskId && (() => {
-          const task = tasks.find(t => t.id === editingTaskId);
-          if (!task) return null;
-          return (
-            <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-xl animate-in fade-in duration-300">
-              <div className="bg-white rounded-[3.5rem] w-full max-w-2xl p-10 md:p-14 border border-slate-200 shadow-2xl animate-in zoom-in-95 duration-300 overflow-y-auto max-h-[90vh] no-scrollbar">
-                <div className="flex justify-between items-start mb-10">
-                  <div>
-                    <h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">Edit Campaign</h3>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">Update credentials for {task.id}</p>
-                  </div>
-                  <button onClick={() => setEditingTaskId(null)} className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-all">
-                    <i className="fa-solid fa-xmark"></i>
-                  </button>
+        {editingTaskId && editingTaskData && (
+          <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-xl animate-in fade-in duration-300">
+            <div className="bg-white rounded-[3.5rem] w-full max-w-2xl p-10 md:p-14 border border-slate-200 shadow-2xl animate-in zoom-in-95 duration-300 overflow-y-auto max-h-[90vh] no-scrollbar">
+              <div className="flex justify-between items-start mb-10">
+                <div>
+                  <h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">Edit Campaign</h3>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">Update credentials for {editingTaskData.id}</p>
                 </div>
+                <button onClick={() => setEditingTaskId(null)} className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-all">
+                  <i className="fa-solid fa-xmark"></i>
+                </button>
+              </div>
 
-                <form onSubmit={async (e) => {
-                  e.preventDefault();
-                  const formData = new FormData(e.currentTarget);
-                  const updates = {
-                    title: formData.get('title') as string,
-                    type: formData.get('type') as any,
-                    reward: parseInt(formData.get('reward') as string),
-                    totalWorkers: parseInt(formData.get('totalWorkers') as string),
-                    link: formData.get('link') as string,
-                    description: formData.get('description') as string,
-                    requiredScreenshots: parseInt(formData.get('screenshots') as string),
-                  };
-                  await storage.updateTaskInCloud(task.id, updates);
-                  setEditingTaskId(null);
-                  refreshActiveData();
-                  alert('Campaign updated successfully.');
-                }} className="space-y-8">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Campaign Title</label>
-                      <input name="title" defaultValue={task.title} required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Node Type</label>
-                      <select name="type" defaultValue={task.type} required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500">
-                        {['YouTube', 'Websites', 'Apps', 'Social Media', 'Content Writing', 'Graphics Designing', 'Blog Development', 'SEO'].map(t => (
-                          <option key={t} value={t}>{t}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Reward (Coins)</label>
-                      <input name="reward" type="number" defaultValue={task.reward} required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Total Workers</label>
-                      <input name="totalWorkers" type="number" defaultValue={task.totalWorkers} required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500" />
-                    </div>
-                    <div className="md:col-span-2 space-y-2">
-                      <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Resource Link</label>
-                      <input name="link" defaultValue={task.link} required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500" />
-                    </div>
-                    <div className="md:col-span-2 space-y-2">
-                      <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Verification Complexity</label>
-                      <select name="screenshots" defaultValue={task.requiredScreenshots} className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500">
-                        <option value="1">1 Screenshot</option>
-                        <option value="2">2 Screenshots</option>
-                      </select>
-                    </div>
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                await storage.updateTaskInCloud(editingTaskData.id, editingTaskData);
+                setEditingTaskId(null);
+                refreshActiveData();
+                alert('Campaign updated successfully.');
+              }} className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Campaign Title</label>
+                    <input
+                      name="title"
+                      value={editingTaskData.title}
+                      onChange={e => setEditingTaskData({ ...editingTaskData, title: e.target.value })}
+                      required
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500"
+                    />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Instructions</label>
-                    <textarea name="description" defaultValue={task.description} rows={4} required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500 resize-none" />
+                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Node Type</label>
+                    <select
+                      name="type"
+                      value={editingTaskData.type}
+                      onChange={e => setEditingTaskData({ ...editingTaskData, type: e.target.value })}
+                      required
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500"
+                    >
+                      {['YouTube', 'Websites', 'Apps', 'Social Media', 'Content Writing', 'Graphics Designing', 'Blog Development', 'SEO'].map(t => (
+                        <option key={t} value={t}>{t}</option>
+                      ))}
+                    </select>
                   </div>
-                  <button type="submit" className="w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-900 transition-all active:scale-95 shadow-xl shadow-indigo-100">
-                    <i className="fa-solid fa-floppy-disk mr-2"></i> Commit Updates
-                  </button>
-                </form>
-              </div>
+
+                  <div className="space-y-2">
+                    <NumericInput
+                      label="Reward (Coins)"
+                      value={editingTaskData.reward}
+                      onChange={val => setEditingTaskData({ ...editingTaskData, reward: val })}
+                      min={0}
+                      unitLabel="Coins"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <NumericInput
+                      label="Total Workers"
+                      value={editingTaskData.totalWorkers}
+                      onChange={val => setEditingTaskData({ ...editingTaskData, totalWorkers: val })}
+                      min={1}
+                      unitLabel="Workers"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2 space-y-2">
+                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Resource Link</label>
+                    <input
+                      name="link"
+                      value={editingTaskData.link}
+                      onChange={e => setEditingTaskData({ ...editingTaskData, link: e.target.value })}
+                      required
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2 space-y-2">
+                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Verification Complexity</label>
+                    <select
+                      name="screenshots"
+                      value={editingTaskData.requiredScreenshots}
+                      onChange={e => setEditingTaskData({ ...editingTaskData, requiredScreenshots: parseInt(e.target.value) })}
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500"
+                    >
+                      <option value="1">1 Screenshot</option>
+                      <option value="2">2 Screenshots</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Instructions</label>
+                  <textarea
+                    name="description"
+                    value={editingTaskData.description}
+                    onChange={e => setEditingTaskData({ ...editingTaskData, description: e.target.value })}
+                    rows={4}
+                    required
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500 resize-none"
+                  />
+                </div>
+                <button type="submit" className="w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-900 transition-all active:scale-95 shadow-xl shadow-indigo-100">
+                  <i className="fa-solid fa-floppy-disk mr-2"></i> Commit Updates
+                </button>
+              </form>
             </div>
-          );
-        })()}
+          </div>
+        )}
 
         {view === 'finance' && (
           <div className="bg-white rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">

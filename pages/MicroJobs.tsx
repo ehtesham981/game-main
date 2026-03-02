@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { User } from '../types';
+import BackToDashboard from '../components/BackToDashboard';
 
 interface MicroJobsProps {
     user: User;
@@ -50,6 +51,8 @@ const MicroJobs: React.FC<MicroJobsProps> = ({ user, onNavigate }) => {
     return (
         <div className="pt-28 pb-20 min-h-screen bg-slate-50">
             <div className="max-w-[1600px] mx-auto px-4 sm:px-8 space-y-12 animate-in fade-in slide-in-from-bottom-6 duration-700">
+
+                <BackToDashboard onNavigate={onNavigate} />
 
                 {/* Header Section */}
                 <div className="max-w-3xl mb-16">

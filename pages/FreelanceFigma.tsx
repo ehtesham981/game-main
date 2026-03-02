@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { User, Task, TaskType } from '../types';
+import BackToDashboard from '../components/BackToDashboard';
 
 interface FreelanceFigmaProps {
     user: User;
@@ -147,45 +148,37 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, tasks, onBack, on
 
     if (!user.freelanceId) {
         return (
-            <div className="pt-24 pb-20 min-h-screen bg-slate-50 flex items-center justify-center p-6">
-                <div className="max-w-xl w-full bg-white rounded-[4rem] border border-slate-200 shadow-3xl p-12 md:p-16 text-center animate-in zoom-in-95 duration-500">
-                    <div className="w-24 h-24 bg-indigo-600 rounded-[2.5rem] flex items-center justify-center text-white mx-auto mb-10 shadow-2xl animate-bounce">
-                        <i className="fa-solid fa-briefcase text-4xl"></i>
+            <div className="pt-28 pb-20 min-h-screen bg-slate-50 flex items-center justify-center p-4">
+                <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-8">
+                    <BackToDashboard onNavigate={onBack} />
+                    <div className="max-w-2xl mx-auto text-center mt-12 bg-white p-12 md:p-20 rounded-[4rem] border border-slate-100 shadow-sm animate-in zoom-in-95 duration-500">
+                        <div className="w-24 h-24 bg-indigo-600 rounded-[2.5rem] flex items-center justify-center text-white mx-auto mb-10 shadow-2xl">
+                            <i className={`fa-solid ${isInitializing ? 'fa-spinner fa-spin' : 'fa-id-card-clip'} text-4xl`}></i>
+                        </div>
+                        <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter mb-6 uppercase">
+                            Freelance <span className="text-indigo-600">Gateway</span>
+                        </h1>
+                        <p className="text-slate-500 font-bold text-sm md:text-lg mb-12 leading-relaxed">
+                            To participate in our premium high-yield freelance network, you must first initialize your unique contractor identity and join the verified talent pool.
+                        </p>
+                        <button
+                            onClick={handleInitialize}
+                            disabled={isInitializing}
+                            className="w-full py-6 bg-slate-900 text-white rounded-[2rem] font-black text-xs uppercase tracking-[0.4em] shadow-2xl hover:bg-indigo-600 transition-all active:scale-95 disabled:opacity-50"
+                        >
+                            {isInitializing ? 'Generating Node Identity...' : 'Generate Identity ID'}
+                        </button>
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter mb-6 uppercase">
-                        Freelance <span className="text-indigo-600">Gateway</span>
-                    </h1>
-                    <p className="text-slate-500 font-medium text-lg mb-10 leading-relaxed">
-                        Authorize your professional identity to access our specialized freelance marketplace. Each account requires a unique Freelance ID for secure payouts.
-                    </p>
-                    <button
-                        onClick={handleInitialize}
-                        disabled={isInitializing}
-                        className="w-full py-6 bg-slate-900 text-white rounded-3xl font-black text-xs uppercase tracking-[0.4em] shadow-2xl hover:bg-indigo-600 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-50"
-                    >
-                        {isInitializing ? (
-                            <>
-                                <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-                                Registering ID...
-                            </>
-                        ) : (
-                            <>
-                                <i className="fa-solid fa-id-card"></i>
-                                Initialize Freelance ID
-                            </>
-                        )}
-                    </button>
-                    <button onClick={onBack} className="mt-6 text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-900 transition-all">
-                        Return to Dashboard
-                    </button>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="pt-24 pb-20 min-h-screen bg-slate-50">
+        <div className="pt-28 pb-20 min-h-screen bg-slate-50 overflow-x-hidden">
             <div className="max-w-[1600px] mx-auto px-4 sm:px-8 space-y-12 animate-in fade-in duration-700">
+
+                <BackToDashboard onNavigate={onBack} />
 
                 {/* Header Profile Section */}
                 <header className="bg-slate-900 p-10 md:p-14 rounded-[3.5rem] text-white flex flex-col md:flex-row items-center justify-between gap-10 relative overflow-hidden shadow-3xl">
@@ -549,4 +542,3 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, tasks, onBack, on
 };
 
 export default FreelanceFigma;
-

@@ -2,6 +2,8 @@
 // @ts-nocheck
 import React, { useState, useRef, useMemo } from 'react';
 import { Transaction } from '../types';
+import BackToDashboard from '../components/BackToDashboard';
+import NumericInput from '../components/NumericInput';
 
 interface WalletProps {
    coins: number;
@@ -9,11 +11,12 @@ interface WalletProps {
    onAction: (type: 'deposit' | 'withdraw', amount: number, method: string, accountRef?: string, proofImage?: string) => void;
    transactions: Transaction[];
    onRefresh?: () => void;
+   onNavigate: (page: string) => void;
 }
 
-const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, transactions, onRefresh }) => {
+const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, transactions, onRefresh, onNavigate }) => {
    const [activeTab, setActiveTab] = useState<'deposit' | 'withdraw'>('deposit');
-   const [amount, setAmount] = useState('');
+   const [amount, setAmount] = useState('0');
    const [method, setMethod] = useState('Easypaisa');
    const [account, setAccount] = useState('');
    const [withdrawName, setWithdrawName] = useState('');
@@ -153,7 +156,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
       try {
          const finalAccountRef = activeTab === 'withdraw' ? `${withdrawName} | ${withdrawNumber}` : account;
          await onAction(activeTab, parseInt(amount), method, finalAccountRef, proofImage || undefined);
-         setAmount('');
+         setAmount('0');
          setAccount('');
          setProofImage(null);
          setWithdrawName('');
@@ -173,6 +176,8 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
    return (
       <div className="pt-24 md:pt-32 pb-16 md:pb-24 min-h-screen bg-slate-50">
          <div className="max-w-[1600px] mx-auto px-4 sm:px-8 md:px-12 space-y-10 md:space-y-16">
+
+            <BackToDashboard onNavigate={onNavigate} />
 
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 bg-white p-8 md:p-0 rounded-[2.5rem] md:rounded-none md:bg-transparent shadow-sm md:shadow-none border border-slate-100 md:border-none">
@@ -212,7 +217,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                         </div>
                      </div>
                      <p className="mt-10 text-[10px] font-medium text-slate-400 uppercase tracking-widest leading-relaxed">
-                        Minimum withdrawal: 1 Coin ($1.5). Coins are converted to your preferred gateway currency at verified global rates.
+                        Minimum withdrawal: 6,000 Coins ($1.5). Coins are converted to your preferred gateway currency at verified global rates.
                      </p>
                   </div>
                   <i className="fa-solid fa-arrow-up-from-bracket absolute -right-12 -bottom-12 text-[15rem] text-white/5 -rotate-12 transition-transform group-hover:scale-110 duration-700"></i>
@@ -235,7 +240,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                         </div>
                      </div>
                      <p className="mt-10 text-[10px] font-medium text-slate-500 uppercase tracking-widest leading-relaxed">
-                        Minimum deposit: 2 Coins ($2.00). Ad credits are synchronized instantly upon TxID verification.
+                        Minimum deposit: 6,000 Coins ($2.00). Ad credits are synchronized instantly upon TxID verification.
                      </p>
                   </div>
                   <i className="fa-solid fa-bullhorn absolute -right-12 -bottom-12 text-[15rem] text-slate-50 rotate-12 transition-transform group-hover:scale-110 duration-700"></i>
@@ -322,9 +327,9 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                   </div>
 
                   <form onSubmit={handleSubmitInitial} className="max-w-5xl mx-auto space-y-12">
-                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 text-center lg:text-left">
                         <div className="space-y-6">
-                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 block">1. Select Settlement Node (Method)</label>
+                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 block">1. Settlement Node (Method)</label>
                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                               {availableMethods.map(gate => (
                                  <button
@@ -340,28 +345,18 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                            </div>
                         </div>
 
-                        <div className="space-y-6">
-                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 block">2. Input Coin Volume (Coins)</label>
-                           <div className="relative">
-                              <input
-                                 type="number"
-                                 placeholder="0.00"
-                                 value={amount}
-                                 onChange={e => setAmount(e.target.value)}
-                                 className="w-full px-10 py-8 bg-slate-50 border-none rounded-[2.5rem] font-black text-5xl text-slate-900 shadow-inner outline-none focus:ring-4 focus:ring-indigo-100 transition-all placeholder:text-slate-200"
-                              />
-                              <div className="absolute right-10 top-1/2 -translate-y-1/2 text-right">
-                                 <span className="text-[10px] font-black text-slate-400 uppercase block mb-1">Estimated Value</span>
-                                 <span className="text-xl font-black text-indigo-600">
-                                    ${(parseInt(amount || '0') / WITHDRAW_RATE).toFixed(2)}
-                                 </span>
-                              </div>
-                           </div>
-                           <div className="px-6 flex justify-between items-center text-[9px] font-black uppercase tracking-widest">
-                              <span className="text-slate-400">Min {activeTab}: {activeTab === 'deposit' ? MIN_DEPOSIT.toLocaleString() : MIN_WITHDRAWAL.toLocaleString()} Coins</span>
-                              <span className="text-indigo-600">Node Sync Active</span>
-                           </div>
-                        </div>
+                        <NumericInput
+                           label="2. Input Coin Volume (Coins)"
+                           value={parseInt(amount || '0')}
+                           min={activeTab === 'deposit' ? MIN_DEPOSIT : MIN_WITHDRAWAL}
+                           unitLabel="Coins"
+                           onChange={val => setAmount(val.toString())}
+                        />
+                     </div>
+
+                     <div className="px-6 flex justify-between items-center text-[9px] font-black uppercase tracking-widest">
+                        <span className="text-slate-400">Min {activeTab}: {activeTab === 'deposit' ? MIN_DEPOSIT.toLocaleString() : MIN_WITHDRAWAL.toLocaleString()} Coins</span>
+                        <span className="text-indigo-600">Node Sync Active</span>
                      </div>
 
                      <div className={`p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] border transition-all duration-500 ${activeTab === 'deposit' ? 'bg-emerald-50 border-emerald-100' : 'bg-slate-50 border-slate-100'}`}>
@@ -436,8 +431,9 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                </div>
             </div>
 
+
             {/* Transaction History Section */}
-            <div className="bg-white rounded-[4rem] border border-slate-200 shadow-sm overflow-hidden">
+            < div className="bg-white rounded-[4rem] border border-slate-200 shadow-sm overflow-hidden" >
                <div className="p-10 border-b border-slate-50 bg-slate-50/20 flex justify-between items-center">
                   <div>
                      <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter leading-none">Global Ledger</h3>
@@ -489,48 +485,50 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                      </tbody>
                   </table>
                </div>
-            </div>
-         </div>
+            </div >
+         </div >
 
          {/* Confirmation Modal */}
-         {showConfirmModal && (
-            <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-950/95 backdrop-blur-2xl animate-in fade-in duration-300">
-               <div className="bg-white rounded-[4rem] w-full max-w-xl p-12 md:p-16 border border-slate-200 shadow-2xl animate-in zoom-in-95 duration-300 relative overflow-hidden">
-                  <div className="relative z-10">
-                     <div className="w-20 h-20 bg-slate-900 rounded-[1.75rem] flex items-center justify-center text-white text-3xl shadow-xl mx-auto mb-10">
-                        <i className="fa-solid fa-file-signature"></i>
+         {
+            showConfirmModal && (
+               <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-950/95 backdrop-blur-2xl animate-in fade-in duration-300">
+                  <div className="bg-white rounded-[4rem] w-full max-w-xl p-12 md:p-16 border border-slate-200 shadow-2xl animate-in zoom-in-95 duration-300 relative overflow-hidden">
+                     <div className="relative z-10">
+                        <div className="w-20 h-20 bg-slate-900 rounded-[1.75rem] flex items-center justify-center text-white text-3xl shadow-xl mx-auto mb-10">
+                           <i className="fa-solid fa-file-signature"></i>
+                        </div>
+                        <h3 className="text-3xl font-black text-slate-900 tracking-tighter mb-10 text-center uppercase">Authorize Transmission</h3>
+                        <div className="bg-slate-50 p-10 rounded-[3rem] border border-slate-200 mb-12 space-y-6 shadow-inner">
+                           <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                              <span>Operation Type</span>
+                              <span className={`px-3 py-1 rounded-lg ${activeTab === 'deposit' ? 'text-emerald-600 bg-emerald-100/50' : 'text-indigo-600 bg-indigo-100/50'}`}>{activeTab}</span>
+                           </div>
+                           <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                              <span>Coin Volume</span>
+                              <span className="text-slate-900 font-black text-xl">{amount} Coins</span>
+                           </div>
+                           <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                              <span>Gateway Hub</span>
+                              <span className="text-slate-900">{method}</span>
+                           </div>
+                           <div className="h-px bg-slate-200 w-full"></div>
+                           <div className="flex justify-between items-center pt-2">
+                              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Settlement Value</span>
+                              <span className="text-2xl font-black text-emerald-600">${(parseInt(amount) / WITHDRAW_RATE).toFixed(2)} USD</span>
+                           </div>
+                        </div>
+                        <div className="flex flex-col sm:flex-row gap-4">
+                           <button onClick={() => setShowConfirmModal(false)} className="flex-1 py-6 bg-slate-100 text-slate-500 font-black rounded-3xl text-[10px] uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-95">Re-adjust</button>
+                           <button onClick={confirmAction} disabled={isProcessing} className="flex-[2] py-6 bg-slate-900 text-white font-black rounded-3xl text-[10px] uppercase tracking-widest shadow-2xl shadow-indigo-100 hover:bg-indigo-600 transition-all flex items-center justify-center gap-4 active:scale-95">
+                              {isProcessing ? <i className="fa-solid fa-spinner fa-spin"></i> : <><i className="fa-solid fa-shield-check"></i> Commit Authorization</>}
+                           </button>
+                        </div>
                      </div>
-                     <h3 className="text-3xl font-black text-slate-900 tracking-tighter mb-10 text-center uppercase">Authorize Transmission</h3>
-                     <div className="bg-slate-50 p-10 rounded-[3rem] border border-slate-200 mb-12 space-y-6 shadow-inner">
-                        <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                           <span>Operation Type</span>
-                           <span className={`px-3 py-1 rounded-lg ${activeTab === 'deposit' ? 'text-emerald-600 bg-emerald-100/50' : 'text-indigo-600 bg-indigo-100/50'}`}>{activeTab}</span>
-                        </div>
-                        <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                           <span>Coin Volume</span>
-                           <span className="text-slate-900 font-black text-xl">{amount} Coins</span>
-                        </div>
-                        <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                           <span>Gateway Hub</span>
-                           <span className="text-slate-900">{method}</span>
-                        </div>
-                        <div className="h-px bg-slate-200 w-full"></div>
-                        <div className="flex justify-between items-center pt-2">
-                           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Settlement Value</span>
-                           <span className="text-2xl font-black text-emerald-600">${(parseInt(amount) / WITHDRAW_RATE).toFixed(2)} USD</span>
-                        </div>
-                     </div>
-                     <div className="flex flex-col sm:flex-row gap-4">
-                        <button onClick={() => setShowConfirmModal(false)} className="flex-1 py-6 bg-slate-100 text-slate-500 font-black rounded-3xl text-[10px] uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-95">Re-adjust</button>
-                        <button onClick={confirmAction} disabled={isProcessing} className="flex-[2] py-6 bg-slate-900 text-white font-black rounded-3xl text-[10px] uppercase tracking-widest shadow-2xl shadow-indigo-100 hover:bg-indigo-600 transition-all flex items-center justify-center gap-4 active:scale-95">
-                           {isProcessing ? <i className="fa-solid fa-spinner fa-spin"></i> : <><i className="fa-solid fa-shield-check"></i> Commit Authorization</>}
-                        </button>
-                     </div>
+                     <i className="fa-solid fa-fingerprint absolute -right-12 -top-12 text-[15rem] text-slate-50 pointer-events-none opacity-50"></i>
                   </div>
-                  <i className="fa-solid fa-fingerprint absolute -right-12 -top-12 text-[15rem] text-slate-50 pointer-events-none opacity-50"></i>
                </div>
-            </div>
-         )}
+            )
+         }
 
          <style>{`
         @keyframes shimmer {
@@ -539,7 +537,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
-      </div>
+      </div >
    );
 };
 

@@ -1,14 +1,16 @@
 import React, { useState, useRef, useMemo } from 'react';
 import { Task, TaskType, User, Transaction } from '../types';
+import BackToDashboard from '../components/BackToDashboard';
 
 interface TasksProps {
   user: User;
   tasks: Task[];
   transactions: Transaction[];
   onComplete: (taskId: string, proofImage?: string, proofImage2?: string, timestamp?: string, message?: string) => Promise<void> | void;
+  navigateTo: (page: string) => void;
 }
 
-export default function Tasks({ user, tasks, transactions, onComplete }: TasksProps) {
+export default function Tasks({ user, tasks, transactions, onComplete, navigateTo }: TasksProps) {
   const [activeView, setActiveView] = useState<'Marketplace' | 'My History'>('Marketplace');
   const [categoryFilter, setCategoryFilter] = useState<TaskType | 'All'>('All');
   const [historyFilter, setHistoryFilter] = useState<'All' | 'Pending' | 'Approved' | 'Rejected'>('All');
@@ -35,10 +37,8 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
   const availableTasks = useMemo(() => {
     const safeTasks = Array.isArray(tasks) ? tasks : [];
     const today = new Date().toISOString().split('T')[0];
-    const now = Date.now();
     return safeTasks.filter(t => {
       if (!t) return false;
-
       const isSubmitted = user.completedTasks?.includes(t.id);
       if (isSubmitted) return false;
       if (t.dueDate && t.dueDate < today) return false;
@@ -65,7 +65,6 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
         return tx.status === 'success';
       })
       .sort((a, b) => {
-        // Fallback for sorting: use timestamp if available, then date
         const timeA = new Date(a.date).getTime();
         const timeB = new Date(b.date).getTime();
         return timeB - timeA;
@@ -177,7 +176,10 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
   return (
     <div className="pt-28 pb-20 min-h-screen bg-slate-50">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-8">
-        <div className="mb-12">
+
+        <BackToDashboard onNavigate={navigateTo} />
+
+        <div className="mb-12 mt-12">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 md:gap-12 border-b border-slate-200 pb-8 md:pb-12">
             <div className="max-w-2xl">
               <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 border border-indigo-100 shadow-sm">
@@ -297,8 +299,8 @@ export default function Tasks({ user, tasks, transactions, onComplete }: TasksPr
                       <i className={`fa-solid ${getIcon(tx.method || '')}`}></i>
                     </div>
                     <div className={`px-4 py-1.5 text-[8px] font-black rounded-lg uppercase tracking-widest border transition-all ${tx.status === 'success' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
-                      tx.status === 'failed' ? 'bg-rose-50 text-rose-600 border-rose-100' :
-                        'bg-amber-50 text-amber-600 border-amber-100 animate-pulse'
+                        tx.status === 'failed' ? 'bg-rose-50 text-rose-600 border-rose-100' :
+                          'bg-amber-50 text-amber-600 border-amber-100 animate-pulse'
                       }`}>
                       {tx.status === 'failed' ? 'rejected' : tx.status}
                     </div>

@@ -213,7 +213,7 @@ const App: React.FC = () => {
           {currentPage === 'home' && <Home onStart={navigateTo} isLoggedIn={user.isLoggedIn} />}
           {currentPage === 'features' && <Features />}
           {currentPage === 'contact' && <Contact />}
-          {currentPage === 'wallet' && <Wallet coins={user.coins} depositBalance={user.depositBalance} onAction={handleWalletAction} transactions={transactions} onRefresh={() => refreshUserBalance()} />}
+          {currentPage === 'wallet' && <Wallet coins={user.coins} depositBalance={user.depositBalance} onAction={handleWalletAction} transactions={transactions} onRefresh={() => refreshUserBalance()} onNavigate={navigateTo} />}
           {currentPage === 'dashboard' && user.isLoggedIn && <Dashboard user={user} tasks={tasks} transactions={transactions} onDeleteTask={() => { }} onUpdateTask={() => { }} />}
           {currentPage === 'micro-jobs' && user.isLoggedIn && <MicroJobs user={user} onNavigate={navigateTo} />}
           {currentPage === 'weekly-bonus' && user.isLoggedIn && (
@@ -222,6 +222,7 @@ const App: React.FC = () => {
               transactions={transactions}
               onClaim={handleClaimWeeklyBonus}
               onBack={() => navigateTo('micro-jobs')}
+              onNavigate={navigateTo}
             />
           )}
           {currentPage === 'tasks' && user.isLoggedIn && (
@@ -229,6 +230,7 @@ const App: React.FC = () => {
               user={user}
               tasks={tasks}
               transactions={transactions}
+              navigateTo={navigateTo}
               onComplete={async (taskId, img1, img2, date, msg) => {
                 const task = tasks.find(t => t.id === taskId);
                 if (!task) return;
@@ -314,10 +316,11 @@ const App: React.FC = () => {
                 await refreshUserBalance();
               }}
               transactions={transactions}
+              onNavigate={navigateTo}
             />
           )}
-          {currentPage === 'referrals' && user.isLoggedIn && <Referrals user={user} onClaim={handleClaimReferral} />}
-          {currentPage === 'profile' && user.isLoggedIn && <ProfileSettings user={user} />}
+          {currentPage === 'referrals' && user.isLoggedIn && <Referrals user={user} onClaim={handleClaimReferral} onNavigate={navigateTo} />}
+          {currentPage === 'profile' && user.isLoggedIn && <ProfileSettings user={user} onNavigate={navigateTo} />}
           {currentPage === 'privacy-policy' && <PrivacyPolicy />}
           {currentPage === 'terms-conditions' && <TermsConditions />}
           {currentPage === 'disclaimer' && <Disclaimer />}
@@ -363,7 +366,7 @@ const App: React.FC = () => {
             />
           )}
 
-          {currentPage.startsWith('admin-') && user.isAdmin && <AdminPanel initialView={currentPage.slice(6) as any} />}
+          {currentPage.startsWith('admin-') && user.isAdmin && <AdminPanel initialView={currentPage.slice(6) as any} onNavigate={navigateTo} />}
         </Suspense>
       </main>
       <Footer setCurrentPage={navigateTo} isLoggedIn={user.isLoggedIn} />

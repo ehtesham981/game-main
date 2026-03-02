@@ -1,15 +1,16 @@
-
 import React, { useState, useEffect } from 'react';
 import { User, Transaction } from '../types';
+import BackToDashboard from '../components/BackToDashboard';
 
 interface WeeklyBonusProps {
     user: User;
     transactions: Transaction[];
     onClaim: (reward: number) => Promise<void>;
     onBack?: () => void;
+    onNavigate?: (page: string) => void;
 }
 
-const WeeklyBonus: React.FC<WeeklyBonusProps> = ({ user, transactions, onClaim, onBack }) => {
+const WeeklyBonus: React.FC<WeeklyBonusProps> = ({ user, transactions, onClaim, onBack, onNavigate }) => {
     const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
     const REWARD_COINS = 360; // $0.09 * 4000
     const [timeLeft, setTimeLeft] = useState<number | null>(null);
@@ -59,6 +60,8 @@ const WeeklyBonus: React.FC<WeeklyBonusProps> = ({ user, transactions, onClaim, 
     return (
         <div className="pt-28 pb-20 min-h-screen bg-slate-50">
             <div className="max-w-[1600px] mx-auto px-4 sm:px-8 space-y-12">
+
+                {onNavigate && <BackToDashboard onNavigate={onNavigate} />}
 
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8">

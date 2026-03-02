@@ -1,14 +1,15 @@
-
 import React, { useState, useEffect } from 'react';
 import { User } from '../types';
 import { storage } from '../services/storage';
+import BackToDashboard from '../components/BackToDashboard';
 
 interface ReferralsProps {
   user: User;
   onClaim: (referredUserId: string) => void;
+  onNavigate?: (page: string) => void;
 }
 
-const Referrals: React.FC<ReferralsProps> = ({ user, onClaim }) => {
+const Referrals: React.FC<ReferralsProps> = ({ user, onClaim, onNavigate }) => {
   const [copied, setCopied] = useState(false);
   const [refCount, setRefCount] = useState(0);
   const [referredUsers, setReferredUsers] = useState<User[]>([]);
@@ -87,7 +88,9 @@ const Referrals: React.FC<ReferralsProps> = ({ user, onClaim }) => {
     <div className="pt-28 pb-20 min-h-screen bg-slate-50">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-8">
 
-        <div className="mb-16 max-w-3xl">
+        {onNavigate && <BackToDashboard onNavigate={onNavigate} />}
+
+        <div className="mb-16 max-w-3xl mt-12">
           <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 border border-indigo-100 shadow-sm">
             <i className="fa-solid fa-users-rays"></i>
             Affiliate Growth Center
