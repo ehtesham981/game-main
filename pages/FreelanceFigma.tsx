@@ -73,6 +73,10 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, tasks, onBack, on
         return tasks.filter(t => t.type === activeCategory && t.status === 'active' && !user.completedTasks?.includes(t.id));
     }, [tasks, activeCategory, user.completedTasks]);
 
+    const completedTasks = useMemo(() => {
+        return tasks.filter(t => user.completedTasks?.includes(t.id) || false);
+    }, [tasks, user.completedTasks]);
+
     const handleInitialize = async () => {
         setIsInitializing(true);
         const newId = 'FL-' + Math.random().toString(36).substr(2, 6).toUpperCase();
@@ -308,6 +312,67 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, tasks, onBack, on
                                 </div>
                             </>
                         )}
+
+                        {/* Project History Section */}
+                        <div className="pt-10 border-t border-slate-200/60 mt-10">
+                            <div className="flex items-center justify-between mb-8">
+                                <div>
+                                    <h2 className="text-2xl font-black text-slate-900 tracking-tighter uppercase mb-2">Project History</h2>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Chronicle of your completed assignments</p>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <div className="px-4 py-2 bg-white border border-slate-100 rounded-xl flex items-center gap-3 shadow-sm">
+                                        <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                                        <span className="text-[10px] font-black text-slate-500 uppercase">Verified Projects: {completedTasks.length}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {completedTasks.length > 0 ? (
+                                <div className="grid grid-cols-1 gap-6">
+                                    {completedTasks.map((project) => (
+                                        <div key={project.id} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 hover:shadow-md transition-all group">
+                                            <div className="flex items-center gap-6">
+                                                <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-xl shadow-inner border border-emerald-100/50">
+                                                    <i className="fa-solid fa-check-double"></i>
+                                                </div>
+                                                <div>
+                                                    <div className="flex items-center gap-3 mb-1">
+                                                        <h4 className="text-lg font-black text-slate-900">{project.title}</h4>
+                                                        <span className="px-3 py-1 bg-slate-100 text-slate-500 text-[8px] font-black uppercase tracking-widest rounded-full">{project.type}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-4">
+                                                        <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">Job ID: {project.id}</span>
+                                                        <span className="w-1 h-1 bg-slate-200 rounded-full"></span>
+                                                        <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest flex items-center gap-1.5">
+                                                            <i className="fa-solid fa-shield-check"></i>
+                                                            Payout Secured
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-8">
+                                                <div className="text-right">
+                                                    <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Earnings</p>
+                                                    <p className="text-xl font-black text-emerald-600">+{project.reward} <span className="text-[10px] uppercase">Coins</span></p>
+                                                </div>
+                                                <div className="px-4 py-2 bg-slate-50 text-slate-400 rounded-xl text-[10px] font-black uppercase tracking-widest border border-slate-100">
+                                                    Archived
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="py-20 text-center bg-white rounded-[3rem] border-2 border-dashed border-slate-100">
+                                    <div className="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center mx-auto mb-6 text-slate-200">
+                                        <i className="fa-solid fa-scroll text-3xl"></i>
+                                    </div>
+                                    <p className="text-sm font-black text-slate-400 uppercase tracking-widest">No project records found in this ID</p>
+                                    <p className="text-[10px] font-medium text-slate-400 mt-2 max-w-[250px] mx-auto">Complete your first assignment to initialize your career log.</p>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
 
