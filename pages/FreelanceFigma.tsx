@@ -460,7 +460,7 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, tasks, onBack, on
                                     <div className="flex gap-4">
                                         <button onClick={() => setIsSubmittingProof(false)} className="flex-1 py-6 bg-slate-50 text-slate-400 font-black rounded-3xl text-[10px] uppercase tracking-widest hover:bg-slate-100 transition-all">Backtrack</button>
                                         <button onClick={handleFinalSubmit} disabled={!textProof1 || !textProof2 || !pdfProof || isUploading} className="flex-[2] py-6 bg-slate-900 text-white font-black rounded-3xl text-[10px] uppercase tracking-[0.3em] shadow-2xl hover:bg-indigo-600 transition-all flex items-center justify-center gap-4 disabled:opacity-50 active:scale-95">
-                                            {isUploading ? <i className="fa-solid fa-spinner fa-spin"></i> : <><i className="fa-solid fa-terminal"></i> Commit Node</>}
+                                            {isUploading ? <i className="fa-solid fa-spinner fa-spin"></i> : <><i className="fa-solid fa-terminal"></i> Submit Project</>}
                                         </button>
                                     </div>
                                 </div>
