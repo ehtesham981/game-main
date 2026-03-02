@@ -293,6 +293,147 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
             </div>
           </div>
         )}
+
+        {/* Freelance Edit Modal */}
+        {editingFreelancerId && (() => {
+          const fu = users.find(u => u.id === editingFreelancerId);
+          if (!fu) return null;
+          return (
+            <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-xl animate-in fade-in duration-300">
+              <div className="bg-white rounded-[3.5rem] w-full max-w-lg p-10 md:p-14 border border-slate-200 shadow-2xl animate-in zoom-in-95 duration-300">
+                <div className="flex justify-between items-start mb-10">
+                  <div>
+                    <h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">Edit Freelancer</h3>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">{fu.username}</p>
+                  </div>
+                  <button onClick={() => setEditingFreelancerId(null)} className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-all">
+                    <i className="fa-solid fa-xmark"></i>
+                  </button>
+                </div>
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2 block">Freelance ID</label>
+                    <input
+                      type="text"
+                      defaultValue={fu.freelanceId || ''}
+                      id="edit-freelance-id-input"
+                      className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-900 outline-none focus:border-indigo-500 transition-all font-mono"
+                      placeholder="e.g. FL-ABC123"
+                    />
+                  </div>
+                  <div className="flex gap-4 pt-4">
+                    <button
+                      onClick={async () => {
+                        const input = document.getElementById('edit-freelance-id-input') as HTMLInputElement;
+                        const newId = input?.value?.trim();
+                        if (!newId) return alert('Freelance ID cannot be empty.');
+                        await storage.updateUserInCloud(fu.id, { freelanceId: newId });
+                        setEditingFreelancerId(null);
+                        refreshActiveData();
+                      }}
+                      className="flex-1 py-4 bg-indigo-600 text-white rounded-2xl font-black text-[9px] uppercase tracking-widest hover:bg-indigo-700 transition-all active:scale-95 shadow-lg shadow-indigo-100"
+                    >
+                      <i className="fa-solid fa-floppy-disk mr-2"></i>Save Changes
+                    </button>
+                    <button
+                      onClick={async () => {
+                        if (confirm(`Revoke freelance access for ${fu.username}? Their Freelance ID will be removed.`)) {
+                          await storage.updateUserInCloud(fu.id, { freelanceId: null });
+                          setEditingFreelancerId(null);
+                          refreshActiveData();
+                        }
+                      }}
+                      className="flex-1 py-4 bg-rose-50 text-rose-500 border border-rose-100 rounded-2xl font-black text-[9px] uppercase tracking-widest hover:bg-rose-500 hover:text-white transition-all active:scale-95"
+                    >
+                      <i className="fa-solid fa-ban mr-2"></i>Revoke Access
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* Campaign Edit Modal */}
+        {editingTaskId && (() => {
+          const task = tasks.find(t => t.id === editingTaskId);
+          if (!task) return null;
+          return (
+            <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-xl animate-in fade-in duration-300">
+              <div className="bg-white rounded-[3.5rem] w-full max-w-2xl p-10 md:p-14 border border-slate-200 shadow-2xl animate-in zoom-in-95 duration-300 overflow-y-auto max-h-[90vh] no-scrollbar">
+                <div className="flex justify-between items-start mb-10">
+                  <div>
+                    <h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">Edit Campaign</h3>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">Update credentials for {task.id}</p>
+                  </div>
+                  <button onClick={() => setEditingTaskId(null)} className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-all">
+                    <i className="fa-solid fa-xmark"></i>
+                  </button>
+                </div>
+
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.currentTarget);
+                  const updates = {
+                    title: formData.get('title') as string,
+                    type: formData.get('type') as any,
+                    reward: parseInt(formData.get('reward') as string),
+                    totalWorkers: parseInt(formData.get('totalWorkers') as string),
+                    link: formData.get('link') as string,
+                    description: formData.get('description') as string,
+                    requiredScreenshots: parseInt(formData.get('screenshots') as string),
+                  };
+                  await storage.updateTaskInCloud(task.id, updates);
+                  setEditingTaskId(null);
+                  refreshActiveData();
+                  alert('Campaign updated successfully.');
+                }} className="space-y-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Campaign Title</label>
+                      <input name="title" defaultValue={task.title} required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Node Type</label>
+                      <select name="type" defaultValue={task.type} required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500">
+                        {['YouTube', 'Websites', 'Apps', 'Social Media', 'Content Writing', 'Graphics Designing', 'Blog Development', 'SEO'].map(t => (
+                          <option key={t} value={t}>{t}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Reward (Coins)</label>
+                      <input name="reward" type="number" defaultValue={task.reward} required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Total Workers</label>
+                      <input name="totalWorkers" type="number" defaultValue={task.totalWorkers} required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500" />
+                    </div>
+                    <div className="md:col-span-2 space-y-2">
+                      <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Resource Link</label>
+                      <input name="link" defaultValue={task.link} required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500" />
+                    </div>
+                    <div className="md:col-span-2 space-y-2">
+                      <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Verification Complexity</label>
+                      <select name="screenshots" defaultValue={task.requiredScreenshots} className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500">
+                        <option value="1">1 Screenshot</option>
+                        <option value="2">2 Screenshots</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Instructions</label>
+                    <textarea name="description" defaultValue={task.description} rows={4} required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500 resize-none" />
+                  </div>
+                  <button type="submit" className="w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-900 transition-all active:scale-95 shadow-xl shadow-indigo-100">
+                    <i className="fa-solid fa-floppy-disk mr-2"></i> Commit Updates
+                  </button>
+                </form>
+              </div>
+            </div>
+          );
+        })()}
+
         {view === 'finance' && (
           <div className="bg-white rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
             <div className="p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
@@ -483,146 +624,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview' }) => 
         )}
         {view === 'freelance' && (
           <div className="space-y-6 animate-in fade-in duration-500">
-            {/* Freelance Edit Modal */}
-            {editingFreelancerId && (() => {
-              const fu = users.find(u => u.id === editingFreelancerId);
-              if (!fu) return null;
-              return (
-                <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-xl animate-in fade-in duration-300">
-                  <div className="bg-white rounded-[3.5rem] w-full max-w-lg p-10 md:p-14 border border-slate-200 shadow-2xl animate-in zoom-in-95 duration-300">
-                    <div className="flex justify-between items-start mb-10">
-                      <div>
-                        <h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">Edit Freelancer</h3>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">{fu.username}</p>
-                      </div>
-                      <button onClick={() => setEditingFreelancerId(null)} className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-all">
-                        <i className="fa-solid fa-xmark"></i>
-                      </button>
-                    </div>
-                    <div className="space-y-6">
-                      <div className="space-y-2">
-                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2 block">Freelance ID</label>
-                        <input
-                          type="text"
-                          defaultValue={fu.freelanceId || ''}
-                          id="edit-freelance-id-input"
-                          className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-900 outline-none focus:border-indigo-500 transition-all font-mono"
-                          placeholder="e.g. FL-ABC123"
-                        />
-                      </div>
-                      <div className="flex gap-4 pt-4">
-                        <button
-                          onClick={async () => {
-                            const input = document.getElementById('edit-freelance-id-input') as HTMLInputElement;
-                            const newId = input?.value?.trim();
-                            if (!newId) return alert('Freelance ID cannot be empty.');
-                            await storage.updateUserInCloud(fu.id, { freelanceId: newId });
-                            setEditingFreelancerId(null);
-                            refreshActiveData();
-                          }}
-                          className="flex-1 py-4 bg-indigo-600 text-white rounded-2xl font-black text-[9px] uppercase tracking-widest hover:bg-indigo-700 transition-all active:scale-95 shadow-lg shadow-indigo-100"
-                        >
-                          <i className="fa-solid fa-floppy-disk mr-2"></i>Save Changes
-                        </button>
-                        <button
-                          onClick={async () => {
-                            if (confirm(`Revoke freelance access for ${fu.username}? Their Freelance ID will be removed.`)) {
-                              await storage.updateUserInCloud(fu.id, { freelanceId: null });
-                              setEditingFreelancerId(null);
-                              refreshActiveData();
-                            }
-                          }}
-                          className="flex-1 py-4 bg-rose-50 text-rose-500 border border-rose-100 rounded-2xl font-black text-[9px] uppercase tracking-widest hover:bg-rose-500 hover:text-white transition-all active:scale-95"
-                        >
-                          <i className="fa-solid fa-ban mr-2"></i>Revoke Access
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })()}
-
-            {/* Campaign Edit Modal */}
-            {editingTaskId && (() => {
-              const task = tasks.find(t => t.id === editingTaskId);
-              if (!task) return null;
-              return (
-                <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-xl animate-in fade-in duration-300">
-                  <div className="bg-white rounded-[3.5rem] w-full max-w-2xl p-10 md:p-14 border border-slate-200 shadow-2xl animate-in zoom-in-95 duration-300 overflow-y-auto max-h-[90vh] no-scrollbar">
-                    <div className="flex justify-between items-start mb-10">
-                      <div>
-                        <h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">Edit Campaign</h3>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">Update credentials for {task.id}</p>
-                      </div>
-                      <button onClick={() => setEditingTaskId(null)} className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-all">
-                        <i className="fa-solid fa-xmark"></i>
-                      </button>
-                    </div>
-
-                    <form onSubmit={async (e) => {
-                      e.preventDefault();
-                      const formData = new FormData(e.currentTarget);
-                      const updates = {
-                        title: formData.get('title') as string,
-                        type: formData.get('type') as any,
-                        reward: parseInt(formData.get('reward') as string),
-                        totalWorkers: parseInt(formData.get('totalWorkers') as string),
-                        link: formData.get('link') as string,
-                        description: formData.get('description') as string,
-                        requiredScreenshots: parseInt(formData.get('screenshots') as string),
-                      };
-                      await storage.updateTaskInCloud(task.id, updates);
-                      setEditingTaskId(null);
-                      refreshActiveData();
-                      alert('Campaign updated successfully.');
-                    }} className="space-y-8">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Campaign Title</label>
-                          <input name="title" defaultValue={task.title} required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500" />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Node Type</label>
-                          <select name="type" defaultValue={task.type} required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500">
-                            {['YouTube', 'Websites', 'Apps', 'Social Media', 'Content Writing', 'Graphics Designing', 'Blog Development', 'SEO'].map(t => (
-                              <option key={t} value={t}>{t}</option>
-                            ))}
-                          </select>
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Reward (Coins)</label>
-                          <input name="reward" type="number" defaultValue={task.reward} required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500" />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Total Workers</label>
-                          <input name="totalWorkers" type="number" defaultValue={task.totalWorkers} required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500" />
-                        </div>
-                        <div className="md:col-span-2 space-y-2">
-                          <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Resource Link</label>
-                          <input name="link" defaultValue={task.link} required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500" />
-                        </div>
-                        <div className="md:col-span-2 space-y-2">
-                          <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Verification Complexity</label>
-                          <select name="screenshots" defaultValue={task.requiredScreenshots} className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500">
-                            <option value="1">1 Screenshot</option>
-                            <option value="2">2 Screenshots</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Instructions</label>
-                        <textarea name="description" defaultValue={task.description} rows={4} required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-indigo-500 resize-none" />
-                      </div>
-                      <button type="submit" className="w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-900 transition-all active:scale-95 shadow-xl shadow-indigo-100">
-                        <i className="fa-solid fa-floppy-disk mr-2"></i> Commit Updates
-                      </button>
-                    </form>
-                  </div>
-                </div>
-              );
-            })()}
-
             <div className="bg-white rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
               <div className="p-10 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center bg-slate-50/30 gap-6">
                 <div>
