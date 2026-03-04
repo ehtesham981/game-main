@@ -4,7 +4,8 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900;
+    @apply bg-slate-50 text-slate-900 antialiased overflow-x-hidden;
+    touch-action: manipulation;
   }
 }
 
@@ -18,11 +19,11 @@
   }
 
   .dashboard-card-primary {
-    @apply bg-white border border-slate-200/60 shadow-sm rounded-3xl md:rounded-[2.5rem] p-6 md:p-10;
+    @apply bg-white border border-slate-200/60 shadow-sm rounded-3xl md:rounded-[2.5rem] p-5 sm:p-6 md:p-10;
   }
 
   .dashboard-card-dark {
-    @apply bg-slate-900 text-white rounded-[2.5rem] md:rounded-[3.5rem] p-6 md:p-12 shadow-xl;
+    @apply bg-slate-900 text-white rounded-3xl md:rounded-[3.5rem] p-5 sm:p-6 md:p-12 shadow-xl;
   }
 
   .stat-box {

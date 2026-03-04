@@ -82,8 +82,8 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
     <div className="pt-24 pb-20 min-h-screen bg-slate-50">
       <div className="dashboard-container animate-in fade-in slide-in-from-bottom-6 duration-700">
 
-        <header className="dashboard-card-primary flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-          <div className="flex items-center gap-6">
+        <header className="dashboard-card-primary flex flex-col lg:flex-row lg:items-center justify-between gap-8 overflow-hidden">
+          <div className="flex items-center gap-4 sm:gap-6">
             <div className="relative group">
               <div className="w-20 h-20 bg-slate-900 rounded-[1.75rem] flex items-center justify-center text-white text-2xl shadow-2xl shadow-slate-300 transition-transform group-hover:scale-105 overflow-hidden">
                 <span className="font-black">{user.username.charAt(0).toUpperCase()}</span>
@@ -92,7 +92,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
             </div>
             <div>
               <div className="flex flex-wrap items-center gap-3 mb-2">
-                <h1 className="text-3xl font-black text-slate-900 tracking-tighter">Welcome back, {user.username}</h1>
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 tracking-tighter">Welcome back, {user.username}</h1>
                 <span className="px-3 py-1 bg-indigo-50 text-indigo-600 text-[8px] font-black uppercase tracking-widest rounded-lg border border-indigo-100 shadow-sm">Verified Partner</span>
               </div>
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
@@ -116,14 +116,14 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-8 dashboard-card-dark">
+          <div className="lg:col-span-8 dashboard-card-dark relative overflow-hidden">
             <div className="relative z-10 flex flex-col h-full justify-between">
               <div className="flex flex-col sm:flex-row justify-between items-start gap-12">
                 <div>
                   <p className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em] mb-4">Earning Evaluation</p>
-                  <div className="flex items-baseline gap-4 mb-6">
-                    <h2 className="text-5xl md:text-7xl lg:text-9xl font-black tracking-tighter leading-none">${earnings.usd}</h2>
-                    <span className="text-xl font-bold text-slate-500 uppercase tracking-widest">USD</span>
+                  <div className="flex items-baseline gap-2 sm:gap-4 mb-6">
+                    <h2 className="text-3xl sm:text-5xl md:text-7xl lg:text-9xl font-black tracking-tighter leading-none">${earnings.usd}</h2>
+                    <span className="text-lg sm:text-xl font-bold text-slate-500 uppercase tracking-widest">USD</span>
                   </div>
                   <div className="flex flex-wrap items-center gap-4">
                     <div className="px-5 py-3 bg-white/5 rounded-2xl border border-white/10 text-xs font-black shadow-inner flex items-center gap-3">
@@ -133,23 +133,23 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 w-full sm:w-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full sm:w-auto">
                   <div className="stat-box">
                     <p className="text-[8px] font-black uppercase text-slate-500 mb-2 tracking-widest">Vault Coins</p>
-                    <p className="text-3xl font-black tabular-nums">{earnings.total.toLocaleString()}</p>
+                    <p className="text-2xl sm:text-3xl font-black tabular-nums">{earnings.total.toLocaleString()}</p>
                   </div>
                   <div className="stat-box-emerald">
                     <p className="text-[8px] font-black uppercase text-emerald-400 mb-2 tracking-widest">Ad Credits</p>
-                    <p className="text-3xl font-black tabular-nums text-emerald-400">{user.depositBalance?.toLocaleString() || 0}</p>
+                    <p className="text-2xl sm:text-3xl font-black tabular-nums text-emerald-400">{user.depositBalance?.toLocaleString() || 0}</p>
                   </div>
                   <div className="stat-box">
                     <p className="text-[8px] font-black uppercase text-slate-500 mb-2 tracking-widest">Ref Partners</p>
-                    <p className="text-3xl font-black tabular-nums">{user.claimedReferrals?.length || 0}</p>
+                    <p className="text-2xl sm:text-3xl font-black tabular-nums">{user.claimedReferrals?.length || 0}</p>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-20 w-full max-w-2xl">
+              <div className="mt-12 sm:mt-20 w-full max-w-2xl">
                 <div className="flex justify-between items-end mb-4">
                   <div>
                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400 block mb-1">Earning Trajectory</span>
