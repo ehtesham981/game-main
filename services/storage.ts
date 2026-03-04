@@ -93,12 +93,18 @@ export const storage = {
     const snapshot = await get(ref(db, `${KEYS.USERS}/${userId}`));
     if (snapshot.exists()) {
       const cloudData = snapshot.val();
-      if (isBrowser) localStorage.setItem(KEYS.USER, JSON.stringify(cloudData));
-      return cloudData;
+      const user: User = {
+        ...cloudData,
+        completedTasks: storage.ensureArray(cloudData.completedTasks),
+        createdTasks: storage.ensureArray(cloudData.createdTasks),
+        claimedReferrals: storage.ensureArray(cloudData.claimedReferrals)
+      };
+      if (isBrowser) localStorage.setItem(KEYS.USER, JSON.stringify(user));
+      return user;
     }
     return null;
   },
-  
+
   getTasks: async (): Promise<Task[]> => {
     const snapshot = await get(ref(db, KEYS.TASKS));
     return snapshot.exists() ? storage.ensureArray<Task>(snapshot.val()) : [];
@@ -123,7 +129,7 @@ export const storage = {
     let tasks: Task[] = storage.ensureArray<Task>(snapshot.val());
     await set(ref(db, KEYS.TASKS), tasks.filter(t => t.id !== taskId));
   },
-  
+
   getTransactions: (): Transaction[] => {
     if (isBrowser) {
       const data = localStorage.getItem(KEYS.TRANSACTIONS);

@@ -65,13 +65,15 @@ const Referrals: React.FC<ReferralsProps> = ({ user, onClaim, onNavigate }) => {
     setTimeout(() => setCopied(false), 2500);
   };
 
-  const handleClaimReward = (partnerId: string) => {
+  const handleClaimReward = async (partnerId: string) => {
     setClaimingId(partnerId);
     // Simulate a high-trust verification process
-    setTimeout(() => {
-      onClaim(partnerId);
+    await new Promise(resolve => setTimeout(resolve, 1200));
+    try {
+      await onClaim(partnerId);
+    } finally {
       setClaimingId(null);
-    }, 1200);
+    }
   };
 
   const shareLinks = [

@@ -112,10 +112,9 @@ const App: React.FC = () => {
     const cloudUser = await storage.syncUserFromCloud(userData.id);
     const updatedUser: User = {
       ...userData,
+      ...(cloudUser || {}),
       isLoggedIn: true,
       currentSessionId: newSessionId,
-      coins: cloudUser?.coins ?? 0,
-      depositBalance: cloudUser?.depositBalance ?? 0,
     };
     setUser(updatedUser);
     await storage.setUser(updatedUser);
@@ -144,18 +143,24 @@ const App: React.FC = () => {
   };
 
   const handleClaimReferral = async (referredUserId: string) => {
-    if (user.claimedReferrals?.includes(referredUserId)) return;
+    const freshUser = await storage.syncUserFromCloud(user.id);
+    const currentUser = freshUser || user;
+
+    if (currentUser.claimedReferrals?.includes(referredUserId)) return;
+
     const REWARD = referredUserId === 'milestone_5_bonus' ? 200 : (referredUserId === 'milestone_3_bonus' ? 150 : 50);
-    const updatedUser = {
-      ...user,
-      coins: user.coins + REWARD,
-      claimedReferrals: [...(user.claimedReferrals || []), referredUserId]
+    const updatedUser: User = {
+      ...currentUser,
+      coins: currentUser.coins + REWARD,
+      claimedReferrals: [...(currentUser.claimedReferrals || []), referredUserId]
     };
+
     setUser(updatedUser);
     await storage.setUser(updatedUser);
+
     const tx: Transaction = {
       id: `REF-${Math.random().toString(36).substr(2, 6).toUpperCase()}-${Date.now()}`,
-      userId: user.id,
+      userId: currentUser.id,
       amount: REWARD,
       type: 'referral_claim',
       method: 'Referral Bonus',
