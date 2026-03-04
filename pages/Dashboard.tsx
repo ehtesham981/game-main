@@ -32,7 +32,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
   const progressToNextDollar = ((earnings.total % COIN_RATE) / COIN_RATE) * 100;
 
   const ledgerList = useMemo(() => {
-    let filtered = transactions.filter(tx => ['earn', 'spin', 'referral_claim', 'math_reward', 'deposit', 'withdraw'].includes(tx.type));
+    let filtered = transactions.filter(tx => ['earn', 'spin', 'referral_claim', 'math_reward', 'deposit', 'withdraw', 'spend'].includes(tx.type));
     if (ledgerTab === 'pending') filtered = filtered.filter(tx => tx.status === 'pending');
     else if (ledgerTab === 'verified') filtered = filtered.filter(tx => tx.status === 'success');
 
@@ -242,7 +242,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
                     <div>
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-lg font-black text-slate-900 tabular-nums">
-                          {tx.type === 'withdraw' ? '-' : '+'}{tx.amount.toLocaleString()}
+                          {['withdraw', 'spend'].includes(tx.type) ? '-' : '+'}{tx.amount.toLocaleString()}
                         </span>
                         <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Coins</span>
                       </div>

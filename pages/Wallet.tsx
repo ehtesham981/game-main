@@ -170,7 +170,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
    };
 
    const walletHistory = transactions
-      .filter(tx => tx.type === 'deposit' || tx.type === 'withdraw')
+      .filter(tx => tx.type === 'deposit' || tx.type === 'withdraw' || tx.type === 'spend')
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
    return (

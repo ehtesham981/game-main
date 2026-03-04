@@ -194,6 +194,86 @@ const App: React.FC = () => {
     await refreshUserBalance();
   };
 
+  const handleCreateTask = async (taskData: any) => {
+    const totalCost = taskData.reward * taskData.totalWorkers;
+
+    if (user.depositBalance < totalCost) {
+      alert("Insufficient deposit balance!");
+      return;
+    }
+
+    const newTask: Task = {
+      id: `TSK-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
+      ...taskData,
+      creatorId: user.id,
+      completedCount: 0,
+      status: 'active',
+      createdAt: new Date().toISOString()
+    };
+
+    const updatedUser = {
+      ...user,
+      depositBalance: user.depositBalance - totalCost,
+      createdTasks: [...(user.createdTasks || []), newTask.id]
+    };
+
+    const tx: Transaction = {
+      id: `CAM-${Math.random().toString(36).substr(2, 6).toUpperCase()}-${Date.now()}`,
+      userId: user.id,
+      taskId: newTask.id,
+      amount: totalCost,
+      type: 'spend',
+      method: `Campaign: ${newTask.title}`,
+      status: 'success',
+      date: new Date().toLocaleString()
+    };
+
+    try {
+      // 1. Update user
+      setUser(updatedUser);
+      await storage.setUser(updatedUser);
+
+      // 2. Add transaction
+      await storage.addTransaction(tx);
+
+      // 3. Save new task
+      const currentTasks = await storage.getTasks();
+      const updatedTasks = [newTask, ...currentTasks];
+      storage.setTasks(updatedTasks);
+
+      // 4. Update local state
+      setTasks(updatedTasks);
+
+      alert("Campaign launched successfully!");
+      navigateTo('my-campaigns');
+    } catch (error) {
+      console.error("Failed to create task:", error);
+      alert("Failed to launch campaign. Please try again.");
+    }
+  };
+
+  const handleDeleteTask = async (taskId: string) => {
+    try {
+      await storage.deleteTaskFromCloud(taskId);
+      setTasks(prev => prev.filter(t => t.id !== taskId));
+      alert("Campaign terminated and removed.");
+    } catch (error) {
+      console.error("Failed to delete task:", error);
+      alert("Failed to delete campaign.");
+    }
+  };
+
+  const handleUpdateTask = async (taskId: string, updates: Partial<Task>) => {
+    try {
+      await storage.updateTaskInCloud(taskId, updates);
+      setTasks(prev => prev.map(t => t.id === taskId ? { ...t, ...updates } : t));
+      alert("Campaign specifications updated.");
+    } catch (error) {
+      console.error("Failed to update task:", error);
+      alert("Failed to update campaign.");
+    }
+  };
+
   const navigateTo = (page: string) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -267,8 +347,27 @@ const App: React.FC = () => {
             />
           )}
           {currentPage === 'advertise' && user.isLoggedIn && <Advertise user={user} onRefresh={() => refreshUserBalance()} onNavigate={navigateTo} />}
-          {currentPage === 'create-task' && user.isLoggedIn && <CreateTask user={user} tasks={tasks} userDepositBalance={user.depositBalance} onDeleteTask={async () => { }} onUpdateTask={async () => { }} onCreate={() => { }} navigateTo={navigateTo} />}
-          {currentPage === 'my-campaigns' && user.isLoggedIn && <MyCampaigns user={user} tasks={tasks} transactions={transactions} onDeleteTask={() => { }} onUpdateTask={() => { }} onNavigate={navigateTo} />}
+          {currentPage === 'create-task' && user.isLoggedIn && (
+            <CreateTask
+              user={user}
+              tasks={tasks}
+              userDepositBalance={user.depositBalance}
+              onDeleteTask={handleDeleteTask}
+              onUpdateTask={handleUpdateTask}
+              onCreate={handleCreateTask}
+              navigateTo={navigateTo}
+            />
+          )}
+          {currentPage === 'my-campaigns' && user.isLoggedIn && (
+            <MyCampaigns
+              user={user}
+              tasks={tasks}
+              transactions={transactions}
+              onDeleteTask={handleDeleteTask}
+              onUpdateTask={handleUpdateTask}
+              onNavigate={navigateTo}
+            />
+          )}
           {currentPage === 'math-solver' && user.isLoggedIn && (
             <MathSolver
               user={user}
