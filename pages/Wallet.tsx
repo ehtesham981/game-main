@@ -29,9 +29,9 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
    const fileInputRef = useRef<HTMLInputElement>(null);
 
    // Updated Exchange Rates
-   const WITHDRAW_RATE = 4000; // 4000 Coins = $1
-   const DEPOSIT_RATE = 6000;  // 6000 Coins = $2 ($1 per 3000 coins)
-   const MIN_DEPOSIT = 6000;
+   const WITHDRAW_RATE = 4800; // 4800 Coins = $1 ($1.25 for 6000 coins)
+   const DEPOSIT_RATE = 5000;  // 5000 Coins = $1 ($2.00 for 10000 coins)
+   const MIN_DEPOSIT = 10000;
    const MIN_WITHDRAWAL = 6000;
 
    // External conversion multipliers (simulated live rates)
@@ -144,7 +144,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
          if (!account) return alert('Transaction ID (TxID) is required.');
          if (!proofImage) return alert('Payment proof screenshot is required.');
       } else {
-         if (isNaN(val) || val < MIN_WITHDRAWAL) return alert(`Minimum withdrawal amount: ${MIN_WITHDRAWAL.toLocaleString()} coins ($1.50)`);
+         if (isNaN(val) || val < MIN_WITHDRAWAL) return alert(`Minimum withdrawal amount: ${MIN_WITHDRAWAL.toLocaleString()} coins ($1.25)`);
          if (val > coins) return alert('Insufficient balance in your earning vault.');
          if (!withdrawName || !withdrawNumber) return alert('Complete account details are required.');
       }
@@ -211,13 +211,13 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                            </div>
                            <i className="fa-solid fa-equals text-indigo-500 text-xl"></i>
                            <div className="text-center px-6 py-4 bg-indigo-600 rounded-2xl shadow-xl shadow-indigo-900/40">
-                              <p className="text-3xl font-black text-white">$1.5</p>
+                              <p className="text-3xl font-black text-white">$1.25</p>
                               <p className="text-[9px] font-black text-indigo-200 uppercase">USD Rate</p>
                            </div>
                         </div>
                      </div>
                      <p className="mt-10 text-[10px] font-medium text-slate-400 uppercase tracking-widest leading-relaxed">
-                        Minimum withdrawal: 6,000 Coins ($1.5). Coins are converted to your preferred gateway currency at verified global rates.
+                        Minimum withdrawal: 6,000 Coins ($1.25). Coins are converted to your preferred gateway currency at verified global rates.
                      </p>
                   </div>
                   <i className="fa-solid fa-arrow-up-from-bracket absolute -right-12 -bottom-12 text-[15rem] text-white/5 -rotate-12 transition-transform group-hover:scale-110 duration-700"></i>
@@ -229,7 +229,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                         <h3 className="text-indigo-600 text-[10px] font-black uppercase tracking-[0.3em] mb-8">Deposit Protocol</h3>
                         <div className="flex items-center gap-6">
                            <div className="text-center px-6 py-4 bg-slate-50 rounded-2xl border border-slate-100">
-                              <p className="text-3xl font-black text-slate-900">6,000</p>
+                              <p className="text-3xl font-black text-slate-900">10,000</p>
                               <p className="text-[9px] font-black text-slate-400 uppercase">Coins</p>
                            </div>
                            <i className="fa-solid fa-equals text-slate-200 text-xl"></i>
@@ -240,7 +240,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                         </div>
                      </div>
                      <p className="mt-10 text-[10px] font-medium text-slate-500 uppercase tracking-widest leading-relaxed">
-                        Minimum deposit: 6,000 Coins ($2.00). Ad credits are synchronized instantly upon TxID verification.
+                        Minimum deposit: 10,000 Coins ($2.00). Ad credits are synchronized instantly upon TxID verification.
                      </p>
                   </div>
                   <i className="fa-solid fa-bullhorn absolute -right-12 -bottom-12 text-[15rem] text-slate-50 rotate-12 transition-transform group-hover:scale-110 duration-700"></i>
@@ -514,7 +514,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                            <div className="h-px bg-slate-200 w-full"></div>
                            <div className="flex justify-between items-center pt-2">
                               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Settlement Value</span>
-                              <span className="text-2xl font-black text-emerald-600">${(parseInt(amount) / WITHDRAW_RATE).toFixed(2)} USD</span>
+                              <span className="text-2xl font-black text-emerald-600">${(parseInt(amount) / (activeTab === 'deposit' ? DEPOSIT_RATE : WITHDRAW_RATE)).toFixed(2)} USD</span>
                            </div>
                         </div>
                         <div className="flex flex-col sm:flex-row gap-4">
