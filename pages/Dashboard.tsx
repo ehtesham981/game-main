@@ -80,9 +80,9 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
 
   return (
     <div className="pt-24 pb-20 min-h-screen bg-slate-50">
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-8 space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
+      <div className="dashboard-container animate-in fade-in slide-in-from-bottom-6 duration-700">
 
-        <header className="bg-white p-8 md:p-12 rounded-[2.5rem] border border-slate-200/60 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+        <header className="dashboard-card-primary flex flex-col lg:flex-row lg:items-center justify-between gap-8">
           <div className="flex items-center gap-6">
             <div className="relative group">
               <div className="w-20 h-20 bg-slate-900 rounded-[1.75rem] flex items-center justify-center text-white text-2xl shadow-2xl shadow-slate-300 transition-transform group-hover:scale-105 overflow-hidden">
@@ -116,13 +116,13 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-8 bg-slate-900 rounded-[3.5rem] p-10 md:p-14 text-white relative overflow-hidden shadow-3xl">
+          <div className="lg:col-span-8 dashboard-card-dark">
             <div className="relative z-10 flex flex-col h-full justify-between">
               <div className="flex flex-col sm:flex-row justify-between items-start gap-12">
                 <div>
                   <p className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em] mb-4">Earning Evaluation</p>
                   <div className="flex items-baseline gap-4 mb-6">
-                    <h2 className="text-7xl md:text-9xl font-black tracking-tighter leading-none">${earnings.usd}</h2>
+                    <h2 className="text-5xl md:text-7xl lg:text-9xl font-black tracking-tighter leading-none">${earnings.usd}</h2>
                     <span className="text-xl font-bold text-slate-500 uppercase tracking-widest">USD</span>
                   </div>
                   <div className="flex flex-wrap items-center gap-4">
@@ -134,15 +134,15 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
                 </div>
 
                 <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 w-full sm:w-auto">
-                  <div className="bg-white/5 p-6 rounded-[2rem] border border-white/5 backdrop-blur-md flex flex-col justify-center text-center">
+                  <div className="stat-box">
                     <p className="text-[8px] font-black uppercase text-slate-500 mb-2 tracking-widest">Vault Coins</p>
                     <p className="text-3xl font-black tabular-nums">{earnings.total.toLocaleString()}</p>
                   </div>
-                  <div className="bg-emerald-500/10 p-6 rounded-[2rem] border border-emerald-500/20 backdrop-blur-md flex flex-col justify-center text-center">
+                  <div className="stat-box-emerald">
                     <p className="text-[8px] font-black uppercase text-emerald-400 mb-2 tracking-widest">Ad Credits</p>
                     <p className="text-3xl font-black tabular-nums text-emerald-400">{user.depositBalance?.toLocaleString() || 0}</p>
                   </div>
-                  <div className="bg-white/5 p-6 rounded-[2rem] border border-white/5 backdrop-blur-md flex flex-col justify-center text-center">
+                  <div className="stat-box">
                     <p className="text-[8px] font-black uppercase text-slate-500 mb-2 tracking-widest">Ref Partners</p>
                     <p className="text-3xl font-black tabular-nums">{user.claimedReferrals?.length || 0}</p>
                   </div>
@@ -170,7 +170,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
             <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4 pointer-events-none opacity-50"></div>
           </div>
 
-          <div className="lg:col-span-4 bg-white p-10 rounded-[3rem] border border-slate-200/60 shadow-sm flex flex-col relative overflow-hidden">
+          <div className="lg:col-span-4 dashboard-card-primary flex flex-col relative overflow-hidden">
             <div className="relative z-10 mb-8">
               <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-2">Revenue Analysis</h3>
               <h4 className="text-2xl font-black text-slate-900 tracking-tighter">Activity Yield</h4>
@@ -200,8 +200,8 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
           </div>
         </div>
 
-        <div className="bg-white rounded-[3.5rem] border border-slate-200 shadow-sm overflow-hidden">
-          <div className="p-8 md:p-12 border-b border-slate-50 flex flex-col md:flex-row justify-between items-center bg-slate-50/20 gap-6">
+        <div className="income-analysis-container">
+          <div className="income-analysis-header">
             <div>
               <h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">Income Analysis</h3>
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Audit of yield and verification status</p>
@@ -234,7 +234,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
               </div>
             ) : (
               ledgerList.map((tx) => (
-                <div key={tx.id} className="p-8 hover:bg-slate-50/50 transition-all flex items-center justify-between group">
+                <div key={tx.id} className="p-6 md:p-8 hover:bg-slate-50/50 transition-all flex items-center justify-between group">
                   <div className="flex items-center gap-5">
                     <div className="w-14 h-14 bg-white border border-slate-100 rounded-2xl flex items-center justify-center text-xl shadow-sm group-hover:scale-110 transition-transform">
                       <i className={`fa-solid ${getActivityIcon(tx.type)}`}></i>

@@ -35,8 +35,8 @@ const PageLoader = () => (
 );
 
 const App: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState('home');
-  const [user, setUser] = useState<User>(storage.getUser());
+  const [currentPage, setCurrentPage] = useState('dashboard');
+  const [user, setUser] = useState<User>({ ...storage.getUser(), isLoggedIn: true });
   const [tasks, setTasks] = useState<Task[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>(storage.getTransactions());
   const [sessionConflict, setSessionConflict] = useState(false);
