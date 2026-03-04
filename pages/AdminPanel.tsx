@@ -6,7 +6,7 @@ import BackToDashboard from '../components/BackToDashboard';
 import NumericInput from '../components/NumericInput';
 
 interface AdminPanelProps {
-  initialView?: 'overview' | 'users' | 'history' | 'tasks' | 'finance' | 'reviews' | 'seo' | 'create-task' | 'freelance' | 'create-freelance';
+  initialView?: 'overview' | 'users' | 'history' | 'tasks' | 'finance' | 'reviews' | 'seo' | 'create-task' | 'freelance' | 'create-freelance' | 'referrals';
   onNavigate?: (page: string) => void;
 }
 
@@ -50,7 +50,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
           const allTxs = await storage.getAllGlobalTransactions();
           setTransactions(allTxs || []);
         }
-        if (['users', 'reviews', 'finance', 'history'].includes(view)) {
+        if (['users', 'reviews', 'finance', 'history', 'referrals'].includes(view)) {
           const allUsers = await storage.getAllUsers();
           setUsers(allUsers || []);
         }
@@ -88,6 +88,20 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
     return users.filter(u => u?.username?.toLowerCase().includes(s) || u?.id?.toLowerCase().includes(s) || u?.email?.toLowerCase().includes(s));
   }, [users, searchQuery]);
 
+  const referralData = useMemo(() => {
+    const referrers = users.filter(u => {
+      return users.some(other => other.referredBy?.toUpperCase() === u.id.toUpperCase());
+    });
+
+    return referrers.map(referrer => {
+      const referredUsers = users.filter(u => u.referredBy?.toUpperCase() === referrer.id.toUpperCase());
+      return {
+        referrer,
+        referredUsers
+      };
+    }).filter(item => item.referredUsers.length > 0);
+  }, [users]);
+
   const tabs = [
     { id: 'overview', label: 'Dashboard', icon: 'fa-chart-pie' },
     { id: 'users', label: 'Users', icon: 'fa-users' },
@@ -96,6 +110,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
     { id: 'freelance', label: 'Freelance Hub', icon: 'fa-briefcase' },
     { id: 'create-freelance', label: 'Post Project', icon: 'fa-folder-plus' },
     { id: 'finance', label: 'Finance', icon: 'fa-wallet', badge: stats.pendingFinance },
+    { id: 'referrals', label: 'Referrals', icon: 'fa-people-group' },
     { id: 'create-task', label: 'Create Campaign', icon: 'fa-plus' },
     { id: 'history', label: 'Logs', icon: 'fa-clock' }
   ];
@@ -1072,6 +1087,82 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                       </td>
                     </tr>
                   ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {view === 'referrals' && (
+          <div className="bg-white rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
+            <div className="p-10 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center bg-slate-50/30 gap-6">
+              <div>
+                <h2 className="text-2xl font-black text-slate-900 uppercase">Referral Network</h2>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">{referralData.length} active referrers</p>
+              </div>
+              <input type="text" placeholder="Search Referrers..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full sm:w-80 px-6 py-4 bg-white border border-slate-200 rounded-2xl text-[11px] font-bold outline-none" />
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left min-w-[900px]">
+                <thead className="bg-slate-50 text-[10px] font-black uppercase text-slate-400 border-b border-slate-100">
+                  <tr>
+                    <th className="px-10 py-6">Referrer Identity</th>
+                    <th className="px-6 py-6 font-black uppercase">Referred Members</th>
+                    <th className="px-10 py-6 text-right">Metrics</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50">
+                  {referralData
+                    .filter(item => !searchQuery || item.referrer.username.toLowerCase().includes(searchQuery.toLowerCase()) || item.referrer.email.toLowerCase().includes(searchQuery.toLowerCase()) || item.referrer.id.toLowerCase().includes(searchQuery.toLowerCase()))
+                    .map(({ referrer, referredUsers }) => (
+                      <tr key={referrer.id} className="hover:bg-slate-50/50 transition-colors">
+                        <td className="px-10 py-8 align-top">
+                          <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-black text-xs uppercase shadow-lg shadow-indigo-100">
+                              {referrer.username.charAt(0)}
+                            </div>
+                            <div>
+                              <p className="text-sm font-black text-slate-900">{referrer.username}</p>
+                              <p className="text-[10px] text-slate-400 font-mono">{referrer.email}</p>
+                              <p className="text-[9px] text-indigo-400 font-bold uppercase mt-1">ID: {referrer.id}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-8">
+                          <div className="space-y-4">
+                            {referredUsers.map(u => (
+                              <div key={u.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 group/item">
+                                <div className="flex items-center gap-4">
+                                  <div className="w-8 h-8 bg-white border border-slate-200 rounded-lg flex items-center justify-center text-[10px] font-black text-slate-400 uppercase">
+                                    {u.username.charAt(0)}
+                                  </div>
+                                  <div>
+                                    <p className="text-[11px] font-black text-slate-700">{u.username}</p>
+                                    <p className="text-[9px] text-slate-400 font-medium">{u.email}</p>
+                                  </div>
+                                </div>
+                                <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest bg-emerald-50 px-2 py-0.5 rounded">Joined</span>
+                              </div>
+                            ))}
+                          </div>
+                        </td>
+                        <td className="px-10 py-8 text-right align-top">
+                          <div className="inline-block px-6 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest">
+                            {referredUsers.length} <span className="opacity-50 ml-1">Refers</span>
+                          </div>
+                          <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-4">Growth Index: +{(referredUsers.length * 100 / users.length).toFixed(1)}%</p>
+                        </td>
+                      </tr>
+                    ))}
+                  {referralData.length === 0 && (
+                    <tr>
+                      <td colSpan={3} className="px-10 py-32 text-center text-slate-300 font-black uppercase tracking-widest text-xs">
+                        <i className="fa-solid fa-people-group text-5xl mb-6 opacity-20"></i>
+                        <br />
+                        No referral data nodes located in mainnet
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
