@@ -120,7 +120,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
                 <div>
                   <p className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em] mb-4">Earning Evaluation</p>
                   <div className="flex items-baseline gap-2 sm:gap-4 mb-6">
-                    <h2 className="text-3xl sm:text-5xl md:text-7xl lg:text-9xl font-black tracking-tighter leading-none">${earnings.usd}</h2>
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black tracking-tighter leading-none truncate whitespace-nowrap" title={`$${earnings.usd}`}>${earnings.usd}</h2>
                     <span className="text-lg sm:text-xl font-bold text-slate-500 uppercase tracking-widest">USD</span>
                   </div>
                   <div className="flex flex-wrap items-center gap-4">
