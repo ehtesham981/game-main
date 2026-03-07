@@ -17,7 +17,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userBalance, onSpin, transactions
 
   const SPIN_COST = 0;
   const DAILY_LIMIT = 5;
-  const REWARDS = [0.01, 0.06, 0.09, 0.04, 0.09, 0.03];
+  const REWARDS = [0.002, 0.001, 0.003, 0.005, 0.004];
   const COLORS = [
     'bg-indigo-600', 'bg-slate-900', 'bg-amber-500',
     'bg-rose-500', 'bg-indigo-800', 'bg-emerald-600'
@@ -163,7 +163,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userBalance, onSpin, transactions
                           transformOrigin: 'bottom center'
                         }}
                       >
-                        <span className="text-2xl md:text-3xl tracking-tighter transform rotate-180 mb-6 drop-shadow-lg">${rew.toFixed(2)}</span>
+                        <span className="text-2xl md:text-3xl tracking-tighter transform rotate-180 mb-6 drop-shadow-lg">${rew.toFixed(3)}</span>
                         <i className="fa-solid fa-bolt text-xs md:text-base text-white/30 transform rotate-180"></i>
                       </div>
                     </div>
@@ -183,7 +183,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userBalance, onSpin, transactions
               {result !== null && !isSpinning && (
                 <div className="mb-12 animate-in zoom-in duration-500">
                   <div className={`text-6xl md:text-8xl font-black tracking-tighter drop-shadow-2xl ${result > 0 ? 'text-amber-500' : 'text-slate-400 opacity-50'}`}>
-                    {result > 0 ? `+$${result.toFixed(2)}` : '$0.00'}
+                    {result > 0 ? `+$${result.toFixed(3)}` : '$0.000'}
                   </div>
                   <div className="text-[12px] font-black text-slate-900 uppercase tracking-[0.6em] mt-4 flex items-center justify-center gap-3">
                     <span className="w-8 h-px bg-slate-200"></span>
