@@ -29,8 +29,8 @@ const Wallet: React.FC<WalletProps> = ({ balance = 0, depositBalance = 0, onActi
    const fileInputRef = useRef<HTMLInputElement>(null);
 
    // Updated Exchange Rates
-   const MIN_DEPOSIT = 2; // $2
-   const MIN_WITHDRAWAL = 1.25; // $1.25
+   const MIN_DEPOSIT = 1.00;
+   const MIN_WITHDRAWAL = 0.50;
 
    // External conversion multipliers (simulated live rates)
    const PKR_RATE = 280;
@@ -40,9 +40,9 @@ const Wallet: React.FC<WalletProps> = ({ balance = 0, depositBalance = 0, onActi
    const totalWorthUSD = balance;
 
    const currencyValuations = [
-      { label: 'US Dollar', code: 'USD', value: totalWorthUSD.toFixed(5), icon: 'fa-dollar-sign', color: 'text-emerald-500', bg: 'bg-emerald-50' },
+      { label: 'US Dollar', code: 'USD', value: totalWorthUSD.toFixed(3), icon: 'fa-dollar-sign', color: 'text-emerald-500', bg: 'bg-emerald-50' },
       { label: 'Pakistani Rupee', code: 'PKR', value: (totalWorthUSD * PKR_RATE).toLocaleString(undefined, { maximumFractionDigits: 0 }), icon: 'fa-rupee-sign', color: 'text-indigo-600', bg: 'bg-indigo-50' },
-      { label: 'Tether (TRC20)', code: 'USDT', value: totalWorthUSD.toFixed(5), icon: 'fa-brands fa-ethereum', color: 'text-teal-500', bg: 'bg-teal-50' },
+      { label: 'Tether (TRC20)', code: 'USDT', value: totalWorthUSD.toFixed(3), icon: 'fa-brands fa-ethereum', color: 'text-teal-500', bg: 'bg-teal-50' },
       { label: 'Euro', code: 'EUR', value: (totalWorthUSD * EUR_RATE).toFixed(2), icon: 'fa-euro-sign', color: 'text-blue-600', bg: 'bg-blue-50' },
       { label: 'British Pound', code: 'GBP', value: (totalWorthUSD * GBP_RATE).toFixed(2), icon: 'fa-sterling-sign', color: 'text-amber-600', bg: 'bg-amber-50' },
    ];
@@ -459,7 +459,7 @@ const Wallet: React.FC<WalletProps> = ({ balance = 0, depositBalance = 0, onActi
                                     </span>
                                  </td>
                                  <td className={`px-6 py-6 font-black text-base ${tx.type === 'deposit' ? 'text-emerald-600' : 'text-slate-900'}`}>
-                                    {tx.type === 'deposit' ? '+' : '-'}{tx.amount.toLocaleString(undefined, { minimumFractionDigits: 5 })} <span className="text-[9px] opacity-40">USD</span>
+                                    {tx.type === 'deposit' ? '+' : '-'}{tx.amount.toLocaleString(undefined, { minimumFractionDigits: 3 })} <span className="text-[9px] opacity-40">USD</span>
                                  </td>
                                  <td className="px-6 py-6">
                                     <div className="flex items-center gap-2">

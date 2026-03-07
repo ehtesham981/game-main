@@ -137,7 +137,7 @@ const MathSolver: React.FC<MathSolverProps> = ({ user, onSolve, transactions, on
           </div>
           <h2 className="text-5xl font-black tracking-tighter mb-6 uppercase">Calculation Complete</h2>
           <p className="text-slate-400 text-lg font-medium leading-relaxed max-w-sm mx-auto mb-12">
-            You have earned <span className="text-emerald-400 font-black">${earnedBalance.toFixed(4)} USD</span>. The node is now entering a 24-hour cooldown.
+            You have earned <span className="text-emerald-400 font-black">${earnedBalance.toFixed(3)} USD</span>. The node is now entering a 24-hour cooldown.
           </p>
           <div className="flex gap-4">
             <button
@@ -160,7 +160,7 @@ const MathSolver: React.FC<MathSolverProps> = ({ user, onSolve, transactions, on
           </div>
           <div className="text-right">
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Vault Yield</p>
-            <div className="text-2xl font-black text-emerald-600">+${earnedBalance.toFixed(4)} <span className="text-[10px] opacity-40">USD</span></div>
+            <div className="text-2xl font-black text-emerald-600">+${earnedBalance.toFixed(3)} <span className="text-[10px] opacity-40">USD</span></div>
           </div>
         </div>
 
@@ -270,7 +270,7 @@ const MathSolver: React.FC<MathSolverProps> = ({ user, onSolve, transactions, on
                           <i className="fa-solid fa-calculator"></i>
                         </div>
                         <div>
-                          <div className="text-sm font-black text-slate-900 tracking-tight">+${tx.amount.toFixed(4)} <span className="text-[9px] opacity-40 uppercase font-black">USD</span></div>
+                          <div className="text-sm font-black text-slate-900 tracking-tight">+${tx.amount.toFixed(3)} <span className="text-[9px] opacity-40 uppercase font-black">USD</span></div>
                           <div className="text-[8px] text-slate-400 font-black uppercase tracking-widest mt-0.5">{tx.date.split(',')[0]}</div>
                         </div>
                       </div>
@@ -290,7 +290,7 @@ const MathSolver: React.FC<MathSolverProps> = ({ user, onSolve, transactions, on
                   <span className="text-3xl font-black tabular-nums">{mathHistory.length}</span>
                   <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Calculations</span>
                 </div>
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Total Math Yield: <span className="text-emerald-400">+${mathHistory.reduce((sum, tx) => sum + tx.amount, 0).toFixed(4)} USD</span></p>
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Total Math Yield: <span className="text-emerald-400">+${mathHistory.reduce((sum, tx) => sum + tx.amount, 0).toFixed(3)} USD</span></p>
               </div>
               <i className="fa-solid fa-bolt absolute -right-4 -bottom-4 text-6xl text-white/5 -rotate-12"></i>
             </div>

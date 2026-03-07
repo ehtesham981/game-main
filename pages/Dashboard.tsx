@@ -19,7 +19,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
 
   const earnings = useMemo(() => {
     const total = user.balance || 0;
-    const usd = total.toFixed(5);
+    const usd = total.toFixed(3);
     const pending = transactions
       .filter(tx => tx.type === 'earn' && tx.status === 'pending')
       .reduce((sum, tx) => sum + tx.amount, 0);
@@ -27,7 +27,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
     return { total, usd, pending };
   }, [user.balance, transactions]);
 
-  const progressToNextDollar = (earnings.total % 1) * 100;
+  const progressToNextMilestone = ((earnings.total % 0.5) / 0.5) * 100;
 
   const ledgerList = useMemo(() => {
     let filtered = transactions.filter(tx => ['earn', 'spin', 'referral_claim', 'math_reward', 'deposit', 'withdraw', 'spend'].includes(tx.type));
@@ -153,12 +153,12 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400 block mb-1">Earning Trajectory</span>
                     <span className="text-xs font-bold text-slate-400">Next Withdraw Milestone</span>
                   </div>
-                  <span className="text-sm font-black text-white">{Math.floor(progressToNextDollar)}%</span>
+                  <span className="text-sm font-black text-white">{Math.floor(progressToNextMilestone)}%</span>
                 </div>
                 <div className="w-full h-4 bg-white/5 rounded-full overflow-hidden border border-white/10 p-1">
                   <div
                     className="h-full bg-indigo-500 rounded-full transition-all duration-1000 shadow-[0_0_25px_rgba(79,70,229,0.5)] relative overflow-hidden"
-                    style={{ width: `${progressToNextDollar}%` }}
+                    style={{ width: `${progressToNextMilestone}%` }}
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-[shimmer_2s_infinite]"></div>
                   </div>
@@ -240,7 +240,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
                     <div>
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-lg font-black text-slate-900 tabular-nums">
-                          {['withdraw', 'spend'].includes(tx.type) ? '-' : '+'}${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 5 })}
+                          {['withdraw', 'spend'].includes(tx.type) ? '-' : '+'}${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 3 })}
                         </span>
                         <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">USD</span>
                       </div>

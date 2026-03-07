@@ -236,7 +236,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userBalance, onSpin, transactions
                           <i className={`fa-solid ${tx.amount > 0.01 ? 'fa-crown' : 'fa-dollar-sign'}`}></i>
                         </div>
                         <div>
-                          <div className="text-base font-black text-slate-900 tracking-tight">+${tx.amount.toFixed(5)} <span className="text-[10px] opacity-40 uppercase">USD</span></div>
+                          <div className="text-base font-black text-slate-900 tracking-tight">+${tx.amount.toFixed(3)} <span className="text-[10px] opacity-40 uppercase">USD</span></div>
                           <div className="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-1">{tx.date.split(',')[0]}</div>
                         </div>
                       </div>
