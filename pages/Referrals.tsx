@@ -155,7 +155,7 @@ const Referrals: React.FC<ReferralsProps> = ({ user, onClaim, onNavigate }) => {
                   <div className="flex items-baseline gap-4 mb-4 justify-center md:justify-start">
                     <h2 className="text-7xl md:text-9xl font-black tracking-tighter leading-none tabular-nums">
                       $ {(claimedCount * REFERRAL_REWARD +
-                        (user.claimedReferrals?.includes('milestone_3_bonus') ? 0.15 : 0) +
+                        (user.claimedReferrals?.includes('milestone_3_bonus') ? 0.02 : 0) +
                         (user.claimedReferrals?.includes('milestone_5_bonus') ? 0.07 : 0) +
                         (user.claimedReferrals?.includes('milestone_150_bonus') ? 0.04 : 0)).toFixed(3)}
                     </h2>
@@ -216,7 +216,7 @@ const Referrals: React.FC<ReferralsProps> = ({ user, onClaim, onNavigate }) => {
                       ) : (
                         <i className="fa-solid fa-gift"></i>
                       )}
-                      {claimingId === 'milestone_3_bonus' ? 'SYNCING...' : 'CLAIM $0.15 USD'}
+                      {claimingId === 'milestone_3_bonus' ? 'SYNCING...' : 'CLAIM $0.020 USD'}
                     </button>
                   )}
                 </div>
@@ -408,7 +408,7 @@ const Referrals: React.FC<ReferralsProps> = ({ user, onClaim, onNavigate }) => {
               <div className="space-y-10">
                 {[
                   { t: 'Instant Bounty', d: `Claim $0.007 for every successful referral as soon as they join.`, i: 'fa-bolt' },
-                  { t: 'Squad Milestone', d: 'Reach 3 successful referrals to claim an extra $0.15 Bonus.', i: 'fa-trophy' },
+                  { t: 'Squad Milestone', d: 'Reach 3 successful referrals to claim an extra $0.02 Bonus.', i: 'fa-trophy' },
                   { t: 'Elite Milestone', d: 'Reach 5 successful referrals to claim an extra $0.07 Bonus.', i: 'fa-crown' },
                   { t: 'Mega Milestone', d: 'Reach 150 successful referrals to claim an extra $0.04 Bonus.', i: 'fa-flag-checkered' }
                 ].map((rule, i) => (
