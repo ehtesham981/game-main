@@ -17,10 +17,10 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userBalance, onSpin, transactions
 
   const SPIN_COST = 0;
   const DAILY_LIMIT = 5;
-  const REWARDS = [0.005, 0.002, 0.010, 0.001, 0.020, 0, 0.003, 0.008];
+  const REWARDS = [0.01, 0.06, 0.09, 0.04, 0.09, 0.03];
   const COLORS = [
-    'bg-indigo-600', 'bg-slate-900', 'bg-indigo-500', 'bg-indigo-800',
-    'bg-indigo-700', 'bg-emerald-500', 'bg-slate-400', 'bg-indigo-400'
+    'bg-indigo-600', 'bg-slate-900', 'bg-amber-500',
+    'bg-rose-500', 'bg-indigo-800', 'bg-emerald-600'
   ];
 
   const spinHistory = transactions.filter(tx => tx.type === 'spin');
@@ -82,16 +82,16 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userBalance, onSpin, transactions
         {onNavigate && <BackToDashboard onNavigate={onNavigate} />}
 
         {/* Header Section */}
-        <div className="text-center mb-20 max-w-2xl mx-auto mt-12">
-          <div className="inline-flex items-center gap-3 px-5 py-2 bg-yellow-100 text-yellow-700 rounded-full text-[10px] font-black uppercase tracking-[0.4em] mb-6 border border-yellow-200 shadow-sm">
-            <i className="fa-solid fa-crown"></i>
-            Authorized Reward Logic
+        <div className="text-center mb-24 max-w-2xl mx-auto mt-12 animate-in fade-in slide-in-from-top-4 duration-1000">
+          <div className="inline-flex items-center gap-3 px-6 py-2.5 bg-amber-50 text-amber-600 rounded-full text-[10px] font-black uppercase tracking-[0.4em] mb-8 border border-amber-200 shadow-sm shadow-amber-100">
+            <i className="fa-solid fa-gem animate-pulse"></i>
+            Premium Yield Sequence
           </div>
-          <h1 className="text-5xl md:text-7xl font-black text-slate-900 mb-6 tracking-tighter leading-none">
-            The <span className="text-indigo-600">Grand</span> Vault Wheel
+          <h1 className="text-6xl md:text-8xl font-black text-slate-900 mb-8 tracking-tighter leading-none">
+            Gold <span className="text-indigo-600">Vault</span> Node
           </h1>
-          <p className="text-slate-500 font-medium text-lg leading-relaxed">
-            Synchronize your luck with our global reward node. Zero-cost entry, maximum USD potential. Reset occurs every 24 operational hours.
+          <p className="text-slate-500 font-bold text-lg leading-relaxed px-4">
+            Authorized contractor reward gateway. Spin the high-yield nodal wheel for secured USD credit synchronization.
           </p>
         </div>
 
@@ -137,9 +137,10 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userBalance, onSpin, transactions
               </div>
 
               {/* The Mechanical Wheel */}
-              <div className="relative w-80 h-80 md:w-[500px] md:h-[500px] rounded-full p-6 md:p-10 bg-slate-900 border-[16px] border-slate-900 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.6)] group">
+              <div className="relative w-84 h-84 md:w-[550px] md:h-[550px] rounded-full p-8 md:p-12 bg-slate-900 border-[20px] border-slate-900 shadow-[0_60px_120px_-30px_rgba(0,0,0,0.7)] group">
                 {/* Visual Depth Decoration */}
-                <div className="absolute inset-4 md:inset-8 rounded-full border-4 border-white/5 pointer-events-none z-10 shadow-inner"></div>
+                <div className="absolute inset-4 md:inset-8 rounded-full border-4 border-indigo-500/10 pointer-events-none z-10 shadow-inner"></div>
+                <div className="absolute -inset-2 rounded-full border border-white/5 pointer-events-none z-0"></div>
 
                 <div
                   className="w-full h-full rounded-full relative overflow-hidden transition-transform duration-[4500ms] cubic-bezier(0.1, 0, 0.1, 1)"
@@ -152,14 +153,14 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userBalance, onSpin, transactions
                       style={{ transform: `rotate(${(360 / REWARDS.length) * i}deg)` }}
                     >
                       <div
-                        className={`absolute top-0 left-1/2 -translate-x-1/2 h-1/2 w-[45%] flex flex-col items-center pt-12 md:pt-20 font-black ${COLORS[i % COLORS.length]} text-white border-r border-white/5`}
+                        className={`absolute top-0 left-1/2 -translate-x-1/2 h-1/2 w-[52%] flex flex-col items-center pt-16 md:pt-24 font-black ${COLORS[i % COLORS.length]} text-white border-r border-white/10`}
                         style={{
                           clipPath: 'polygon(50% 100%, 0 0, 100% 0)',
                           transformOrigin: 'bottom center'
                         }}
                       >
-                        <span className="text-xl md:text-2xl tracking-tighter transform rotate-180 mb-4">${rew.toFixed(5)}</span>
-                        <i className="fa-solid fa-dollar-sign text-sm md:text-lg text-white/20 transform rotate-180"></i>
+                        <span className="text-2xl md:text-3xl tracking-tighter transform rotate-180 mb-6 drop-shadow-lg">${rew.toFixed(2)}</span>
+                        <i className="fa-solid fa-bolt text-xs md:text-base text-white/30 transform rotate-180"></i>
                       </div>
                     </div>
                   ))}
@@ -177,10 +178,14 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userBalance, onSpin, transactions
             <div className="mt-16 text-center w-full max-w-sm">
               {result !== null && !isSpinning && (
                 <div className="mb-12 animate-in zoom-in duration-500">
-                  <div className={`text-5xl font-black tracking-tighter ${result > 0 ? 'text-emerald-500' : 'text-slate-400 opacity-50'}`}>
-                    {result > 0 ? `+$${result.toFixed(5)} USD` : '$0.00000 USD'}
+                  <div className={`text-6xl md:text-8xl font-black tracking-tighter drop-shadow-2xl ${result > 0 ? 'text-amber-500' : 'text-slate-400 opacity-50'}`}>
+                    {result > 0 ? `+$${result.toFixed(2)}` : '$0.00'}
                   </div>
-                  <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mt-3">Vault Synchronization Successful</div>
+                  <div className="text-[12px] font-black text-slate-900 uppercase tracking-[0.6em] mt-4 flex items-center justify-center gap-3">
+                    <span className="w-8 h-px bg-slate-200"></span>
+                    GOLD CREDIT SECURED
+                    <span className="w-8 h-px bg-slate-200"></span>
+                  </div>
                 </div>
               )}
 
