@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Transaction } from '../types';
 import BackToDashboard from '../components/BackToDashboard';
 
@@ -23,7 +23,11 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userBalance, onSpin, transactions
     'bg-rose-500', 'bg-indigo-800', 'bg-emerald-600'
   ];
 
-  const spinHistory = transactions.filter(tx => tx.type === 'spin');
+  const spinHistory = useMemo(() => {
+    return transactions
+      .filter(tx => tx.type === 'spin' || (tx.type === 'earn' && tx.method === 'Spin Wheel'))
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [transactions]);
   const canSpin = spinStats.count < DAILY_LIMIT && !isSpinning;
 
   useEffect(() => {
@@ -225,7 +229,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userBalance, onSpin, transactions
                     <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No activity</p>
                   </div>
                 ) : (
-                  spinHistory.slice(0, 10).map((tx) => (
+                  spinHistory.slice(0, 10).map((tx: Transaction) => (
                     <div key={tx.id} className="p-8 flex items-center justify-between hover:bg-slate-50 transition-all group">
                       <div className="flex items-center gap-5">
                         <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-lg border shadow-sm transition-transform group-hover:scale-110 ${tx.amount > 0.01 ? 'bg-yellow-50 text-yellow-600 border-yellow-100' : 'bg-indigo-50 text-indigo-400 border-indigo-100'}`}>

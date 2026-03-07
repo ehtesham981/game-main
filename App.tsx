@@ -435,7 +435,7 @@ const App: React.FC = () => {
                     id: `SPIN-${Math.random().toString(36).substr(2, 6).toUpperCase()}-${Date.now()}`,
                     userId: user.id,
                     amount: w - c,
-                    type: 'spin',
+                    type: 'earn',
                     method: 'Spin Wheel',
                     status: 'success',
                     date: new Date().toLocaleString()

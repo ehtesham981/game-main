@@ -44,7 +44,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
     transactions
       .filter(tx => tx.status === 'success')
       .forEach(tx => {
-        if (tx.type === 'spin') counts['Lucky Spin'] += tx.amount;
+        if (tx.type === 'spin' || tx.method === 'Spin Wheel') counts['Lucky Spin'] += tx.amount;
         else if (tx.type === 'referral_claim') counts['Referrals'] += tx.amount;
         else if (tx.type === 'math_reward') counts['Math Solver'] += tx.amount;
       });
@@ -53,8 +53,8 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
 
   const maxActivityValue = Math.max(...(Object.values(activityStats) as number[]), 1);
 
-  const getActivityIcon = (type: string = '') => {
-    if (type === 'spin') return 'fa-clover text-emerald-500';
+  const getActivityIcon = (type: string = '', method: string = '') => {
+    if (type === 'spin' || method === 'Spin Wheel') return 'fa-clover text-emerald-500';
     if (type === 'referral_claim') return 'fa-users text-blue-500';
     if (type === 'math_reward') return 'fa-calculator text-indigo-500';
     if (type === 'deposit') return 'fa-building-columns text-emerald-600';
@@ -235,7 +235,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
                 <div key={tx.id} className="p-6 md:p-8 hover:bg-slate-50/50 transition-all flex items-center justify-between group">
                   <div className="flex items-center gap-5">
                     <div className="w-14 h-14 bg-white border border-slate-100 rounded-2xl flex items-center justify-center text-xl shadow-sm group-hover:scale-110 transition-transform">
-                      <i className={`fa-solid ${getActivityIcon(tx.type)}`}></i>
+                      <i className={`fa-solid ${getActivityIcon(tx.type, tx.method)}`}></i>
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-1">
