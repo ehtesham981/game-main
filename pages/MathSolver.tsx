@@ -75,7 +75,7 @@ const MathSolver: React.FC<MathSolverProps> = ({ user, onSolve, transactions, on
     const ans = parseInt(userAnswer);
     if (ans === questions[currentIndex].a) {
       setIsCorrect(true);
-      const questionReward = 0.0002;
+      const questionReward = 0.003;
       setEarnedBalance(prev => prev + questionReward);
 
       const isLast = currentIndex === questions.length - 1;
@@ -84,7 +84,7 @@ const MathSolver: React.FC<MathSolverProps> = ({ user, onSolve, transactions, on
       setTimeout(() => {
         if (!isLast) {
           const nextIndex = currentIndex + 1;
-          const nextBalance = earnedBalance + 0.0002;
+          const nextBalance = earnedBalance + 0.003;
           setCurrentIndex(nextIndex);
           localStorage.setItem('math_current_index', nextIndex.toString());
           localStorage.setItem('math_earned_balance', nextBalance.toString());
@@ -233,7 +233,7 @@ const MathSolver: React.FC<MathSolverProps> = ({ user, onSolve, transactions, on
             Math <span className="text-indigo-600">Solver</span>
           </h1>
           <p className="text-slate-500 font-medium text-lg leading-relaxed">
-            Solve easy equations to generate USD yield. Each correct calculation credits $0.0002 to your vault instantly.
+            Solve easy equations to generate USD yield. Each correct calculation credits $0.003 to your vault instantly.
           </p>
         </div>
 
