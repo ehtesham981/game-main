@@ -65,13 +65,18 @@ const App: React.FC = () => {
         }
 
         // New One-time cleanup: Remove all transaction history as requested
-        const EARNINGS_CLEARED_KEY = 'history_wiped_02738';
+        const EARNINGS_CLEARED_KEY = 'final_wipe_usd_v1';
         if (!localStorage.getItem(EARNINGS_CLEARED_KEY)) {
           await storage.clearGlobalEarnings();
           await storage.clearGlobalUserCompletedTasks();
           setTransactions([]);
+          if (user.isLoggedIn) {
+            const updatedUser = { ...user, completedTasks: [] };
+            setUser(updatedUser);
+            await storage.setUser(updatedUser);
+          }
           localStorage.setItem(EARNINGS_CLEARED_KEY, 'true');
-          console.log("All earn history and completed task records have been cleared.");
+          console.log("Global cleanup executed: Earnings, tasks, and history wiped.");
         }
 
         if (user.isLoggedIn) {
