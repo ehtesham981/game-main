@@ -89,13 +89,13 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userBalance, onSpin, transactions
         <div className="text-center mb-24 max-w-2xl mx-auto mt-12 animate-in fade-in slide-in-from-top-4 duration-1000">
           <div className="inline-flex items-center gap-3 px-6 py-2.5 bg-amber-50 text-amber-600 rounded-full text-[10px] font-black uppercase tracking-[0.4em] mb-8 border border-amber-200 shadow-sm shadow-amber-100">
             <i className="fa-solid fa-gem animate-pulse"></i>
-            Premium Yield Sequence
+            Earn 0.020$ Everyday
           </div>
           <h1 className="text-6xl md:text-8xl font-black text-slate-900 mb-8 tracking-tighter leading-none">
-            Gold <span className="text-indigo-600">Vault</span> Node
+            Spin <span className="text-indigo-600">Dollers </span> Everyday
           </h1>
           <p className="text-slate-500 font-bold text-lg leading-relaxed px-4">
-            Authorized contractor reward gateway. Spin the high-yield nodal wheel for secured USD credit synchronization.
+            Spin the high-yield nodal wheel for secured USD credit Earn.
           </p>
         </div>
 
