@@ -448,7 +448,7 @@ export default function Tasks({ user, tasks, transactions, onComplete, navigateT
                   onClick={() => setIsSubmittingProof(true)}
                   className="w-full py-8 bg-slate-900 text-white rounded-[2.5rem] font-black text-xs uppercase tracking-[0.4em] shadow-2xl hover:bg-indigo-600 transition-all active:scale-95 flex items-center justify-center gap-4"
                 >
-                  Initialize Completion <i className="fa-solid fa-bolt"></i>
+                  Click and complete <i className="fa-solid fa-bolt"></i>
                 </button>
               )}
             </div>
