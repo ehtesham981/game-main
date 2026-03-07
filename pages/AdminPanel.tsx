@@ -116,35 +116,37 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 pt-32 pb-20">
-      <div className="max-w-[1600px] mx-auto px-6 mb-12">
+    <div className="min-h-screen bg-slate-50 pt-24 md:pt-32 pb-20">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 mb-12">
 
         {onNavigate && <BackToDashboard onNavigate={onNavigate} />}
 
-        <div className="bg-slate-900 rounded-[3rem] p-8 md:p-10 border border-slate-800 shadow-2xl flex flex-col xl:flex-row justify-between items-center gap-10 relative overflow-hidden mt-12">
-          <div className="flex items-center gap-6 relative z-10">
-            <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-2xl">
+        <div className="bg-slate-900 rounded-[2rem] sm:rounded-[3rem] p-6 md:p-10 border border-slate-800 shadow-2xl flex flex-col xl:flex-row justify-between items-center gap-8 md:gap-10 relative overflow-hidden mt-8 md:mt-12">
+          <div className="flex items-center gap-4 sm:gap-6 relative z-10 w-full xl:w-auto">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-indigo-600 rounded-xl sm:rounded-2xl flex items-center justify-center text-white text-xl sm:text-2xl shadow-2xl shrink-0">
               <i className={`fa-solid ${isSyncing ? 'fa-sync fa-spin' : 'fa-user-shield'}`}></i>
             </div>
             <div>
-              <h1 className="text-3xl font-black text-white tracking-tighter uppercase">Admin Hub</h1>
+              <h1 className="text-xl sm:text-3xl font-black text-white tracking-tighter uppercase">Admin Hub</h1>
               <div className="flex items-center gap-2 mt-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                 <span className="text-[8px] font-black uppercase tracking-widest text-slate-400">Live Management</span>
               </div>
             </div>
           </div>
-          <div className="flex bg-white/5 p-1.5 rounded-2xl border border-white/10 overflow-x-auto no-scrollbar relative z-10">
-            {tabs.map(tab => (
-              <button key={tab.id} onClick={() => setView(tab.id as any)} className={`relative flex items-center gap-2.5 px-6 py-3.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${view === tab.id ? 'bg-white text-slate-900 shadow-xl' : 'text-slate-400 hover:text-white'}`}>
-                <i className={`fa-solid ${tab.icon}`}></i> {tab.label}
-                {tab.badge !== undefined && tab.badge > 0 && <span className="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 text-white text-[8px] font-black flex items-center justify-center rounded-full border border-slate-900">{tab.badge}</span>}
-              </button>
-            ))}
+          <div className="flex w-full overflow-x-auto no-scrollbar bg-white/5 p-1.5 rounded-2xl border border-white/10 relative z-10">
+            <div className="flex items-center gap-1 min-w-max">
+              {tabs.map(tab => (
+                <button key={tab.id} onClick={() => setView(tab.id as any)} className={`relative flex items-center gap-2.5 px-4 sm:px-6 py-3 sm:py-3.5 rounded-xl text-[8px] sm:text-[9px] font-black uppercase tracking-widest transition-all ${view === tab.id ? 'bg-white text-slate-900 shadow-xl' : 'text-slate-400 hover:text-white'}`}>
+                  <i className={`fa-solid ${tab.icon}`}></i> {tab.label}
+                  {tab.badge !== undefined && tab.badge > 0 && <span className="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 text-white text-[8px] font-black flex items-center justify-center rounded-full border border-slate-900">{tab.badge}</span>}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
-      <div className="max-w-[1600px] mx-auto px-6">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
         {view === 'overview' && (
           <div className="space-y-12 animate-in fade-in duration-500">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -154,20 +156,20 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                 { label: 'Total Vault', val: (stats.totalDeposit || 0).toLocaleString(), icon: 'fa-dollar-sign', col: 'text-emerald-600' },
                 { label: 'Balance Active', val: (stats.totalBalance || 0).toLocaleString(undefined, { minimumFractionDigits: 3 }), icon: 'fa-dollar-sign', col: 'text-blue-600' }
               ].map((s, i) => (
-                <div key={i} className="bg-white p-10 rounded-[2.5rem] border border-slate-200 shadow-sm relative overflow-hidden group">
-                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-6 relative z-10">{s.label}</p>
-                  <h4 className="text-4xl font-black text-slate-900 tracking-tighter relative z-10">
+                <div key={i} className="bg-white p-8 sm:p-10 rounded-[2rem] sm:rounded-[2.5rem] border border-slate-200 shadow-sm relative overflow-hidden group">
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-4 sm:mb-6 relative z-10">{s.label}</p>
+                  <h4 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tighter relative z-10">
                     {s.icon === 'fa-shield' || s.icon === 'fa-dollar-sign' ? '$' : ''}{s.val}
                   </h4>
-                  <i className={`fa-solid ${s.icon} absolute -right-4 -bottom-4 text-7xl opacity-5 ${s.col}`}></i>
+                  <i className={`fa-solid ${s.icon} absolute -right-4 -bottom-4 text-6xl sm:text-7xl opacity-5 ${s.col}`}></i>
                 </div>
               ))}
             </div>
           </div>
         )}
         {view === 'users' && (
-          <div className="bg-white rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
-            <div className="p-10 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center bg-slate-50/30 gap-6">
+          <div className="bg-white rounded-[2rem] sm:rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
+            <div className="p-6 sm:p-10 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center bg-slate-50/30 gap-6">
               <h2 className="text-2xl font-black text-slate-900 uppercase">Registry</h2>
               <input type="text" placeholder="Search..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full sm:w-80 px-6 py-4 bg-white border border-slate-200 rounded-2xl text-[11px] font-bold outline-none" />
             </div>
@@ -201,36 +203,36 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
 
         {/* User Management Modal */}
         {editingUserId && (
-          <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-xl animate-in fade-in duration-300">
-            <div className="bg-white rounded-[3.5rem] w-full max-w-2xl p-10 md:p-14 border border-slate-200 shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
+          <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-xl animate-in fade-in duration-300 overflow-y-auto">
+            <div className="bg-white rounded-[2.5rem] sm:rounded-[3.5rem] w-full max-w-2xl p-6 sm:p-10 md:p-14 border border-slate-200 shadow-2xl relative my-8 animate-in zoom-in-95 duration-300">
               {(() => {
                 const user = users.find(u => u.id === editingUserId);
                 if (!user) return null;
                 return (
                   <div className="relative z-10">
-                    <div className="flex justify-between items-start mb-10">
+                    <div className="flex justify-between items-start mb-8 sm:mb-10">
                       <div>
-                        <h3 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">User Protocol</h3>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">{user.username} ({user.email})</p>
+                        <h3 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tighter uppercase">User Protocol</h3>
+                        <p className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">{user.username} ({user.email})</p>
                       </div>
-                      <button onClick={() => setEditingUserId(null)} className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-all"><i className="fa-solid fa-xmark"></i></button>
+                      <button onClick={() => setEditingUserId(null)} className="w-8 h-8 sm:w-10 sm:h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-all"><i className="fa-solid fa-xmark"></i></button>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-6 mb-10">
-                      <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8 sm:mb-10">
+                      <div className="bg-slate-50 p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-100">
                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Earning Vault</p>
-                        <p className="text-2xl font-black text-slate-900">${user.balance?.toLocaleString(undefined, { minimumFractionDigits: 3 }) || '0.000'} <span className="text-[10px] opacity-40">USD</span></p>
+                        <p className="text-xl sm:text-2xl font-black text-slate-900">${user.balance?.toLocaleString(undefined, { minimumFractionDigits: 3 }) || '0.000'} <span className="text-[10px] opacity-40">USD</span></p>
                       </div>
-                      <div className="bg-indigo-50 p-6 rounded-3xl border border-indigo-100">
+                      <div className="bg-indigo-50 p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-indigo-100">
                         <p className="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-2">Deposit Vault</p>
-                        <p className="text-2xl font-black text-indigo-600">${user.depositBalance?.toLocaleString(undefined, { minimumFractionDigits: 2 }) || '0.00'} <span className="text-[10px] opacity-40">USD</span></p>
+                        <p className="text-xl sm:text-2xl font-black text-indigo-600">${user.depositBalance?.toLocaleString(undefined, { minimumFractionDigits: 2 }) || '0.00'} <span className="text-[10px] opacity-40">USD</span></p>
                       </div>
                     </div>
 
                     <div className="space-y-8">
                       <div>
                         <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-4 px-2">Account Credentials</label>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <label className="text-[8px] font-black text-slate-400 uppercase tracking-widest px-2">Full Name</label>
                             <input
@@ -500,8 +502,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
         )}
 
         {view === 'finance' && (
-          <div className="bg-white rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
-            <div className="p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
+          <div className="bg-white rounded-[2rem] sm:rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
+            <div className="p-6 sm:p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
               <h2 className="text-2xl font-black text-slate-900 uppercase">Financial Requests</h2>
             </div>
             <div className="overflow-x-auto">
@@ -574,8 +576,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
           </div>
         )}
         {view === 'reviews' && (
-          <div className="bg-white rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
-            <div className="p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
+          <div className="bg-white rounded-[2rem] sm:rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
+            <div className="p-6 sm:p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
               <h2 className="text-2xl font-black text-slate-900 uppercase">Task Reviews</h2>
             </div>
             <div className="overflow-x-auto">
@@ -689,17 +691,17 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
         )}
         {view === 'freelance' && (
           <div className="space-y-6 animate-in fade-in duration-500">
-            <div className="bg-white rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
-              <div className="p-10 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center bg-slate-50/30 gap-6">
+            <div className="bg-white rounded-[2rem] sm:rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
+              <div className="p-6 sm:p-10 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center bg-slate-50/30 gap-6">
                 <div>
                   <h2 className="text-2xl font-black text-slate-900 uppercase">Freelance Pro Registry</h2>
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">{users.filter(u => u.freelanceId).length} registered professionals</p>
                 </div>
-                <div className="flex items-center gap-4 w-full sm:w-auto">
+                <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
                   <input type="text" placeholder="Search Identity..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full sm:w-64 px-6 py-4 bg-white border border-slate-200 rounded-2xl text-[11px] font-bold outline-none" />
                   <button
                     onClick={() => setView('create-freelance' as any)}
-                    className="flex items-center gap-2 px-6 py-4 bg-slate-900 text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-lg active:scale-95 whitespace-nowrap"
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-4 bg-slate-900 text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-lg active:scale-95 whitespace-nowrap"
                   >
                     <i className="fa-solid fa-plus"></i> Post Project
                   </button>
@@ -797,13 +799,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
           </div>
         )}
         {view === 'tasks' && (
-          <div className="bg-white rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
-            <div className="p-10 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center bg-slate-50/30 gap-6">
+          <div className="bg-white rounded-[2rem] sm:rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
+            <div className="p-6 sm:p-10 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center bg-slate-50/30 gap-6">
               <div>
                 <h2 className="text-2xl font-black text-slate-900 uppercase">Campaigns Management</h2>
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">{tasks.length} active nodes</p>
               </div>
-              <div className="flex items-center gap-4 w-full sm:w-auto">
+              <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
                 <input
                   type="text"
                   placeholder="Filter Campaigns..."
@@ -813,7 +815,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                 />
                 <button
                   onClick={() => setView('create-task' as any)}
-                  className="flex items-center gap-2 px-6 py-4 bg-slate-900 text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-lg active:scale-95 whitespace-nowrap"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-4 bg-slate-900 text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-lg active:scale-95 whitespace-nowrap"
                 >
                   <i className="fa-solid fa-plus"></i> Post Campaign
                 </button>
@@ -876,11 +878,11 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
           </div>
         )}
         {view === 'create-freelance' && (
-          <div className="max-w-[1000px] mx-auto animate-in fade-in slide-in-from-bottom-6 duration-700">
-            <div className="bg-slate-900 rounded-[3.5rem] p-10 md:p-14 border border-slate-800 shadow-2xl relative overflow-hidden">
+          <div className="max-w-[1000px] mx-auto px-2 sm:px-0 animate-in fade-in slide-in-from-bottom-6 duration-700">
+            <div className="bg-slate-900 rounded-[2.5rem] sm:rounded-[3.5rem] p-6 sm:p-10 md:p-14 border border-slate-800 shadow-2xl relative overflow-hidden">
               <div className="relative z-10">
-                <div className="flex items-center gap-6 mb-12">
-                  <div className="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-2xl">
+                <div className="flex items-center gap-4 sm:gap-6 mb-8 sm:mb-12">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-emerald-600 rounded-xl sm:rounded-2xl flex items-center justify-center text-white text-xl sm:text-2xl shadow-2xl">
                     <i className="fa-solid fa-briefcase"></i>
                   </div>
                   <div>
@@ -962,12 +964,11 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
           </div>
         )}
         {view === 'create-task' && (
-
-          <div className="max-w-[1000px] mx-auto animate-in fade-in slide-in-from-bottom-6 duration-700">
-            <div className="bg-white rounded-[3.5rem] p-10 md:p-14 border border-slate-200 shadow-xl relative overflow-hidden">
+          <div className="max-w-[1000px] mx-auto px-2 sm:px-0 animate-in fade-in slide-in-from-bottom-6 duration-700">
+            <div className="bg-white rounded-[2.5rem] sm:rounded-[3.5rem] p-6 sm:p-10 md:p-14 border border-slate-200 shadow-xl relative overflow-hidden">
               <div className="relative z-10">
-                <div className="flex items-center gap-6 mb-12">
-                  <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-2xl">
+                <div className="flex items-center gap-4 sm:gap-6 mb-8 sm:mb-12">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-indigo-600 rounded-xl sm:rounded-2xl flex items-center justify-center text-white text-xl sm:text-2xl shadow-2xl">
                     <i className="fa-solid fa-plus"></i>
                   </div>
                   <div>
@@ -1050,7 +1051,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                     <textarea name="description" required rows={4} placeholder="Detailed instructions for the task..." className="w-full px-8 py-6 bg-slate-50 border-none rounded-[2rem] font-bold text-slate-900 shadow-inner focus:bg-white transition-all outline-none resize-none"></textarea>
                   </div>
 
-                  <button type="submit" className="w-full py-8 bg-slate-900 text-white rounded-[2rem] font-black text-xs uppercase tracking-[0.5em] shadow-2xl hover:bg-indigo-600 transition-all active:scale-95">
+                  <button type="submit" className="w-full py-6 sm:py-8 bg-slate-900 text-white rounded-[1.5rem] sm:rounded-[2rem] font-black text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.5em] shadow-2xl hover:bg-indigo-600 transition-all active:scale-95">
                     Deploy Task to Mainnet
                   </button>
                 </form>
@@ -1060,8 +1061,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
           </div>
         )}
         {view === 'history' && (
-          <div className="bg-white rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
-            <div className="p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
+          <div className="bg-white rounded-[2rem] sm:rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
+            <div className="p-6 sm:p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
               <h2 className="text-2xl font-black text-slate-900 uppercase">Global Transaction Logs</h2>
             </div>
             <div className="overflow-x-auto">
@@ -1097,8 +1098,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
         )}
 
         {view === 'referrals' && (
-          <div className="bg-white rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
-            <div className="p-10 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center bg-slate-50/30 gap-6">
+          <div className="bg-white rounded-[2rem] sm:rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
+            <div className="p-6 sm:p-10 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center bg-slate-50/30 gap-6">
               <div>
                 <h2 className="text-2xl font-black text-slate-900 uppercase">Referral Network</h2>
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">{referralData.length} active referrers</p>
