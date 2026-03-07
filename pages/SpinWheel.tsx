@@ -158,7 +158,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userBalance, onSpin, transactions
                           transformOrigin: 'bottom center'
                         }}
                       >
-                        <span className="text-xl md:text-2xl tracking-tighter transform rotate-180 mb-4">${rew.toFixed(3)}</span>
+                        <span className="text-xl md:text-2xl tracking-tighter transform rotate-180 mb-4">${rew.toFixed(5)}</span>
                         <i className="fa-solid fa-dollar-sign text-sm md:text-lg text-white/20 transform rotate-180"></i>
                       </div>
                     </div>
@@ -178,7 +178,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userBalance, onSpin, transactions
               {result !== null && !isSpinning && (
                 <div className="mb-12 animate-in zoom-in duration-500">
                   <div className={`text-5xl font-black tracking-tighter ${result > 0 ? 'text-emerald-500' : 'text-slate-400 opacity-50'}`}>
-                    {result > 0 ? `+$${result.toFixed(3)} USD` : '$0.000 USD'}
+                    {result > 0 ? `+$${result.toFixed(5)} USD` : '$0.00000 USD'}
                   </div>
                   <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mt-3">Vault Synchronization Successful</div>
                 </div>
@@ -227,7 +227,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userBalance, onSpin, transactions
                           <i className={`fa-solid ${tx.amount > 0.01 ? 'fa-crown' : 'fa-dollar-sign'}`}></i>
                         </div>
                         <div>
-                          <div className="text-base font-black text-slate-900 tracking-tight">+${tx.amount.toFixed(3)} <span className="text-[10px] opacity-40 uppercase">USD</span></div>
+                          <div className="text-base font-black text-slate-900 tracking-tight">+${tx.amount.toFixed(5)} <span className="text-[10px] opacity-40 uppercase">USD</span></div>
                           <div className="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-1">{tx.date.split(',')[0]}</div>
                         </div>
                       </div>
