@@ -26,14 +26,14 @@ const NumericInput: React.FC<NumericInputProps> = ({
     const handleIncrement = () => {
         if (disabled) return;
         if (value + step <= max) {
-            onChange(Number((value + step).toFixed(4)));
+            onChange(Number((value + step).toFixed(6)));
         }
     };
 
     const handleDecrement = () => {
         if (disabled) return;
         if (value - step >= min) {
-            onChange(Number((value - step).toFixed(4)));
+            onChange(Number((value - step).toFixed(6)));
         }
     };
 

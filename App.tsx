@@ -52,7 +52,17 @@ const App: React.FC = () => {
 
       try {
         const initialTasks = await storage.getTasks();
-        setTasks(initialTasks);
+
+        // One-time cleanup: Remove all existing tasks as requested
+        const TASKS_CLEARED_KEY = 'tasks_wiped_02738';
+        if (!localStorage.getItem(TASKS_CLEARED_KEY)) {
+          await storage.setTasks([]);
+          setTasks([]);
+          localStorage.setItem(TASKS_CLEARED_KEY, 'true');
+          console.log("All previous tasks have been removed per update protocol.");
+        } else {
+          setTasks(initialTasks);
+        }
 
         if (user.isLoggedIn) {
           const cloudUser = await storage.syncUserFromCloud(user.id);
@@ -399,7 +409,7 @@ const App: React.FC = () => {
           {currentPage === 'login' && <Login onLogin={handleLogin} />}
           {currentPage === 'spin' && user.isLoggedIn && (
             <SpinWheel
-              userCoins={user.balance}
+              userBalance={user.balance}
               onSpin={async (w: number, c: number) => {
                 const updatedUser = { ...user, balance: user.balance + w - c };
                 setUser(updatedUser);

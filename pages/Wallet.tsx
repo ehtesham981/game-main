@@ -40,9 +40,9 @@ const Wallet: React.FC<WalletProps> = ({ balance, depositBalance = 0, onAction, 
    const totalWorthUSD = balance;
 
    const currencyValuations = [
-      { label: 'US Dollar', code: 'USD', value: totalWorthUSD.toFixed(2), icon: 'fa-dollar-sign', color: 'text-emerald-500', bg: 'bg-emerald-50' },
+      { label: 'US Dollar', code: 'USD', value: totalWorthUSD.toFixed(5), icon: 'fa-dollar-sign', color: 'text-emerald-500', bg: 'bg-emerald-50' },
       { label: 'Pakistani Rupee', code: 'PKR', value: (totalWorthUSD * PKR_RATE).toLocaleString(undefined, { maximumFractionDigits: 0 }), icon: 'fa-rupee-sign', color: 'text-indigo-600', bg: 'bg-indigo-50' },
-      { label: 'Tether (TRC20)', code: 'USDT', value: totalWorthUSD.toFixed(2), icon: 'fa-brands fa-ethereum', color: 'text-teal-500', bg: 'bg-teal-50' },
+      { label: 'Tether (TRC20)', code: 'USDT', value: totalWorthUSD.toFixed(5), icon: 'fa-brands fa-ethereum', color: 'text-teal-500', bg: 'bg-teal-50' },
       { label: 'Euro', code: 'EUR', value: (totalWorthUSD * EUR_RATE).toFixed(2), icon: 'fa-euro-sign', color: 'text-blue-600', bg: 'bg-blue-50' },
       { label: 'British Pound', code: 'GBP', value: (totalWorthUSD * GBP_RATE).toFixed(2), icon: 'fa-sterling-sign', color: 'text-amber-600', bg: 'bg-amber-50' },
    ];
@@ -242,13 +242,13 @@ const Wallet: React.FC<WalletProps> = ({ balance, depositBalance = 0, onAction, 
                      <div>
                         <p className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.4em] mb-4 md:mb-6">Main Earning Vault</p>
                         <div className="flex items-baseline gap-4 mb-6 md:mb-8">
-                           <h2 className="text-5xl sm:text-7xl md:text-8xl font-black tracking-tighter tabular-nums">{balance.toLocaleString(undefined, { minimumFractionDigits: 3 })}</h2>
+                           <h2 className="text-5xl sm:text-7xl md:text-8xl font-black tracking-tighter tabular-nums">{balance.toLocaleString(undefined, { minimumFractionDigits: 5 })}</h2>
                            <span className="text-lg md:text-xl font-bold text-slate-500 uppercase tracking-widest">USD</span>
                         </div>
                         <div className="flex flex-wrap items-center gap-4">
                            <div className="px-5 md:px-6 py-3 bg-white/5 rounded-2xl border border-white/10 text-xs md:text-sm font-black shadow-inner flex items-center gap-3">
                               <i className="fa-solid fa-dollar-sign text-emerald-400"></i>
-                              {(coins / WITHDRAW_RATE).toFixed(2)} <span className="opacity-40 text-[9px] md:text-[10px]">USD</span>
+                              {balance.toFixed(5)} <span className="opacity-40 text-[9px] md:text-[10px]">USD</span>
                            </div>
                            <div className="px-5 md:px-6 py-3 bg-indigo-600/20 rounded-2xl border border-indigo-500/20 text-[9px] md:text-[10px] font-black uppercase tracking-widest text-indigo-300">
                               Status: Operational
@@ -459,7 +459,7 @@ const Wallet: React.FC<WalletProps> = ({ balance, depositBalance = 0, onAction, 
                                     </span>
                                  </td>
                                  <td className={`px-6 py-6 font-black text-base ${tx.type === 'deposit' ? 'text-emerald-600' : 'text-slate-900'}`}>
-                                    {tx.type === 'deposit' ? '+' : '-'}{tx.amount.toLocaleString(undefined, { minimumFractionDigits: 3 })} <span className="text-[9px] opacity-40">USD</span>
+                                    {tx.type === 'deposit' ? '+' : '-'}{tx.amount.toLocaleString(undefined, { minimumFractionDigits: 5 })} <span className="text-[9px] opacity-40">USD</span>
                                  </td>
                                  <td className="px-6 py-6">
                                     <div className="flex items-center gap-2">

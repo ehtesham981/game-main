@@ -19,7 +19,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
 
   const earnings = useMemo(() => {
     const total = user.balance || 0;
-    const usd = total.toFixed(3);
+    const usd = total.toFixed(5);
     const pending = transactions
       .filter(tx => tx.type === 'earn' && tx.status === 'pending')
       .reduce((sum, tx) => sum + tx.amount, 0);
@@ -240,7 +240,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
                     <div>
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-lg font-black text-slate-900 tabular-nums">
-                          {['withdraw', 'spend'].includes(tx.type) ? '-' : '+'}${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 3 })}
+                          {['withdraw', 'spend'].includes(tx.type) ? '-' : '+'}${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 5 })}
                         </span>
                         <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">USD</span>
                       </div>

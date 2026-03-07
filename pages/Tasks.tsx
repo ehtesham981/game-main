@@ -257,7 +257,7 @@ export default function Tasks({ user, tasks, transactions, onComplete, navigateT
                     </div>
                     <div className="px-5 py-3 bg-white/5 rounded-[1.25rem] text-slate-900 border border-slate-100 flex items-center gap-3">
                       <i className="fa-solid fa-dollar-sign text-emerald-500"></i>
-                      <span className="text-xl font-black">{task.reward.toFixed(3)}</span>
+                      <span className="text-xl font-black">{task.reward.toFixed(5)}</span>
                     </div>
                   </div>
                   <div className="flex-grow mb-8">
@@ -313,7 +313,7 @@ export default function Tasks({ user, tasks, transactions, onComplete, navigateT
                     <div className="flex items-center justify-between mt-6">
                       <div>
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Yield</p>
-                        <div className="text-2xl md:text-3xl font-black text-slate-900">+${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 3 })}</div>
+                        <div className="text-2xl md:text-3xl font-black text-slate-900">+${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 5 })}</div>
                       </div>
                       <div className="text-right">
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Status</p>
@@ -363,7 +363,7 @@ export default function Tasks({ user, tasks, transactions, onComplete, navigateT
                 </div>
                 <div>
                   <h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">{selectedTask.title}</h3>
-                  <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Reward: ${selectedTask.reward.toFixed(3)} USD</p>
+                  <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Reward: ${selectedTask.reward.toFixed(5)} USD</p>
                 </div>
               </div>
               <button onClick={handleCloseModal} className="w-10 h-10 bg-white rounded-xl text-slate-400 hover:text-slate-900 transition-all flex items-center justify-center shadow-sm">

@@ -28,7 +28,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({ tasks, user, onDeleteTask, onUp
     title: '',
     link: '',
     type: 'YouTube' as TaskType,
-    reward: 0.002,
+    reward: 0.02738,
     totalWorkers: 10,
     description: '',
     dueDate: ''
@@ -66,7 +66,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({ tasks, user, onDeleteTask, onUp
     if (!formData.title || !formData.description || !formData.link) {
       return alert('Operational parameters incomplete. Title, Link, and Instructions are required.');
     }
-    if (formData.reward < 0.002) return alert('Minimum reward per user is $0.002 to ensure engagement quality.');
+    if (formData.reward < 0.02738) return alert('Minimum reward per user is $0.02738 to ensure engagement quality.');
 
     setShowConfirmModal(true);
   };
@@ -75,7 +75,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({ tasks, user, onDeleteTask, onUp
     setIsDeploying(true);
     setTimeout(() => {
       onCreate(formData);
-      setFormData({ title: '', link: '', type: 'YouTube', reward: 10, totalWorkers: 10, description: '', dueDate: '' });
+      setFormData({ title: '', link: '', type: 'YouTube', reward: 0.02738, totalWorkers: 10, description: '', dueDate: '' });
       setShowConfirmModal(false);
       setIsDeploying(false);
     }, 1500);
@@ -176,7 +176,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({ tasks, user, onDeleteTask, onUp
                     <NumericInput
                       label="Reward / User"
                       value={formData.reward}
-                      min={0.002}
+                      min={0.02738}
                       step={0.001}
                       unitLabel="USD"
                       onChange={val => setFormData({ ...formData, reward: val })}

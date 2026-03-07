@@ -152,7 +152,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                 { label: 'Active Users', val: users.length, icon: 'fa-users', col: 'text-indigo-600' },
                 { label: 'Pending Audits', val: stats.pendingTasks + stats.pendingFinance, icon: 'fa-clock', col: 'text-amber-500' },
                 { label: 'Total Vault', val: (stats.totalDeposit || 0).toLocaleString(), icon: 'fa-dollar-sign', col: 'text-emerald-600' },
-                { label: 'Balance Active', val: (stats.totalBalance || 0).toLocaleString(undefined, { minimumFractionDigits: 3 }), icon: 'fa-dollar-sign', col: 'text-blue-600' }
+                { label: 'Balance Active', val: (stats.totalBalance || 0).toLocaleString(undefined, { minimumFractionDigits: 5 }), icon: 'fa-dollar-sign', col: 'text-blue-600' }
               ].map((s, i) => (
                 <div key={i} className="bg-white p-10 rounded-[2.5rem] border border-slate-200 shadow-sm relative overflow-hidden group">
                   <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-6 relative z-10">{s.label}</p>
@@ -189,7 +189,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                       <td className="px-6 py-6">
                         <p className="text-xs font-bold text-slate-600">{u.email}</p>
                       </td>
-                      <td className="px-6 py-6 font-black text-slate-900"><p>${u.balance?.toLocaleString(undefined, { minimumFractionDigits: 3 }) || '0.000'} (Earn)</p><p className="text-indigo-500">${u.depositBalance?.toLocaleString(undefined, { minimumFractionDigits: 2 }) || '0.00'} (Dep)</p></td>
+                      <td className="px-6 py-6 font-black text-slate-900"><p>${u.balance?.toLocaleString(undefined, { minimumFractionDigits: 5 }) || '0.00000'} (Earn)</p><p className="text-indigo-500">${u.depositBalance?.toLocaleString(undefined, { minimumFractionDigits: 2 }) || '0.00'} (Dep)</p></td>
                       <td className="px-10 py-6 text-right"><button onClick={() => setEditingUserId(u.id)} className="px-4 py-2 bg-slate-900 text-white text-[9px] font-black uppercase rounded-lg hover:bg-indigo-600 transition-all">Manage</button></td>
                     </tr>
                   ))}
@@ -219,7 +219,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                     <div className="grid grid-cols-2 gap-6 mb-10">
                       <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100">
                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Earning Vault</p>
-                        <p className="text-2xl font-black text-slate-900">${user.balance?.toLocaleString(undefined, { minimumFractionDigits: 3 }) || '0.000'} <span className="text-[10px] opacity-40">USD</span></p>
+                        <p className="text-2xl font-black text-slate-900">${user.balance?.toLocaleString(undefined, { minimumFractionDigits: 5 }) || '0.00000'} <span className="text-[10px] opacity-40">USD</span></p>
                       </div>
                       <div className="bg-indigo-50 p-6 rounded-3xl border border-indigo-100">
                         <p className="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-2">Deposit Vault</p>
@@ -525,7 +525,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                         <span className={`px-2 py-1 rounded text-[9px] uppercase tracking-widest ${tx.type === 'withdraw' ? 'bg-amber-100 text-amber-600' : 'bg-emerald-100 text-emerald-600'}`}>
                           {tx.type}
                         </span>
-                        <p className="mt-2 text-slate-900">${tx.amount.toLocaleString(undefined, { minimumFractionDigits: tx.type === 'deposit' ? 2 : 3 })} USD</p>
+                        <p className="mt-2 text-slate-900">${tx.amount.toLocaleString(undefined, { minimumFractionDigits: tx.type === 'deposit' ? 2 : 5 })} USD</p>
                       </td>
                       <td className="px-6 py-6">
                         <p className="text-[10px] font-bold text-slate-500">{tx.method} <br /> {tx.account}</p>
@@ -599,7 +599,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                         </td>
                         <td className="px-6 py-6 text-xs font-black text-slate-900">
                           <p className="text-slate-500 font-mono text-[10px] mb-1">{reviewUser?.email || tx.userId}</p>
-                          <p className="text-emerald-600">+${tx.amount.toFixed(3)} USD</p>
+                          <p className="text-emerald-600">+${tx.amount.toFixed(5)} USD</p>
                           {tx.message && (
                             <div className="mt-2 p-3 bg-slate-50 border border-slate-100 rounded-xl font-medium text-[10px] text-slate-500 max-w-[350px] break-words whitespace-pre-line">
                               <i className="fa-solid fa-message mr-1 text-indigo-400"></i> {tx.message}
@@ -836,7 +836,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                       <tr key={task.id} className="hover:bg-slate-50/50 transition-colors">
                         <td className="px-10 py-6">
                           <p className="text-sm font-black text-slate-900">{task.title}</p>
-                          <p className="text-[10px] text-slate-400 font-bold uppercase mt-1">{task.type} - ${task.reward.toFixed(3)} USD</p>
+                          <p className="text-[10px] text-slate-400 font-bold uppercase mt-1">{task.type} - ${task.reward.toFixed(5)} USD</p>
                           <p className={`mt-1 text-[9px] font-black uppercase tracking-widest ${task.status === 'pending' ? 'text-amber-500' : task.status === 'active' ? 'text-emerald-500' : 'text-slate-400'}`}>{task.status}</p>
                         </td>
                         <td className="px-6 py-6 text-xs font-black text-slate-700">
@@ -935,7 +935,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                     </div>
                     <div className="space-y-4">
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 font-mono">Project Yield (USD)</label>
-                      <input name="reward" type="number" step="0.001" required placeholder="0.250" className="w-full px-8 py-5 bg-white/5 border border-white/10 rounded-2xl font-bold text-white shadow-inner focus:bg-white/10 transition-all outline-none" />
+                      <input name="reward" type="number" step="0.00001" required placeholder="0.02738" className="w-full px-8 py-5 bg-white/5 border border-white/10 rounded-2xl font-bold text-white shadow-inner focus:bg-white/10 transition-all outline-none" />
                     </div>
                     <div className="space-y-4">
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 font-mono">Workforce Quota</label>
@@ -1026,7 +1026,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                     </div>
                     <div className="space-y-4">
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Reward Volume (USD)</label>
-                      <input name="reward" type="number" step="0.001" required placeholder="0.002" className="w-full px-8 py-5 bg-slate-50 border-none rounded-2xl font-bold text-slate-900 shadow-inner focus:bg-white transition-all outline-none" />
+                      <input name="reward" type="number" step="0.00001" required placeholder="0.02738" className="w-full px-8 py-5 bg-slate-50 border-none rounded-2xl font-bold text-slate-900 shadow-inner focus:bg-white transition-all outline-none" />
                     </div>
                     <div className="space-y-4">
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Workforce Quota (Total Workers)</label>
@@ -1083,7 +1083,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                       </td>
                       <td className="px-6 py-6 text-xs font-black text-slate-900">{tx.userId}</td>
                       <td className="px-6 py-6 text-xs font-black">
-                        ${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 3 })} <span className="ml-2 px-2 py-0.5 bg-slate-100 text-slate-600 rounded uppercase tracking-widest text-[8px]">{tx.type}</span>
+                        ${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 5 })} <span className="ml-2 px-2 py-0.5 bg-slate-100 text-slate-600 rounded uppercase tracking-widest text-[8px]">{tx.type}</span>
                       </td>
                       <td className="px-10 py-6 text-right">
                         <span className={`text-[10px] font-black uppercase tracking-widest ${tx.status === 'success' ? 'text-emerald-500' : tx.status === 'pending' ? 'text-amber-500' : 'text-rose-500'}`}>{tx.status}</span>
