@@ -148,12 +148,27 @@ export const storage = {
     return [];
   },
 
+  clearGlobalEarnings: async () => {
+    await set(ref(db, KEYS.ALL_TRANSACTIONS), null);
+    await set(ref(db, KEYS.USER_TXS), null);
+    if (isBrowser) localStorage.removeItem(KEYS.TRANSACTIONS);
+  },
+
   addTransaction: async (tx: Transaction) => {
     const cleanTx = storage.cleanData(tx);
     await set(ref(db, `${KEYS.ALL_TRANSACTIONS}/${tx.id}`), cleanTx);
     await push(ref(db, `${KEYS.USER_TXS}/${tx.userId}`), cleanTx);
     const currentTxs = storage.getTransactions();
     if (isBrowser) localStorage.setItem(KEYS.TRANSACTIONS, JSON.stringify([cleanTx, ...currentTxs]));
+  },
+
+  clearGlobalUserCompletedTasks: async () => {
+    const users = await storage.getAllUsers();
+    for (const u of users) {
+      if (u.id) {
+        await update(ref(db, `${KEYS.USERS}/${u.id}`), { completedTasks: [] });
+      }
+    }
   },
 
   getAllUsers: async (): Promise<User[]> => {
