@@ -28,7 +28,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({ tasks, user, onDeleteTask, onUp
     title: '',
     link: '',
     type: 'YouTube' as TaskType,
-    reward: 10,
+    reward: 0.002,
     totalWorkers: 10,
     description: '',
     dueDate: ''
@@ -38,7 +38,6 @@ const CreateTask: React.FC<CreateTaskProps> = ({ tasks, user, onDeleteTask, onUp
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   // Economic Policy
-  const COIN_RATE = 2500;
   const totalCost = formData.reward * formData.totalWorkers;
   const isBalanceEnough = userDepositBalance >= totalCost;
 
@@ -67,7 +66,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({ tasks, user, onDeleteTask, onUp
     if (!formData.title || !formData.description || !formData.link) {
       return alert('Operational parameters incomplete. Title, Link, and Instructions are required.');
     }
-    if (formData.reward < 5) return alert('Minimum reward per user is 5 coins to ensure engagement quality.');
+    if (formData.reward < 0.002) return alert('Minimum reward per user is $0.002 to ensure engagement quality.');
 
     setShowConfirmModal(true);
   };
@@ -177,9 +176,11 @@ const CreateTask: React.FC<CreateTaskProps> = ({ tasks, user, onDeleteTask, onUp
                     <NumericInput
                       label="Reward / User"
                       value={formData.reward}
-                      min={5}
-                      unitLabel="Coins"
+                      min={0.002}
+                      step={0.001}
+                      unitLabel="USD"
                       onChange={val => setFormData({ ...formData, reward: val })}
+                      disabled={true} // Fixed per user request
                     />
 
                     <NumericInput
@@ -222,7 +223,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({ tasks, user, onDeleteTask, onUp
                   <div className="space-y-8 mb-12">
                     <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-slate-500">
                       <span>Reward per user</span>
-                      <span className="text-white">{formData.reward.toLocaleString()} <span className="text-[8px] opacity-40">Coins</span></span>
+                      <span className="text-white">${formData.reward.toFixed(3)} <span className="text-[8px] opacity-40">USD</span></span>
                     </div>
                     <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-slate-500">
                       <span>Target userbase</span>
@@ -232,8 +233,8 @@ const CreateTask: React.FC<CreateTaskProps> = ({ tasks, user, onDeleteTask, onUp
                     <div className="pt-2">
                       <p className="text-[8px] font-black text-indigo-400 uppercase tracking-widest mb-2">Projected Campaign Cost</p>
                       <div className="flex items-baseline gap-3">
-                        <span className="text-6xl font-black tracking-tighter leading-none">{totalCost.toLocaleString()}</span>
-                        <span className="text-xs font-black text-slate-500 uppercase tracking-widest">Coins</span>
+                        <span className="text-4xl font-black tracking-tighter leading-none">${totalCost.toFixed(3)}</span>
+                        <span className="text-xs font-black text-slate-500 uppercase tracking-widest">USD</span>
                       </div>
                     </div>
                   </div>
@@ -282,8 +283,8 @@ const CreateTask: React.FC<CreateTaskProps> = ({ tasks, user, onDeleteTask, onUp
                       <p className="text-xl font-black text-slate-900 tabular-nums">{t.completedCount} / {t.totalWorkers}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Coin Value</p>
-                      <p className="text-xl font-black text-indigo-600 tabular-nums">{t.reward} <span className="text-[8px]">Coins</span></p>
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">USD Value</p>
+                      <p className="text-xl font-black text-indigo-600 tabular-nums">${t.reward} <span className="text-[8px]">USD</span></p>
                     </div>
                   </div>
 
@@ -379,8 +380,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({ tasks, user, onDeleteTask, onUp
                 <div className="flex justify-between items-center pb-6 border-b border-slate-200/60">
                   <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Escrow Total</span>
                   <div className="text-right">
-                    <span className="text-xl font-black text-slate-900 block leading-none">{totalCost.toLocaleString()} Coins</span>
-                    <span className="text-[9px] font-black text-slate-400 uppercase">≈ ${(totalCost / COIN_RATE).toFixed(2)} USD</span>
+                    <span className="text-xl font-black text-slate-900 block leading-none">${totalCost.toFixed(3)} USD</span>
                   </div>
                 </div>
               </div>

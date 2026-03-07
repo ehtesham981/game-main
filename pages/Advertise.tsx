@@ -117,9 +117,9 @@ const Advertise: React.FC<AdvertiseProps> = ({ user, onRefresh, onNavigate }) =>
                                 Your advertising credits for running tasks.
                             </p>
                             <div className="text-5xl font-black text-white tabular-nums mb-2">
-                                {user.depositBalance?.toLocaleString() || 0}
+                                ${user.depositBalance?.toLocaleString(undefined, { minimumFractionDigits: 2 }) || '0.00'}
                             </div>
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400">Coins Available</span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400">USD Available</span>
                         </div>
                         <button
                             onClick={() => onNavigate('wallet')}
@@ -137,7 +137,7 @@ const Advertise: React.FC<AdvertiseProps> = ({ user, onRefresh, onNavigate }) =>
                         <h4 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">Why Choose <span className="text-indigo-600">AdsPredia?</span></h4>
                         <p className="text-slate-500 font-medium leading-relaxed">
                             Our network provides a unique trust between advertisers and micro-task workers.
-                            By leveraging our dual-proof verification system, you ensure that every coin spent translates into real, verified engagement.
+                            By leveraging our dual-proof verification system, you ensure that every dollar spent translates into real, verified engagement.
                         </p>
                         <ul className="space-y-4">
                             {[

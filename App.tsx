@@ -83,7 +83,7 @@ const App: React.FC = () => {
       id: storage.getUserId(),
       username: 'Guest',
       email: '',
-      coins: 0,
+      balance: 0,
       depositBalance: 0,
       completedTasks: [],
       createdTasks: [],
@@ -135,7 +135,7 @@ const App: React.FC = () => {
       date: new Date().toLocaleString()
     };
     if (type === 'withdraw') {
-      const updatedUser = { ...user, coins: user.coins - amt };
+      const updatedUser = { ...user, balance: user.balance - amt };
       await storage.setUser(updatedUser);
       setUser(updatedUser);
     }
@@ -148,10 +148,10 @@ const App: React.FC = () => {
 
     if (currentUser.claimedReferrals?.includes(referredUserId)) return;
 
-    const REWARD = referredUserId === 'milestone_5_bonus' ? 200 : (referredUserId === 'milestone_3_bonus' ? 150 : 50);
+    const REWARD = referredUserId === 'milestone_5_bonus' ? 0.01 : (referredUserId === 'milestone_3_bonus' ? 0.005 : 0.002);
     const updatedUser: User = {
       ...currentUser,
-      coins: currentUser.coins + REWARD,
+      balance: currentUser.balance + REWARD,
       claimedReferrals: [...(currentUser.claimedReferrals || []), referredUserId]
     };
 
@@ -175,7 +175,7 @@ const App: React.FC = () => {
     const now = Date.now();
     const updatedUser: User = {
       ...user,
-      coins: user.coins + reward,
+      balance: user.balance + reward,
       lastWeeklyBonusClaim: now
     };
     setUser(updatedUser);
@@ -298,7 +298,7 @@ const App: React.FC = () => {
           {currentPage === 'home' && <Home onStart={navigateTo} isLoggedIn={user.isLoggedIn} />}
           {currentPage === 'features' && <Features />}
           {currentPage === 'contact' && <Contact />}
-          {currentPage === 'wallet' && <Wallet coins={user.coins} depositBalance={user.depositBalance} onAction={handleWalletAction} transactions={transactions} onRefresh={() => refreshUserBalance()} onNavigate={navigateTo} />}
+          {currentPage === 'wallet' && <Wallet balance={user.balance} depositBalance={user.depositBalance} onAction={handleWalletAction} transactions={transactions} onRefresh={() => refreshUserBalance()} onNavigate={navigateTo} />}
           {currentPage === 'dashboard' && user.isLoggedIn && <Dashboard user={user} tasks={tasks} transactions={transactions} onDeleteTask={() => { }} onUpdateTask={() => { }} />}
           {currentPage === 'micro-jobs' && user.isLoggedIn && <MicroJobs user={user} onNavigate={navigateTo} />}
           {currentPage === 'weekly-bonus' && user.isLoggedIn && (
@@ -376,7 +376,7 @@ const App: React.FC = () => {
               onSolve={async (reward: number, isLast: boolean) => {
                 const updatedUser = {
                   ...user,
-                  coins: user.coins + reward,
+                  balance: user.balance + reward,
                   ...(isLast ? { lastMathTimestamp: Date.now() } : {})
                 };
                 setUser(updatedUser);
@@ -399,9 +399,9 @@ const App: React.FC = () => {
           {currentPage === 'login' && <Login onLogin={handleLogin} />}
           {currentPage === 'spin' && user.isLoggedIn && (
             <SpinWheel
-              userCoins={user.coins}
+              userCoins={user.balance}
               onSpin={async (w: number, c: number) => {
-                const updatedUser = { ...user, coins: user.coins + w - c };
+                const updatedUser = { ...user, balance: user.balance + w - c };
                 setUser(updatedUser);
                 await storage.setUser(updatedUser);
 

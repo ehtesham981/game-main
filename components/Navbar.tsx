@@ -279,8 +279,8 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
               ) : (
                 <div className="flex items-center gap-3">
                   <div onClick={() => handleNavClick('wallet')} className="hidden sm:flex flex-col items-end pr-4 cursor-pointer group">
-                    <span className="text-[13px] font-black text-slate-900 group-hover:text-indigo-600 tabular-nums">{user.coins.toLocaleString()}</span>
-                    <span className="text-[7px] font-black uppercase tracking-widest text-slate-400">Vault Coins</span>
+                    <span className="text-[13px] font-black text-slate-900 group-hover:text-indigo-600 tabular-nums">${user.balance?.toLocaleString(undefined, { minimumFractionDigits: 3 })}</span>
+                    <span className="text-[7px] font-black uppercase tracking-widest text-slate-400">Vault Balance</span>
                   </div>
 
                   <div className="relative">
@@ -313,7 +313,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
                               <div className="h-px bg-white/10 mb-4"></div>
                               <div className="flex justify-between items-center">
                                 <span className="text-[9px] font-black uppercase text-slate-500">Node Balance</span>
-                                <span className="text-sm font-black text-indigo-400">{user.coins.toLocaleString()} C</span>
+                                <span className="text-sm font-black text-indigo-400">${user.balance?.toLocaleString(undefined, { minimumFractionDigits: 3 })}</span>
                               </div>
                             </div>
                             <i className="fa-solid fa-fingerprint absolute -right-6 -bottom-6 text-7xl opacity-5"></i>
@@ -376,8 +376,8 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
                   <p className="text-xl font-black tracking-tight truncate mb-4">{user.username}</p>
                   <div className="flex items-center justify-between pt-4 border-t border-white/10">
                     <div>
-                      <p className="text-[14px] font-black tabular-nums">{user.coins.toLocaleString()}</p>
-                      <p className="text-[8px] font-black uppercase tracking-widest mt-1 opacity-70">Coins Earned</p>
+                      <p className="text-[14px] font-black tabular-nums">${user.balance?.toLocaleString(undefined, { minimumFractionDigits: 3 })}</p>
+                      <p className="text-[8px] font-black uppercase tracking-widest mt-1 opacity-70">USD Balance</p>
                     </div>
                     <button onClick={() => handleNavClick('wallet')} className="px-4 py-2 bg-white/10 rounded-xl text-[8px] font-black uppercase tracking-widest border border-white/20">
                       Vault Hub

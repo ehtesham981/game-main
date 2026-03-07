@@ -75,7 +75,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
   }, [view, refreshActiveData]);
 
   const stats = useMemo(() => ({
-    totalCoins: users.reduce((acc, u) => acc + (Number(u.coins) || 0), 0),
+    totalBalance: users.reduce((acc, u) => acc + (Number(u.balance) || 0), 0),
     totalDeposit: users.reduce((acc, u) => acc + (Number(u.depositBalance) || 0), 0),
     pendingTasks: transactions.filter(tx => tx.type === 'earn' && tx.status === 'pending').length,
     pendingFinance: transactions.filter(tx => (tx.type === 'deposit' || tx.type === 'withdraw') && tx.status === 'pending').length,
@@ -151,12 +151,14 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
               {[
                 { label: 'Active Users', val: users.length, icon: 'fa-users', col: 'text-indigo-600' },
                 { label: 'Pending Audits', val: stats.pendingTasks + stats.pendingFinance, icon: 'fa-clock', col: 'text-amber-500' },
-                { label: 'Total Vault', val: (stats.totalDeposit || 0).toLocaleString(), icon: 'fa-shield', col: 'text-emerald-600' },
-                { label: 'Coins Active', val: (stats.totalCoins || 0).toLocaleString(), icon: 'fa-coins', col: 'text-blue-600' }
+                { label: 'Total Vault', val: (stats.totalDeposit || 0).toLocaleString(), icon: 'fa-dollar-sign', col: 'text-emerald-600' },
+                { label: 'Balance Active', val: (stats.totalBalance || 0).toLocaleString(undefined, { minimumFractionDigits: 3 }), icon: 'fa-dollar-sign', col: 'text-blue-600' }
               ].map((s, i) => (
                 <div key={i} className="bg-white p-10 rounded-[2.5rem] border border-slate-200 shadow-sm relative overflow-hidden group">
                   <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-6 relative z-10">{s.label}</p>
-                  <h4 className="text-4xl font-black text-slate-900 tracking-tighter relative z-10">{s.val}</h4>
+                  <h4 className="text-4xl font-black text-slate-900 tracking-tighter relative z-10">
+                    {s.icon === 'fa-shield' || s.icon === 'fa-dollar-sign' ? '$' : ''}{s.val}
+                  </h4>
                   <i className={`fa-solid ${s.icon} absolute -right-4 -bottom-4 text-7xl opacity-5 ${s.col}`}></i>
                 </div>
               ))}
@@ -187,7 +189,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                       <td className="px-6 py-6">
                         <p className="text-xs font-bold text-slate-600">{u.email}</p>
                       </td>
-                      <td className="px-6 py-6 font-black text-slate-900"><p>{u.coins?.toLocaleString() || 0} C (Earn)</p><p className="text-indigo-500">{u.depositBalance?.toLocaleString() || 0} C (Dep)</p></td>
+                      <td className="px-6 py-6 font-black text-slate-900"><p>${u.balance?.toLocaleString(undefined, { minimumFractionDigits: 3 }) || '0.000'} (Earn)</p><p className="text-indigo-500">${u.depositBalance?.toLocaleString(undefined, { minimumFractionDigits: 2 }) || '0.00'} (Dep)</p></td>
                       <td className="px-10 py-6 text-right"><button onClick={() => setEditingUserId(u.id)} className="px-4 py-2 bg-slate-900 text-white text-[9px] font-black uppercase rounded-lg hover:bg-indigo-600 transition-all">Manage</button></td>
                     </tr>
                   ))}
@@ -217,11 +219,11 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                     <div className="grid grid-cols-2 gap-6 mb-10">
                       <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100">
                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Earning Vault</p>
-                        <p className="text-2xl font-black text-slate-900">{user.coins?.toLocaleString() || 0} <span className="text-[10px] opacity-40">Coins</span></p>
+                        <p className="text-2xl font-black text-slate-900">${user.balance?.toLocaleString(undefined, { minimumFractionDigits: 3 }) || '0.000'} <span className="text-[10px] opacity-40">USD</span></p>
                       </div>
                       <div className="bg-indigo-50 p-6 rounded-3xl border border-indigo-100">
                         <p className="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-2">Deposit Vault</p>
-                        <p className="text-2xl font-black text-indigo-600">{user.depositBalance?.toLocaleString() || 0} <span className="text-[10px] opacity-40">Coins</span></p>
+                        <p className="text-2xl font-black text-indigo-600">${user.depositBalance?.toLocaleString(undefined, { minimumFractionDigits: 2 }) || '0.00'} <span className="text-[10px] opacity-40">USD</span></p>
                       </div>
                     </div>
 
@@ -267,27 +269,27 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                         <div className="grid grid-cols-2 gap-4">
                           <button
                             onClick={async () => {
-                              const amt = prompt('Total coins to ADD to Earning Vault:');
-                              if (amt && !isNaN(parseInt(amt))) {
-                                await storage.updateUserInCloud(user.id, { coins: (user.coins || 0) + parseInt(amt) });
+                              const amt = prompt('Total USD to ADD to Earning Vault:');
+                              if (amt && !isNaN(parseFloat(amt))) {
+                                await storage.updateUserInCloud(user.id, { balance: (user.balance || 0) + parseFloat(amt) });
                                 refreshActiveData();
                               }
                             }}
                             className="py-4 bg-emerald-500 text-white rounded-2xl font-black text-[9px] uppercase tracking-widest shadow-lg shadow-emerald-100 active:scale-95"
                           >
-                            Add Coins
+                            Add USD
                           </button>
                           <button
                             onClick={async () => {
-                              const amt = prompt('Total coins to SUBTRACT from Earning Vault:');
-                              if (amt && !isNaN(parseInt(amt))) {
-                                await storage.updateUserInCloud(user.id, { coins: Math.max(0, (user.coins || 0) - parseInt(amt)) });
+                              const amt = prompt('Total USD to SUBTRACT from Earning Vault:');
+                              if (amt && !isNaN(parseFloat(amt))) {
+                                await storage.updateUserInCloud(user.id, { balance: Math.max(0, (user.balance || 0) - parseFloat(amt)) });
                                 refreshActiveData();
                               }
                             }}
                             className="py-4 bg-rose-500 text-white rounded-2xl font-black text-[9px] uppercase tracking-widest shadow-lg shadow-rose-100 active:scale-95"
                           >
-                            Subtract Coins
+                            Subtract USD
                           </button>
                         </div>
                       </div>
@@ -434,11 +436,12 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
 
                   <div className="space-y-2">
                     <NumericInput
-                      label="Reward (Coins)"
+                      label="Reward (USD)"
                       value={editingTaskData.reward}
                       onChange={val => setEditingTaskData({ ...editingTaskData, reward: val })}
                       min={0}
-                      unitLabel="Coins"
+                      step={0.001}
+                      unitLabel="USD"
                     />
                   </div>
 
@@ -522,7 +525,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                         <span className={`px-2 py-1 rounded text-[9px] uppercase tracking-widest ${tx.type === 'withdraw' ? 'bg-amber-100 text-amber-600' : 'bg-emerald-100 text-emerald-600'}`}>
                           {tx.type}
                         </span>
-                        <p className="mt-2 text-slate-900">{tx.amount.toLocaleString()} Coins</p>
+                        <p className="mt-2 text-slate-900">${tx.amount.toLocaleString(undefined, { minimumFractionDigits: tx.type === 'deposit' ? 2 : 3 })} USD</p>
                       </td>
                       <td className="px-6 py-6">
                         <p className="text-[10px] font-bold text-slate-500">{tx.method} <br /> {tx.account}</p>
@@ -596,7 +599,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                         </td>
                         <td className="px-6 py-6 text-xs font-black text-slate-900">
                           <p className="text-slate-500 font-mono text-[10px] mb-1">{reviewUser?.email || tx.userId}</p>
-                          <p className="text-emerald-600">+{tx.amount} C</p>
+                          <p className="text-emerald-600">+${tx.amount.toFixed(3)} USD</p>
                           {tx.message && (
                             <div className="mt-2 p-3 bg-slate-50 border border-slate-100 rounded-xl font-medium text-[10px] text-slate-500 max-w-[350px] break-words whitespace-pre-line">
                               <i className="fa-solid fa-message mr-1 text-indigo-400"></i> {tx.message}
@@ -644,7 +647,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                                   // 2. Credit User
                                   const user = users.find(u => u.id === tx.userId);
                                   if (user) {
-                                    await storage.updateUserInCloud(user.id, { coins: (user.coins || 0) + tx.amount });
+                                    await storage.updateUserInCloud(user.id, { balance: (user.balance || 0) + tx.amount });
                                   }
 
                                   // 3. Update Task Progress
@@ -833,7 +836,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                       <tr key={task.id} className="hover:bg-slate-50/50 transition-colors">
                         <td className="px-10 py-6">
                           <p className="text-sm font-black text-slate-900">{task.title}</p>
-                          <p className="text-[10px] text-slate-400 font-bold uppercase mt-1">{task.type} - {task.reward} Coins</p>
+                          <p className="text-[10px] text-slate-400 font-bold uppercase mt-1">{task.type} - ${task.reward.toFixed(3)} USD</p>
                           <p className={`mt-1 text-[9px] font-black uppercase tracking-widest ${task.status === 'pending' ? 'text-amber-500' : task.status === 'active' ? 'text-emerald-500' : 'text-slate-400'}`}>{task.status}</p>
                         </td>
                         <td className="px-6 py-6 text-xs font-black text-slate-700">
@@ -894,7 +897,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                       id: `PRJ-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
                       title: formData.get('title') as string,
                       type: formData.get('type') as any,
-                      reward: parseInt(formData.get('reward') as string),
+                      reward: parseFloat(formData.get('reward') as string),
                       description: formData.get('description') as string,
                       creatorId: 'ADMIN-PRO',
                       totalWorkers: parseInt(formData.get('totalWorkers') as string),
@@ -931,8 +934,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                       </select>
                     </div>
                     <div className="space-y-4">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 font-mono">Project Yield (Coins)</label>
-                      <input name="reward" type="number" required placeholder="500" className="w-full px-8 py-5 bg-white/5 border border-white/10 rounded-2xl font-bold text-white shadow-inner focus:bg-white/10 transition-all outline-none" />
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 font-mono">Project Yield (USD)</label>
+                      <input name="reward" type="number" step="0.001" required placeholder="0.250" className="w-full px-8 py-5 bg-white/5 border border-white/10 rounded-2xl font-bold text-white shadow-inner focus:bg-white/10 transition-all outline-none" />
                     </div>
                     <div className="space-y-4">
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 font-mono">Workforce Quota</label>
@@ -981,7 +984,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                       id: `TSK-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
                       title: formData.get('title') as string,
                       type: formData.get('type') as any,
-                      reward: parseInt(formData.get('reward') as string),
+                      reward: parseFloat(formData.get('reward') as string),
                       description: formData.get('description') as string,
                       creatorId: 'ADMIN',
                       totalWorkers: parseInt(formData.get('totalWorkers') as string),
@@ -1022,8 +1025,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                       </select>
                     </div>
                     <div className="space-y-4">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Reward Volume (Coins)</label>
-                      <input name="reward" type="number" required placeholder="100" className="w-full px-8 py-5 bg-slate-50 border-none rounded-2xl font-bold text-slate-900 shadow-inner focus:bg-white transition-all outline-none" />
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Reward Volume (USD)</label>
+                      <input name="reward" type="number" step="0.001" required placeholder="0.002" className="w-full px-8 py-5 bg-slate-50 border-none rounded-2xl font-bold text-slate-900 shadow-inner focus:bg-white transition-all outline-none" />
                     </div>
                     <div className="space-y-4">
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Workforce Quota (Total Workers)</label>
@@ -1080,7 +1083,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                       </td>
                       <td className="px-6 py-6 text-xs font-black text-slate-900">{tx.userId}</td>
                       <td className="px-6 py-6 text-xs font-black">
-                        {tx.amount} C <span className="ml-2 px-2 py-0.5 bg-slate-100 text-slate-600 rounded uppercase tracking-widest text-[8px]">{tx.type}</span>
+                        ${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 3 })} <span className="ml-2 px-2 py-0.5 bg-slate-100 text-slate-600 rounded uppercase tracking-widest text-[8px]">{tx.type}</span>
                       </td>
                       <td className="px-10 py-6 text-right">
                         <span className={`text-[10px] font-black uppercase tracking-widest ${tx.status === 'success' ? 'text-emerald-500' : tx.status === 'pending' ? 'text-amber-500' : 'text-rose-500'}`}>{tx.status}</span>

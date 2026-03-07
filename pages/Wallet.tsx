@@ -6,7 +6,7 @@ import BackToDashboard from '../components/BackToDashboard';
 import NumericInput from '../components/NumericInput';
 
 interface WalletProps {
-   coins: number;
+   balance: number;
    depositBalance?: number;
    onAction: (type: 'deposit' | 'withdraw', amount: number, method: string, accountRef?: string, proofImage?: string) => void;
    transactions: Transaction[];
@@ -14,7 +14,7 @@ interface WalletProps {
    onNavigate: (page: string) => void;
 }
 
-const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, transactions, onRefresh, onNavigate }) => {
+const Wallet: React.FC<WalletProps> = ({ balance, depositBalance = 0, onAction, transactions, onRefresh, onNavigate }) => {
    const [activeTab, setActiveTab] = useState<'deposit' | 'withdraw'>('deposit');
    const [amount, setAmount] = useState('0');
    const [method, setMethod] = useState('Easypaisa');
@@ -29,17 +29,15 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
    const fileInputRef = useRef<HTMLInputElement>(null);
 
    // Updated Exchange Rates
-   const WITHDRAW_RATE = 4800; // 4800 Coins = $1 ($1.25 for 6000 coins)
-   const DEPOSIT_RATE = 5000;  // 5000 Coins = $1 ($2.00 for 10000 coins)
-   const MIN_DEPOSIT = 10000;
-   const MIN_WITHDRAWAL = 6000;
+   const MIN_DEPOSIT = 2; // $2
+   const MIN_WITHDRAWAL = 1.25; // $1.25
 
    // External conversion multipliers (simulated live rates)
    const PKR_RATE = 280;
    const EUR_RATE = 0.92;
    const GBP_RATE = 0.79;
 
-   const totalWorthUSD = coins / WITHDRAW_RATE;
+   const totalWorthUSD = balance;
 
    const currencyValuations = [
       { label: 'US Dollar', code: 'USD', value: totalWorthUSD.toFixed(2), icon: 'fa-dollar-sign', color: 'text-emerald-500', bg: 'bg-emerald-50' },
@@ -138,14 +136,14 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
 
    const handleSubmitInitial = (e: React.FormEvent) => {
       e.preventDefault();
-      const val = parseInt(amount);
+      const val = parseFloat(amount);
       if (activeTab === 'deposit') {
-         if (isNaN(val) || val < MIN_DEPOSIT) return alert(`Minimum deposit amount: ${MIN_DEPOSIT.toLocaleString()} coins ($2.00)`);
+         if (isNaN(val) || val < MIN_DEPOSIT) return alert(`Minimum deposit amount: $${MIN_DEPOSIT.toFixed(2)}`);
          if (!account) return alert('Transaction ID (TxID) is required.');
          if (!proofImage) return alert('Payment proof screenshot is required.');
       } else {
-         if (isNaN(val) || val < MIN_WITHDRAWAL) return alert(`Minimum withdrawal amount: ${MIN_WITHDRAWAL.toLocaleString()} coins ($1.25)`);
-         if (val > coins) return alert('Insufficient balance in your earning vault.');
+         if (isNaN(val) || val < MIN_WITHDRAWAL) return alert(`Minimum withdrawal amount: $${MIN_WITHDRAWAL.toFixed(2)}`);
+         if (val > balance) return alert('Insufficient balance in your earning vault.');
          if (!withdrawName || !withdrawNumber) return alert('Complete account details are required.');
       }
       setShowConfirmModal(true);
@@ -155,7 +153,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
       setIsProcessing(true);
       try {
          const finalAccountRef = activeTab === 'withdraw' ? `${withdrawName} | ${withdrawNumber}` : account;
-         await onAction(activeTab, parseInt(amount), method, finalAccountRef, proofImage || undefined);
+         await onAction(activeTab, parseFloat(amount), method, finalAccountRef, proofImage || undefined);
          setAmount('0');
          setAccount('');
          setProofImage(null);
@@ -205,19 +203,14 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                      <div>
                         <h3 className="text-indigo-400 text-[10px] font-black uppercase tracking-[0.3em] mb-8">Withdrawal Protocol</h3>
                         <div className="flex items-center gap-6">
-                           <div className="text-center px-6 py-4 bg-white/5 rounded-2xl border border-white/10">
-                              <p className="text-3xl font-black text-white">6,000</p>
-                              <p className="text-[9px] font-black text-slate-500 uppercase">Coins</p>
-                           </div>
-                           <i className="fa-solid fa-equals text-indigo-500 text-xl"></i>
                            <div className="text-center px-6 py-4 bg-indigo-600 rounded-2xl shadow-xl shadow-indigo-900/40">
                               <p className="text-3xl font-black text-white">$1.25</p>
-                              <p className="text-[9px] font-black text-indigo-200 uppercase">USD Rate</p>
+                              <p className="text-[9px] font-black text-indigo-200 uppercase">Minimum USD</p>
                            </div>
                         </div>
                      </div>
                      <p className="mt-10 text-[10px] font-medium text-slate-400 uppercase tracking-widest leading-relaxed">
-                        Minimum withdrawal: 6,000 Coins ($1.25). Coins are converted to your preferred gateway currency at verified global rates.
+                        Minimum withdrawal: $1.25. Funds are converted to your preferred gateway currency at verified global rates.
                      </p>
                   </div>
                   <i className="fa-solid fa-arrow-up-from-bracket absolute -right-12 -bottom-12 text-[15rem] text-white/5 -rotate-12 transition-transform group-hover:scale-110 duration-700"></i>
@@ -228,19 +221,14 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                      <div>
                         <h3 className="text-indigo-600 text-[10px] font-black uppercase tracking-[0.3em] mb-8">Deposit Protocol</h3>
                         <div className="flex items-center gap-6">
-                           <div className="text-center px-6 py-4 bg-slate-50 rounded-2xl border border-slate-100">
-                              <p className="text-3xl font-black text-slate-900">10,000</p>
-                              <p className="text-[9px] font-black text-slate-400 uppercase">Coins</p>
-                           </div>
-                           <i className="fa-solid fa-equals text-slate-200 text-xl"></i>
                            <div className="text-center px-6 py-4 bg-slate-900 rounded-2xl shadow-xl">
                               <p className="text-3xl font-black text-white">$2.00</p>
-                              <p className="text-[9px] font-black text-slate-500 uppercase">USD Rate</p>
+                              <p className="text-[9px] font-black text-slate-500 uppercase">Minimum USD</p>
                            </div>
                         </div>
                      </div>
                      <p className="mt-10 text-[10px] font-medium text-slate-500 uppercase tracking-widest leading-relaxed">
-                        Minimum deposit: 10,000 Coins ($2.00). Ad credits are synchronized instantly upon TxID verification.
+                        Minimum deposit: $2.00. Ad credits are synchronized instantly upon TxID verification.
                      </p>
                   </div>
                   <i className="fa-solid fa-bullhorn absolute -right-12 -bottom-12 text-[15rem] text-slate-50 rotate-12 transition-transform group-hover:scale-110 duration-700"></i>
@@ -254,8 +242,8 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                      <div>
                         <p className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.4em] mb-4 md:mb-6">Main Earning Vault</p>
                         <div className="flex items-baseline gap-4 mb-6 md:mb-8">
-                           <h2 className="text-5xl sm:text-7xl md:text-8xl font-black tracking-tighter tabular-nums">{coins.toLocaleString()}</h2>
-                           <span className="text-lg md:text-xl font-bold text-slate-500 uppercase tracking-widest">Coins</span>
+                           <h2 className="text-5xl sm:text-7xl md:text-8xl font-black tracking-tighter tabular-nums">{balance.toLocaleString(undefined, { minimumFractionDigits: 3 })}</h2>
+                           <span className="text-lg md:text-xl font-bold text-slate-500 uppercase tracking-widest">USD</span>
                         </div>
                         <div className="flex flex-wrap items-center gap-4">
                            <div className="px-5 md:px-6 py-3 bg-white/5 rounded-2xl border border-white/10 text-xs md:text-sm font-black shadow-inner flex items-center gap-3">
@@ -275,7 +263,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                         </div>
                         <div className="bg-white/5 p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border border-white/5 backdrop-blur-md text-center">
                            <p className="text-[7px] md:text-[8px] font-black uppercase text-slate-500 mb-2 md:mb-3 tracking-widest">Deposit Bal</p>
-                           <p className="text-2xl md:text-3xl font-black tabular-nums">{depositBalance.toLocaleString()}</p>
+                           <p className="text-2xl md:text-3xl font-black tabular-nums">${depositBalance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
                         </div>
                      </div>
                   </div>
@@ -346,16 +334,17 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                         </div>
 
                         <NumericInput
-                           label="2. Input Coin Volume (Coins)"
-                           value={parseInt(amount || '0')}
+                           label="2. Input USD Volume"
+                           value={parseFloat(amount || '0')}
                            min={activeTab === 'deposit' ? MIN_DEPOSIT : MIN_WITHDRAWAL}
-                           unitLabel="Coins"
+                           step={0.01}
+                           unitLabel="USD"
                            onChange={val => setAmount(val.toString())}
                         />
                      </div>
 
                      <div className="px-6 flex justify-between items-center text-[9px] font-black uppercase tracking-widest">
-                        <span className="text-slate-400">Min {activeTab}: {activeTab === 'deposit' ? MIN_DEPOSIT.toLocaleString() : MIN_WITHDRAWAL.toLocaleString()} Coins</span>
+                        <span className="text-slate-400">Min {activeTab}: ${activeTab === 'deposit' ? MIN_DEPOSIT.toFixed(2) : MIN_WITHDRAWAL.toFixed(2)}</span>
                         <span className="text-indigo-600">Node Sync Active</span>
                      </div>
 
@@ -470,7 +459,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                                     </span>
                                  </td>
                                  <td className={`px-6 py-6 font-black text-base ${tx.type === 'deposit' ? 'text-emerald-600' : 'text-slate-900'}`}>
-                                    {tx.type === 'deposit' ? '+' : '-'}{tx.amount.toLocaleString()} <span className="text-[9px] opacity-40">COINS</span>
+                                    {tx.type === 'deposit' ? '+' : '-'}{tx.amount.toLocaleString(undefined, { minimumFractionDigits: 3 })} <span className="text-[9px] opacity-40">USD</span>
                                  </td>
                                  <td className="px-6 py-6">
                                     <div className="flex items-center gap-2">
@@ -504,8 +493,8 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                               <span className={`px-3 py-1 rounded-lg ${activeTab === 'deposit' ? 'text-emerald-600 bg-emerald-100/50' : 'text-indigo-600 bg-indigo-100/50'}`}>{activeTab}</span>
                            </div>
                            <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                              <span>Coin Volume</span>
-                              <span className="text-slate-900 font-black text-xl">{amount} Coins</span>
+                              <span>USD Volume</span>
+                              <span className="text-slate-900 font-black text-xl">${amount}</span>
                            </div>
                            <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest">
                               <span>Gateway Hub</span>
@@ -514,7 +503,7 @@ const Wallet: React.FC<WalletProps> = ({ coins, depositBalance = 0, onAction, tr
                            <div className="h-px bg-slate-200 w-full"></div>
                            <div className="flex justify-between items-center pt-2">
                               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Settlement Value</span>
-                              <span className="text-2xl font-black text-emerald-600">${(parseInt(amount) / (activeTab === 'deposit' ? DEPOSIT_RATE : WITHDRAW_RATE)).toFixed(2)} USD</span>
+                              <span className="text-2xl font-black text-emerald-600">${parseFloat(amount).toFixed(2)} USD</span>
                            </div>
                         </div>
                         <div className="flex flex-col sm:flex-row gap-4">

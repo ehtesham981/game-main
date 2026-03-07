@@ -9,32 +9,37 @@ interface NumericInputProps {
     onChange: (value: number) => void;
     unitLabel?: string;
     placeholder?: string;
+    disabled?: boolean;
 }
 
 const NumericInput: React.FC<NumericInputProps> = ({
     label,
     value,
-    min = 1,
+    min = 0,
     max = 1000000,
     step = 1,
     onChange,
     unitLabel = '',
-    placeholder = '0.00'
+    placeholder = '0.00',
+    disabled = false
 }) => {
     const handleIncrement = () => {
+        if (disabled) return;
         if (value + step <= max) {
-            onChange(value + step);
+            onChange(Number((value + step).toFixed(4)));
         }
     };
 
     const handleDecrement = () => {
+        if (disabled) return;
         if (value - step >= min) {
-            onChange(value - step);
+            onChange(Number((value - step).toFixed(4)));
         }
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newVal = parseInt(e.target.value) || 0;
+        if (disabled) return;
+        const newVal = parseFloat(e.target.value) || 0;
         onChange(newVal);
     };
 
@@ -45,7 +50,8 @@ const NumericInput: React.FC<NumericInputProps> = ({
                 <button
                     type="button"
                     onClick={handleDecrement}
-                    className="w-12 h-14 bg-white text-slate-400 hover:text-indigo-600 rounded-2xl flex items-center justify-center transition-all shadow-sm active:scale-90"
+                    disabled={disabled}
+                    className={`w-12 h-14 bg-white text-slate-400 rounded-2xl flex items-center justify-center transition-all shadow-sm active:scale-90 ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:text-indigo-600'}`}
                 >
                     <i className="fa-solid fa-chevron-down text-xs"></i>
                 </button>
@@ -57,7 +63,8 @@ const NumericInput: React.FC<NumericInputProps> = ({
                     value={value}
                     onChange={handleInputChange}
                     placeholder={placeholder}
-                    className="flex-1 bg-transparent border-none text-center font-black text-slate-800 text-lg outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    disabled={disabled}
+                    className={`flex-1 bg-transparent border-none text-center font-black text-slate-800 text-lg outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${disabled ? 'cursor-not-allowed' : ''}`}
                 />
 
                 {unitLabel && (
@@ -69,7 +76,8 @@ const NumericInput: React.FC<NumericInputProps> = ({
                 <button
                     type="button"
                     onClick={handleIncrement}
-                    className="w-12 h-14 bg-white text-slate-400 hover:text-indigo-600 rounded-2xl flex items-center justify-center transition-all shadow-sm active:scale-90"
+                    disabled={disabled}
+                    className={`w-12 h-14 bg-white text-slate-400 rounded-2xl flex items-center justify-center transition-all shadow-sm active:scale-90 ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:text-indigo-600'}`}
                 >
                     <i className="fa-solid fa-chevron-up text-xs"></i>
                 </button>

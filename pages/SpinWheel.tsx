@@ -3,13 +3,13 @@ import { Transaction } from '../types';
 import BackToDashboard from '../components/BackToDashboard';
 
 interface SpinWheelProps {
-  userCoins: number;
+  userBalance: number;
   onSpin: (reward: number, cost: number) => void;
   transactions: Transaction[];
   onNavigate?: (page: string) => void;
 }
 
-const SpinWheel: React.FC<SpinWheelProps> = ({ userCoins, onSpin, transactions, onNavigate }) => {
+const SpinWheel: React.FC<SpinWheelProps> = ({ userBalance, onSpin, transactions, onNavigate }) => {
   const [isSpinning, setIsSpinning] = useState(false);
   const [result, setResult] = useState<number | null>(null);
   const [rotation, setRotation] = useState(0);
@@ -17,7 +17,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userCoins, onSpin, transactions, 
 
   const SPIN_COST = 0;
   const DAILY_LIMIT = 5;
-  const REWARDS = [25, 10, 50, 5, 100, 0, 15, 30];
+  const REWARDS = [0.005, 0.002, 0.010, 0.001, 0.020, 0, 0.003, 0.008];
   const COLORS = [
     'bg-indigo-600', 'bg-slate-900', 'bg-indigo-500', 'bg-indigo-800',
     'bg-indigo-700', 'bg-emerald-500', 'bg-slate-400', 'bg-indigo-400'
@@ -91,7 +91,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userCoins, onSpin, transactions, 
             The <span className="text-indigo-600">Grand</span> Vault Wheel
           </h1>
           <p className="text-slate-500 font-medium text-lg leading-relaxed">
-            Synchronize your luck with our global reward node. Zero-cost entry, maximum Coin potential. Reset occurs every 24 operational hours.
+            Synchronize your luck with our global reward node. Zero-cost entry, maximum USD potential. Reset occurs every 24 operational hours.
           </p>
         </div>
 
@@ -158,8 +158,8 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userCoins, onSpin, transactions, 
                           transformOrigin: 'bottom center'
                         }}
                       >
-                        <span className="text-2xl md:text-4xl tracking-tighter transform rotate-180 mb-4">{rew}</span>
-                        <i className="fa-solid fa-coins text-sm md:text-lg text-white/20 transform rotate-180"></i>
+                        <span className="text-xl md:text-2xl tracking-tighter transform rotate-180 mb-4">${rew.toFixed(3)}</span>
+                        <i className="fa-solid fa-dollar-sign text-sm md:text-lg text-white/20 transform rotate-180"></i>
                       </div>
                     </div>
                   ))}
@@ -178,7 +178,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userCoins, onSpin, transactions, 
               {result !== null && !isSpinning && (
                 <div className="mb-12 animate-in zoom-in duration-500">
                   <div className={`text-5xl font-black tracking-tighter ${result > 0 ? 'text-emerald-500' : 'text-slate-400 opacity-50'}`}>
-                    {result > 0 ? `+${result} COINS` : '0 COINS'}
+                    {result > 0 ? `+$${result.toFixed(3)} USD` : '$0.000 USD'}
                   </div>
                   <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mt-3">Vault Synchronization Successful</div>
                 </div>
@@ -223,11 +223,11 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userCoins, onSpin, transactions, 
                   spinHistory.slice(0, 10).map((tx) => (
                     <div key={tx.id} className="p-8 flex items-center justify-between hover:bg-slate-50 transition-all group">
                       <div className="flex items-center gap-5">
-                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-lg border shadow-sm transition-transform group-hover:scale-110 ${tx.amount > 20 ? 'bg-yellow-50 text-yellow-600 border-yellow-100' : 'bg-indigo-50 text-indigo-400 border-indigo-100'}`}>
-                          <i className={`fa-solid ${tx.amount > 20 ? 'fa-crown' : 'fa-coins'}`}></i>
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-lg border shadow-sm transition-transform group-hover:scale-110 ${tx.amount > 0.01 ? 'bg-yellow-50 text-yellow-600 border-yellow-100' : 'bg-indigo-50 text-indigo-400 border-indigo-100'}`}>
+                          <i className={`fa-solid ${tx.amount > 0.01 ? 'fa-crown' : 'fa-dollar-sign'}`}></i>
                         </div>
                         <div>
-                          <div className="text-base font-black text-slate-900 tracking-tight">+{tx.amount} <span className="text-[10px] opacity-40 uppercase">Coins</span></div>
+                          <div className="text-base font-black text-slate-900 tracking-tight">+${tx.amount.toFixed(3)} <span className="text-[10px] opacity-40 uppercase">USD</span></div>
                           <div className="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-1">{tx.date.split(',')[0]}</div>
                         </div>
                       </div>

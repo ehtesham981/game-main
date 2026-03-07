@@ -190,7 +190,7 @@ export default function Tasks({ user, tasks, transactions, onComplete, navigateT
               </h1>
               <p className="text-slate-500 font-medium text-sm md:text-lg leading-relaxed">
                 {activeView === 'Marketplace'
-                  ? 'Identify micro-tasks to generate daily coin yield. Dual-proof verification required.'
+                  ? 'Identify micro-tasks to generate daily yield. Dual-proof verification required.'
                   : 'Track your verification status and audit history.'}
               </p>
             </div>
@@ -255,9 +255,9 @@ export default function Tasks({ user, tasks, transactions, onComplete, navigateT
                     <div className="w-14 h-14 bg-slate-50 rounded-[1.25rem] flex items-center justify-center text-xl group-hover:bg-indigo-600 group-hover:text-white transition-all">
                       <i className={`fa-solid ${getIcon(task.type)}`}></i>
                     </div>
-                    <div className="px-5 py-3 bg-slate-900 rounded-[1.25rem] text-white flex items-center gap-3">
-                      <i className="fa-solid fa-coins text-yellow-400"></i>
-                      <span className="text-xl font-black">{task.reward}</span>
+                    <div className="px-5 py-3 bg-white/5 rounded-[1.25rem] text-slate-900 border border-slate-100 flex items-center gap-3">
+                      <i className="fa-solid fa-dollar-sign text-emerald-500"></i>
+                      <span className="text-xl font-black">{task.reward.toFixed(3)}</span>
                     </div>
                   </div>
                   <div className="flex-grow mb-8">
@@ -299,8 +299,8 @@ export default function Tasks({ user, tasks, transactions, onComplete, navigateT
                       <i className={`fa-solid ${getIcon(tx.method || '')}`}></i>
                     </div>
                     <div className={`px-4 py-1.5 text-[8px] font-black rounded-lg uppercase tracking-widest border transition-all ${tx.status === 'success' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
-                        tx.status === 'failed' ? 'bg-rose-50 text-rose-600 border-rose-100' :
-                          'bg-amber-50 text-amber-600 border-amber-100 animate-pulse'
+                      tx.status === 'failed' ? 'bg-rose-50 text-rose-600 border-rose-100' :
+                        'bg-amber-50 text-amber-600 border-amber-100 animate-pulse'
                       }`}>
                       {tx.status === 'failed' ? 'rejected' : tx.status}
                     </div>
@@ -313,11 +313,11 @@ export default function Tasks({ user, tasks, transactions, onComplete, navigateT
                     <div className="flex items-center justify-between mt-6">
                       <div>
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Yield</p>
-                        <div className="text-2xl md:text-3xl font-black text-slate-900">+{tx.amount}</div>
+                        <div className="text-2xl md:text-3xl font-black text-slate-900">+${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 3 })}</div>
                       </div>
                       <div className="text-right">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Coin Value</p>
-                        <div className="text-2xl md:text-3xl font-black text-slate-900">+{tx.amount}</div>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Status</p>
+                        <div className={`text-sm font-black uppercase tracking-widest ${tx.status === 'success' ? 'text-emerald-600' : 'text-amber-500'}`}>{tx.status}</div>
                       </div>
                     </div>
                     {tx.message && (
@@ -363,7 +363,7 @@ export default function Tasks({ user, tasks, transactions, onComplete, navigateT
                 </div>
                 <div>
                   <h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">{selectedTask.title}</h3>
-                  <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">Reward: {selectedTask.reward} Coins</p>
+                  <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Reward: ${selectedTask.reward.toFixed(3)} USD</p>
                 </div>
               </div>
               <button onClick={handleCloseModal} className="w-10 h-10 bg-white rounded-xl text-slate-400 hover:text-slate-900 transition-all flex items-center justify-center shadow-sm">

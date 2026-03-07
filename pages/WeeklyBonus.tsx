@@ -12,7 +12,7 @@ interface WeeklyBonusProps {
 
 const WeeklyBonus: React.FC<WeeklyBonusProps> = ({ user, transactions, onClaim, onBack, onNavigate }) => {
     const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
-    const REWARD_COINS = 360; // $0.09 * 4000
+    const REWARD_BALANCE = 0.09; // $0.09
     const [timeLeft, setTimeLeft] = useState<number | null>(null);
     const [isClaiming, setIsClaiming] = useState(false);
 
@@ -45,7 +45,7 @@ const WeeklyBonus: React.FC<WeeklyBonusProps> = ({ user, transactions, onClaim, 
         if (timeLeft && timeLeft > 0) return;
         setIsClaiming(true);
         try {
-            await onClaim(REWARD_COINS);
+            await onClaim(REWARD_BALANCE);
         } catch (error) {
             console.error(error);
         } finally {
@@ -101,7 +101,7 @@ const WeeklyBonus: React.FC<WeeklyBonusProps> = ({ user, transactions, onClaim, 
                                         </div>
                                         <div>
                                             <p className="text-3xl font-black text-white tracking-tighter uppercase">Reward Available</p>
-                                            <p className="text-indigo-300 font-bold text-sm">360 Coins ($0.09) Ready for Claim</p>
+                                            <p className="text-indigo-300 font-bold text-sm">$0.09 USD Ready for Claim</p>
                                         </div>
                                     </div>
                                     <button
@@ -160,7 +160,7 @@ const WeeklyBonus: React.FC<WeeklyBonusProps> = ({ user, transactions, onClaim, 
                                 </div>
                                 <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100">
                                     <p className="text-[8px] font-black text-slate-400 uppercase mb-2">Vault Deposit</p>
-                                    <p className="text-xl font-black text-indigo-600">360 Coins</p>
+                                    <p className="text-xl font-black text-indigo-600">$0.09 USD</p>
                                 </div>
                             </div>
                         </div>
@@ -208,7 +208,7 @@ const WeeklyBonus: React.FC<WeeklyBonusProps> = ({ user, transactions, onClaim, 
                                                 </span>
                                             </td>
                                             <td className="px-6 py-6 font-black text-emerald-600 text-base">
-                                                +{tx.amount.toLocaleString()} <span className="text-[9px] opacity-40">COINS</span>
+                                                +${tx.amount.toFixed(2)} <span className="text-[9px] opacity-40">USD</span>
                                             </td>
                                             <td className="px-6 py-6">
                                                 <div className="flex items-center gap-2">

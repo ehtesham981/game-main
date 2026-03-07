@@ -25,7 +25,7 @@ export interface User {
   email: string;
   city?: string;
   country?: string;
-  coins: number;
+  balance: number;
   depositBalance: number;
   completedTasks: string[];
   createdTasks: string[];

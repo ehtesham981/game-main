@@ -16,7 +16,7 @@ const Referrals: React.FC<ReferralsProps> = ({ user, onClaim, onNavigate }) => {
   const [loading, setLoading] = useState(true);
   const [claimingId, setClaimingId] = useState<string | null>(null);
 
-  const REFERRAL_REWARD = 50;
+  const REFERRAL_REWARD = 0.05; // $0.05
 
   // Branded functional link using current origin and 'id' parameter
   const baseUrl = window.location.origin;
@@ -24,7 +24,7 @@ const Referrals: React.FC<ReferralsProps> = ({ user, onClaim, onNavigate }) => {
   const functionalLink = `${baseUrl}/?id=${partnerId}`;
   const displayLink = functionalLink.replace(/^https?:\/\//, '');
 
-  const shareMessage = `Unlock daily earnings with Ads Predia! Join via my partner link and get 100 coins instantly: ${functionalLink}`;
+  const shareMessage = `Unlock daily earnings with Ads Predia! Join via my partner link and get $0.10 bonus instantly: ${functionalLink}`;
 
   const fetchRefData = async () => {
     setLoading(true);
@@ -98,10 +98,10 @@ const Referrals: React.FC<ReferralsProps> = ({ user, onClaim, onNavigate }) => {
             Affiliate Growth Center
           </div>
           <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter leading-none mb-4">
-            Recruit & <span className="text-indigo-600">Claim 200</span>
+            Recruit & <span className="text-indigo-600">Claim Rewards</span>
           </h1>
           <p className="text-slate-500 font-medium text-lg leading-relaxed">
-            Expand your earning network. Every authorized sign-up via your ID yields {REFERRAL_REWARD} instant coins. Reach milestones for bonuses up to 200 extra coins.
+            Expand your earning network. Every authorized sign-up via your ID yields ${REFERRAL_REWARD.toFixed(2)} instant USD. Reach milestones for bonuses up to $0.20 extra.
           </p>
         </div>
 
@@ -154,11 +154,11 @@ const Referrals: React.FC<ReferralsProps> = ({ user, onClaim, onNavigate }) => {
                   <p className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.4em] mb-4">Total Referral Assets</p>
                   <div className="flex items-baseline gap-4 mb-4 justify-center md:justify-start">
                     <h2 className="text-7xl md:text-9xl font-black tracking-tighter leading-none tabular-nums">
-                      {claimedCount * REFERRAL_REWARD +
-                        (user.claimedReferrals?.includes('milestone_3_bonus') ? 150 : 0) +
-                        (user.claimedReferrals?.includes('milestone_5_bonus') ? 200 : 0)}
+                      $ {(claimedCount * REFERRAL_REWARD +
+                        (user.claimedReferrals?.includes('milestone_3_bonus') ? 0.15 : 0) +
+                        (user.claimedReferrals?.includes('milestone_5_bonus') ? 0.20 : 0)).toFixed(2)}
                     </h2>
-                    <span className="text-xl font-bold text-slate-500 uppercase tracking-widest">Coins</span>
+                    <span className="text-xl font-bold text-slate-500 uppercase tracking-widest">USD</span>
                   </div>
                   <p className="text-xs font-bold text-slate-400 italic">Global bonuses successfully claimed and added to your balance.</p>
                 </div>
@@ -215,7 +215,7 @@ const Referrals: React.FC<ReferralsProps> = ({ user, onClaim, onNavigate }) => {
                       ) : (
                         <i className="fa-solid fa-gift"></i>
                       )}
-                      {claimingId === 'milestone_3_bonus' ? 'SYNCING...' : 'CLAIM 150 COINS'}
+                      {claimingId === 'milestone_3_bonus' ? 'SYNCING...' : 'CLAIM $0.15 USD'}
                     </button>
                   )}
                 </div>
@@ -269,7 +269,7 @@ const Referrals: React.FC<ReferralsProps> = ({ user, onClaim, onNavigate }) => {
                       ) : (
                         <i className="fa-solid fa-gem"></i>
                       )}
-                      {claimingId === 'milestone_5_bonus' ? 'SYNCING...' : 'CLAIM 200 COINS'}
+                      {claimingId === 'milestone_5_bonus' ? 'SYNCING...' : 'CLAIM $0.20 USD'}
                     </button>
                   )}
                 </div>
@@ -339,7 +339,7 @@ const Referrals: React.FC<ReferralsProps> = ({ user, onClaim, onNavigate }) => {
                               ) : (
                                 <i className="fa-solid fa-hand-holding-dollar group-hover/btn:translate-y-[-2px] transition-transform"></i>
                               )}
-                              {claimingId === partner.id ? 'Synchronizing...' : `Claim Now (${REFERRAL_REWARD})`}
+                              {claimingId === partner.id ? 'Synchronizing...' : `Claim Now ($${REFERRAL_REWARD.toFixed(2)})`}
                             </button>
                           )}
                         </div>
@@ -356,9 +356,9 @@ const Referrals: React.FC<ReferralsProps> = ({ user, onClaim, onNavigate }) => {
               <h3 className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.4em] mb-10">Affiliate Rules</h3>
               <div className="space-y-10">
                 {[
-                  { t: 'Instant Bounty', d: `Claim 50 Coins for every successful referral as soon as they join.`, i: 'fa-bolt' },
-                  { t: 'Squad Milestone', d: 'Reach 3 successful referrals to claim an extra 150 Bonus Coins.', i: 'fa-trophy' },
-                  { t: 'Elite Milestone', d: 'Reach 5 successful referrals to claim an extra 200 Bonus Coins.', i: 'fa-crown' },
+                  { t: 'Instant Bounty', d: `Claim $0.05 for every successful referral as soon as they join.`, i: 'fa-bolt' },
+                  { t: 'Squad Milestone', d: 'Reach 3 successful referrals to claim an extra $0.15 Bonus.', i: 'fa-trophy' },
+                  { t: 'Elite Milestone', d: 'Reach 5 successful referrals to claim an extra $0.20 Bonus.', i: 'fa-crown' },
                   { t: 'Manual Claims', d: 'Rewards must be manually initialized via the Directory Hub.', i: 'fa-hand-pointer' }
                 ].map((rule, i) => (
                   <div key={i} className="flex gap-6">

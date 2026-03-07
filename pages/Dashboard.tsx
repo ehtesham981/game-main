@@ -17,19 +17,17 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
     setIsClient(true);
   }, []);
 
-  const COIN_RATE = 3000;
-
   const earnings = useMemo(() => {
-    const total = user.coins || 0;
-    const usd = (total / COIN_RATE).toFixed(2);
+    const total = user.balance || 0;
+    const usd = total.toFixed(3);
     const pending = transactions
       .filter(tx => tx.type === 'earn' && tx.status === 'pending')
       .reduce((sum, tx) => sum + tx.amount, 0);
 
     return { total, usd, pending };
-  }, [user.coins, transactions]);
+  }, [user.balance, transactions]);
 
-  const progressToNextDollar = ((earnings.total % COIN_RATE) / COIN_RATE) * 100;
+  const progressToNextDollar = (earnings.total % 1) * 100;
 
   const ledgerList = useMemo(() => {
     let filtered = transactions.filter(tx => ['earn', 'spin', 'referral_claim', 'math_reward', 'deposit', 'withdraw', 'spend'].includes(tx.type));
@@ -127,20 +125,20 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
                   </div>
                   <div className="flex flex-wrap items-center gap-4">
                     <div className="px-5 py-3 bg-white/5 rounded-2xl border border-white/10 text-xs font-black shadow-inner flex items-center gap-3">
-                      <i className="fa-solid fa-coins text-yellow-500"></i>
-                      {earnings.total.toLocaleString()} <span className="opacity-40 text-[10px]">COINS</span>
+                      <i className="fa-solid fa-dollar-sign text-emerald-400"></i>
+                      {earnings.usd} <span className="opacity-40 text-[10px]">USD</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full sm:w-auto">
                   <div className="stat-box">
-                    <p className="text-[8px] font-black uppercase text-slate-500 mb-2 tracking-widest">Vault Coins</p>
-                    <p className="text-2xl sm:text-3xl font-black tabular-nums">{earnings.total.toLocaleString()}</p>
+                    <p className="text-[8px] font-black uppercase text-slate-500 mb-2 tracking-widest">Vault Balance</p>
+                    <p className="text-2xl sm:text-3xl font-black tabular-nums">${earnings.usd}</p>
                   </div>
                   <div className="stat-box-emerald">
                     <p className="text-[8px] font-black uppercase text-emerald-400 mb-2 tracking-widest">Ad Credits</p>
-                    <p className="text-2xl sm:text-3xl font-black tabular-nums text-emerald-400">{user.depositBalance?.toLocaleString() || 0}</p>
+                    <p className="text-2xl sm:text-3xl font-black tabular-nums text-emerald-400">${user.depositBalance?.toLocaleString(undefined, { minimumFractionDigits: 2 }) || '0.00'}</p>
                   </div>
                   <div className="stat-box">
                     <p className="text-[8px] font-black uppercase text-slate-500 mb-2 tracking-widest">Ref Partners</p>
@@ -242,9 +240,9 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
                     <div>
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-lg font-black text-slate-900 tabular-nums">
-                          {['withdraw', 'spend'].includes(tx.type) ? '-' : '+'}{tx.amount.toLocaleString()}
+                          {['withdraw', 'spend'].includes(tx.type) ? '-' : '+'}${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 3 })}
                         </span>
-                        <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Coins</span>
+                        <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">USD</span>
                       </div>
                       <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest truncate max-w-[150px]">{tx.date}</p>
                     </div>

@@ -22,9 +22,9 @@ const MathSolver: React.FC<MathSolverProps> = ({ user, onSolve, transactions, on
   const [userAnswer, setUserAnswer] = useState('');
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [completed, setCompleted] = useState(false);
-  const [earnedCoins, setEarnedCoins] = useState(() => {
-    const saved = localStorage.getItem('math_earned_coins');
-    return saved ? parseInt(saved) : 0;
+  const [earnedBalance, setEarnedBalance] = useState(() => {
+    const saved = localStorage.getItem('math_earned_balance');
+    return saved ? parseFloat(saved) : 0;
   });
   const [timeLeft, setTimeLeft] = useState<string>('');
 
@@ -75,24 +75,25 @@ const MathSolver: React.FC<MathSolverProps> = ({ user, onSolve, transactions, on
     const ans = parseInt(userAnswer);
     if (ans === questions[currentIndex].a) {
       setIsCorrect(true);
-      setEarnedCoins(prev => prev + 5);
+      const questionReward = 0.0002;
+      setEarnedBalance(prev => prev + questionReward);
 
       const isLast = currentIndex === questions.length - 1;
-      onSolve(5, isLast);
+      onSolve(questionReward, isLast);
 
       setTimeout(() => {
         if (!isLast) {
           const nextIndex = currentIndex + 1;
-          const nextCoins = earnedCoins + 5;
+          const nextBalance = earnedBalance + 0.0002;
           setCurrentIndex(nextIndex);
           localStorage.setItem('math_current_index', nextIndex.toString());
-          localStorage.setItem('math_earned_coins', nextCoins.toString());
+          localStorage.setItem('math_earned_balance', nextBalance.toString());
           setUserAnswer('');
           setIsCorrect(null);
         } else {
           setCompleted(true);
           localStorage.removeItem('math_current_index');
-          localStorage.removeItem('math_earned_coins');
+          localStorage.removeItem('math_earned_balance');
         }
       }, 1000);
     } else {
@@ -136,7 +137,7 @@ const MathSolver: React.FC<MathSolverProps> = ({ user, onSolve, transactions, on
           </div>
           <h2 className="text-5xl font-black tracking-tighter mb-6 uppercase">Calculation Complete</h2>
           <p className="text-slate-400 text-lg font-medium leading-relaxed max-w-sm mx-auto mb-12">
-            You have earned <span className="text-emerald-400 font-black">{earnedCoins} Coins</span>. The node is now entering a 24-hour cooldown.
+            You have earned <span className="text-emerald-400 font-black">${earnedBalance.toFixed(4)} USD</span>. The node is now entering a 24-hour cooldown.
           </p>
           <div className="flex gap-4">
             <button
@@ -159,7 +160,7 @@ const MathSolver: React.FC<MathSolverProps> = ({ user, onSolve, transactions, on
           </div>
           <div className="text-right">
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Vault Yield</p>
-            <div className="text-2xl font-black text-emerald-600">+{earnedCoins} <span className="text-[10px] opacity-40">Coins</span></div>
+            <div className="text-2xl font-black text-emerald-600">+${earnedBalance.toFixed(4)} <span className="text-[10px] opacity-40">USD</span></div>
           </div>
         </div>
 
@@ -232,7 +233,7 @@ const MathSolver: React.FC<MathSolverProps> = ({ user, onSolve, transactions, on
             Math <span className="text-indigo-600">Solver</span>
           </h1>
           <p className="text-slate-500 font-medium text-lg leading-relaxed">
-            Solve easy equations to generate coin yield. Each correct calculation credits 5 coins to your vault instantly.
+            Solve easy equations to generate USD yield. Each correct calculation credits $0.0002 to your vault instantly.
           </p>
         </div>
 
@@ -269,7 +270,7 @@ const MathSolver: React.FC<MathSolverProps> = ({ user, onSolve, transactions, on
                           <i className="fa-solid fa-calculator"></i>
                         </div>
                         <div>
-                          <div className="text-sm font-black text-slate-900 tracking-tight">+{tx.amount} <span className="text-[9px] opacity-40 uppercase font-black">Coins</span></div>
+                          <div className="text-sm font-black text-slate-900 tracking-tight">+${tx.amount.toFixed(4)} <span className="text-[9px] opacity-40 uppercase font-black">USD</span></div>
                           <div className="text-[8px] text-slate-400 font-black uppercase tracking-widest mt-0.5">{tx.date.split(',')[0]}</div>
                         </div>
                       </div>
@@ -289,7 +290,7 @@ const MathSolver: React.FC<MathSolverProps> = ({ user, onSolve, transactions, on
                   <span className="text-3xl font-black tabular-nums">{mathHistory.length}</span>
                   <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Calculations</span>
                 </div>
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Total Math Yield: <span className="text-emerald-400">+{mathHistory.reduce((sum, tx) => sum + tx.amount, 0)} Coins</span></p>
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Total Math Yield: <span className="text-emerald-400">+${mathHistory.reduce((sum, tx) => sum + tx.amount, 0).toFixed(4)} USD</span></p>
               </div>
               <i className="fa-solid fa-bolt absolute -right-4 -bottom-4 text-6xl text-white/5 -rotate-12"></i>
             </div>
