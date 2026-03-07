@@ -14,7 +14,7 @@ interface WalletProps {
    onNavigate: (page: string) => void;
 }
 
-const Wallet: React.FC<WalletProps> = ({ balance, depositBalance = 0, onAction, transactions, onRefresh, onNavigate }) => {
+const Wallet: React.FC<WalletProps> = ({ balance = 0, depositBalance = 0, onAction, transactions, onRefresh, onNavigate }) => {
    const [activeTab, setActiveTab] = useState<'deposit' | 'withdraw'>('deposit');
    const [amount, setAmount] = useState('0');
    const [method, setMethod] = useState('Easypaisa');
@@ -422,7 +422,7 @@ const Wallet: React.FC<WalletProps> = ({ balance, depositBalance = 0, onAction, 
 
 
             {/* Transaction History Section */}
-            < div className="bg-white rounded-[4rem] border border-slate-200 shadow-sm overflow-hidden" >
+            <div className="bg-white rounded-[4rem] border border-slate-200 shadow-sm overflow-hidden" >
                <div className="p-10 border-b border-slate-50 bg-slate-50/20 flex justify-between items-center">
                   <div>
                      <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter leading-none">Global Ledger</h3>
@@ -474,8 +474,8 @@ const Wallet: React.FC<WalletProps> = ({ balance, depositBalance = 0, onAction, 
                      </tbody>
                   </table>
                </div>
-            </div >
-         </div >
+            </div>
+         </div>
 
          {/* Confirmation Modal */}
          {
@@ -526,7 +526,7 @@ const Wallet: React.FC<WalletProps> = ({ balance, depositBalance = 0, onAction, 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
-      </div >
+      </div>
    );
 };
 
