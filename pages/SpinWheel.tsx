@@ -141,7 +141,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userBalance, onSpin, transactions
               </div>
 
               {/* The Mechanical Wheel */}
-              <div className="relative w-84 h-84 md:w-[550px] md:h-[550px] rounded-full p-8 md:p-12 bg-slate-900 border-[20px] border-slate-900 shadow-[0_60px_120px_-30px_rgba(0,0,0,0.7)] group">
+              <div className="relative w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] md:w-[550px] md:h-[550px] rounded-full p-6 sm:p-8 md:p-12 bg-slate-900 border-[10px] sm:border-[15px] md:border-[20px] border-slate-900 shadow-[0_60px_120px_-30px_rgba(0,0,0,0.7)] group">
                 {/* Visual Depth Decoration */}
                 <div className="absolute inset-4 md:inset-8 rounded-full border-4 border-indigo-500/10 pointer-events-none z-10 shadow-inner"></div>
                 <div className="absolute -inset-2 rounded-full border border-white/5 pointer-events-none z-0"></div>
@@ -157,13 +157,13 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userBalance, onSpin, transactions
                       style={{ transform: `rotate(${(360 / REWARDS.length) * i}deg)` }}
                     >
                       <div
-                        className={`absolute top-0 left-1/2 -translate-x-1/2 h-1/2 w-[52%] flex flex-col items-center pt-16 md:pt-24 font-black ${COLORS[i % COLORS.length]} text-white border-r border-white/10`}
+                        className={`absolute top-0 left-1/2 -translate-x-1/2 h-1/2 w-[75%] flex flex-col items-center pt-10 sm:pt-16 md:pt-24 font-black ${COLORS[i % COLORS.length]} text-white border-r border-white/10`}
                         style={{
                           clipPath: 'polygon(50% 100%, 0 0, 100% 0)',
                           transformOrigin: 'bottom center'
                         }}
                       >
-                        <span className="text-2xl md:text-3xl tracking-tighter transform rotate-180 mb-6 drop-shadow-lg">${rew.toFixed(3)}</span>
+                        <span className="text-xl sm:text-2xl md:text-3xl tracking-tighter transform rotate-180 mb-4 md:mb-6 drop-shadow-lg">${rew.toFixed(3)}</span>
                         <i className="fa-solid fa-bolt text-xs md:text-base text-white/30 transform rotate-180"></i>
                       </div>
                     </div>
@@ -171,9 +171,9 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userBalance, onSpin, transactions
                 </div>
 
                 {/* Core Hub Module */}
-                <div className="absolute inset-0 m-auto w-24 h-24 md:w-32 md:h-32 bg-slate-900 rounded-full z-30 border-[8px] border-slate-800 shadow-3xl flex items-center justify-center">
-                  <div className="w-14 h-14 md:w-20 md:h-20 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-full flex items-center justify-center shadow-2xl border-4 border-white/10 group-hover:scale-110 transition-transform">
-                    <i className="fa-solid fa-bolt-lightning text-white text-2xl md:text-4xl animate-pulse"></i>
+                <div className="absolute inset-0 m-auto w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 bg-slate-900 rounded-full z-30 border-[4px] sm:border-[8px] border-slate-800 shadow-3xl flex items-center justify-center">
+                  <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-20 md:h-20 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-full flex items-center justify-center shadow-2xl border-2 sm:border-4 border-white/10 group-hover:scale-110 transition-transform">
+                    <i className="fa-solid fa-bolt-lightning text-white text-xl sm:text-2xl md:text-4xl animate-pulse"></i>
                   </div>
                 </div>
               </div>
