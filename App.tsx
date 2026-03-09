@@ -326,7 +326,13 @@ const App: React.FC = () => {
           {currentPage === 'contact' && <Contact />}
           {currentPage === 'wallet' && <Wallet balance={user.balance} depositBalance={user.depositBalance} onAction={handleWalletAction} transactions={transactions} onRefresh={() => refreshUserBalance()} onNavigate={navigateTo} />}
           {currentPage === 'dashboard' && user.isLoggedIn && <Dashboard user={user} tasks={tasks} transactions={transactions} onDeleteTask={() => { }} onUpdateTask={() => { }} />}
-          {currentPage === 'micro-jobs' && user.isLoggedIn && <MicroJobs user={user} onNavigate={navigateTo} />}
+          {(currentPage === 'micro-jobs' || currentPage === 'shortlinks') && user.isLoggedIn && (
+            <MicroJobs
+              user={user}
+              onNavigate={navigateTo}
+              initialTab={currentPage === 'shortlinks' ? 'shortlinks' : 'offers'}
+            />
+          )}
           {currentPage === 'weekly-bonus' && user.isLoggedIn && (
             <WeeklyBonus
               user={user}

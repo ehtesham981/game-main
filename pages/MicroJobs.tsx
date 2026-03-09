@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 interface MicroJobsProps {
     user: User;
     onNavigate: (page: string) => void;
+    initialTab?: 'offers' | 'shortlinks';
 }
 
 interface Shortlink {
@@ -19,8 +20,8 @@ interface Shortlink {
     url: string;
 }
 
-const MicroJobs: React.FC<MicroJobsProps> = ({ user, onNavigate }) => {
-    const [activeTab, setActiveTab] = useState<'offers' | 'shortlinks'>('offers');
+const MicroJobs: React.FC<MicroJobsProps> = ({ user, onNavigate, initialTab = 'offers' }) => {
+    const [activeTab, setActiveTab] = useState<'offers' | 'shortlinks'>(initialTab);
     const [visitingLink, setVisitingLink] = useState<Shortlink | null>(null);
     const [timeLeft, setTimeLeft] = useState(20);
     const [isCounting, setIsCounting] = useState(false);
