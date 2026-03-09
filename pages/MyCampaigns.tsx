@@ -18,7 +18,9 @@ const MyCampaigns: React.FC<MyCampaignsProps> = ({ user, tasks, transactions, on
 
   // Robust filtering: combine local user created list with task creatorId check
   const userTasks = tasks.filter(t =>
-    t.creatorId === user.id || (user.createdTasks && user.createdTasks.includes(t.id))
+    t.creatorId === user.id ||
+    (user.id === 'USR-ADMIN' && t.creatorId === 'ADMIN') ||
+    (user.createdTasks && user.createdTasks.includes(t.id))
   );
 
   const filteredTasks = userTasks.filter(t => {

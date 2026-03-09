@@ -55,10 +55,14 @@ const CreateTask: React.FC<CreateTaskProps> = ({ tasks, user, onDeleteTask, onUp
   // Recently Created by this user
   const recentUserTasks = useMemo(() => {
     return tasks
-      .filter(t => t.creatorId === user.id)
+      .filter(t =>
+        t.creatorId === user.id ||
+        (user.id === 'USR-ADMIN' && t.creatorId === 'ADMIN') ||
+        (user.createdTasks && user.createdTasks.includes(t.id))
+      )
       .sort((a, b) => b.id.localeCompare(a.id))
       .slice(0, 3);
-  }, [tasks, user.id]);
+  }, [tasks, user.id, user.createdTasks]);
 
   const handleInitialSubmit = (e: React.FormEvent) => {
     e.preventDefault();
