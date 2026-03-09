@@ -29,7 +29,7 @@ const Wallet: React.FC<WalletProps> = ({ balance = 0, depositBalance = 0, onActi
    const fileInputRef = useRef<HTMLInputElement>(null);
 
    // Updated Exchange Rates
-   const MIN_DEPOSIT = 1.00;
+   const MIN_DEPOSIT = 2.00;
    const MIN_WITHDRAWAL = 1.20;
 
    // External conversion multipliers (simulated live rates)
