@@ -374,12 +374,6 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, tasks, onBack, on
                                         <h2 className="text-2xl font-black text-slate-900 tracking-tighter uppercase mb-2">Live Buyer Requests</h2>
                                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Respond to custom project briefs from global clients</p>
                                     </div>
-                                    <button
-                                        onClick={() => alert("Buyer Request submission system is initializing. Please check back soon.")}
-                                        className="px-6 py-3 bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg hover:bg-slate-900 transition-all active:scale-95"
-                                    >
-                                        Post Request
-                                    </button>
                                 </div>
 
                                 <div className="grid grid-cols-1 gap-6">
@@ -520,16 +514,6 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, tasks, onBack, on
                             </div>
                         </div>
 
-                        <div className="bg-indigo-600 p-10 rounded-[3rem] text-white relative overflow-hidden shadow-2xl shadow-indigo-100">
-                            <div className="relative z-10">
-                                <h4 className="text-2xl font-black tracking-tight mb-4">Enterprise Hub</h4>
-                                <p className="text-indigo-100 text-[10px] font-bold uppercase tracking-widest mb-10 leading-relaxed opacity-80">Looking for custom solutions? Post a global brief here.</p>
-                                <button className="w-full py-5 bg-white text-indigo-600 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl active:scale-95 transition-all">
-                                    Post Enterprise Request
-                                </button>
-                            </div>
-                            <i className="fa-solid fa-rocket absolute -right-4 -bottom-4 text-7xl text-white/10 -rotate-12"></i>
-                        </div>
 
                         <div className="bg-white p-8 rounded-[3rem] border border-slate-100 text-center">
                             <p className="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">Network Compliance</p>
