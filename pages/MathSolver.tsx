@@ -121,7 +121,7 @@ const MathSolver: React.FC<MathSolverProps> = ({ user, onSolve, transactions, on
               onClick={onBack}
               className="w-full py-6 bg-white/10 border border-white/10 rounded-2xl font-black text-[10px] uppercase tracking-widest text-white hover:bg-white/20 transition-all"
             >
-              Return to Hub
+              Go Back
             </button>
           </div>
           <i className="fa-solid fa-calculator absolute -right-20 -bottom-20 text-[25rem] text-white/5 -rotate-12 pointer-events-none"></i>
@@ -144,7 +144,7 @@ const MathSolver: React.FC<MathSolverProps> = ({ user, onSolve, transactions, on
               onClick={onBack}
               className="w-full py-6 bg-indigo-600 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-2xl hover:bg-indigo-500 transition-all active:scale-95"
             >
-              Return to Command Hub
+              Go Back
             </button>
           </div>
         </div>

@@ -61,7 +61,7 @@ const WeeklyBonus: React.FC<WeeklyBonusProps> = ({ user, transactions, onClaim, 
         <div className="pt-28 pb-20 min-h-screen bg-slate-50">
             <div className="max-w-[1600px] mx-auto px-4 sm:px-8 space-y-12">
 
-                {onNavigate && <BackToDashboard onNavigate={onNavigate} />}
+                <BackToDashboard onNavigate={onNavigate || onBack || (() => { })} to={onBack ? 'micro-jobs' : 'dashboard'} />
 
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
@@ -71,20 +71,13 @@ const WeeklyBonus: React.FC<WeeklyBonusProps> = ({ user, transactions, onClaim, 
                             Loyalty Reward System
                         </div>
                         <h1 className="text-4xl md:text-7xl font-black text-slate-900 tracking-tighter leading-[0.9] mb-6">
-                            Weekly <span className="text-indigo-600">Bonus Hub</span>
+                            Weekly <span className="text-indigo-600">Bonus</span>
                         </h1>
                         <p className="text-slate-500 font-medium text-lg md:text-xl leading-relaxed max-w-2xl">
                             Unlock your recurring $0.008 reward every 7 days as a token of appreciation for being part of our network.
                         </p>
                     </div>
-                    {onBack && (
-                        <button
-                            onClick={onBack}
-                            className="px-8 py-4 bg-white border border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center gap-3 shadow-sm"
-                        >
-                            <i className="fa-solid fa-arrow-left"></i> Back to Jobs
-                        </button>
-                    )}
+
                 </div>
 
                 {/* Main Action Card */}

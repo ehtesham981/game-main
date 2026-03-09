@@ -60,7 +60,7 @@ const MicroJobs: React.FC<MicroJobsProps> = ({ user, onNavigate, initialTab = 'o
             icon: 'fa-gift',
             color: 'indigo',
             reward: '$0.008 Reward',
-            buttonText: 'Access Hub'
+            buttonText: 'Start Mission'
         }
 
     ];
@@ -179,7 +179,7 @@ const MicroJobs: React.FC<MicroJobsProps> = ({ user, onNavigate, initialTab = 'o
                                 onClick={() => onNavigate('referrals')}
                                 className="w-full md:w-auto px-8 md:px-12 py-4 md:py-5 bg-white text-slate-900 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-400 hover:text-white transition-all shadow-xl"
                             >
-                                Go to Affiliate Hub
+                                Go to Referrals
                             </button>
                         </div>
                     </div>

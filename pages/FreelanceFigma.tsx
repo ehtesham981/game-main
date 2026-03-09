@@ -164,7 +164,7 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, tasks, onBack, on
                             <i className={`fa-solid ${isInitializing ? 'fa-spinner fa-spin' : 'fa-id-card-clip'} text-4xl`}></i>
                         </div>
                         <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter mb-6 uppercase">
-                            Freelance <span className="text-indigo-600">Gateway</span>
+                            Freelance <span className="text-indigo-600">Platform</span>
                         </h1>
                         <p className="text-slate-500 font-bold text-sm md:text-lg mb-12 leading-relaxed">
                             To participate in our premium high-yield freelance network, you must first initialize your unique contractor identity and join the verified talent pool.
@@ -208,12 +208,6 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, tasks, onBack, on
                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Operator: {user.username} {user.lastName}</p>
                             </div>
                         </div>
-                    </div>
-
-                    <div className="relative z-10 flex gap-4">
-                        <button onClick={onBack} className="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all text-[10px] font-black uppercase tracking-widest text-white flex items-center gap-3">
-                            <i className="fa-solid fa-arrow-left"></i> Hub
-                        </button>
                     </div>
 
                     <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
