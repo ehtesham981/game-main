@@ -148,30 +148,73 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
 
         {onNavigate && <BackToDashboard onNavigate={onNavigate} />}
 
-        <div className="bg-slate-900 rounded-[2rem] sm:rounded-[3rem] p-6 md:p-10 border border-slate-800 shadow-2xl flex flex-col xl:flex-row justify-between items-center gap-8 md:gap-10 relative overflow-hidden mt-8 md:mt-12">
-          <div className="flex items-center gap-4 sm:gap-6 relative z-10 w-full xl:w-auto">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-indigo-600 rounded-xl sm:rounded-2xl flex items-center justify-center text-white text-xl sm:text-2xl shadow-2xl shrink-0">
-              <i className={`fa-solid ${isSyncing ? 'fa-sync fa-spin' : 'fa-user-shield'}`}></i>
-            </div>
-            <div>
-              <h1 className="text-xl sm:text-3xl font-black text-white tracking-tighter uppercase">Admin Hub</h1>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                <span className="text-[8px] font-black uppercase tracking-widest text-slate-400">Live Management</span>
+        <div className="mt-8 md:mt-12 space-y-6">
+          {/* Row 1: Brand & Global Telemetry */}
+          <div className="bg-slate-900 rounded-[2.5rem] p-6 md:p-8 border border-slate-800 shadow-2xl flex flex-col lg:flex-row justify-between items-center gap-6 relative overflow-hidden">
+            <div className="flex items-center gap-4 sm:gap-6 relative z-10 w-full lg:w-auto">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-2xl flex items-center justify-center text-white text-xl sm:text-2xl shadow-indigo-500/20 shadow-2xl shrink-0">
+                <i className={`fa-solid ${isSyncing ? 'fa-sync fa-spin' : 'fa-user-shield'}`}></i>
+              </div>
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tighter uppercase leading-none">Admin Hub</h1>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  </span>
+                  <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">System Command Center</span>
+                </div>
               </div>
             </div>
+
+            <div className="hidden xl:flex items-center gap-10 relative z-10 mr-4">
+              <div className="text-center">
+                <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Active Nodes</p>
+                <p className="text-xl font-black text-white">{users.length}</p>
+              </div>
+              <div className="w-px h-8 bg-slate-800"></div>
+              <div className="text-center">
+                <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Queue Size</p>
+                <p className="text-xl font-black text-indigo-400">{stats.pendingTasks + stats.pendingFinance}</p>
+              </div>
+              <div className="w-px h-8 bg-slate-800"></div>
+              <div className="text-center">
+                <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Sync Status</p>
+                <p className="text-[10px] font-black text-emerald-500 uppercase">Synchronized</p>
+              </div>
+            </div>
+
+            <i className="fa-solid fa-bolt-lightning absolute -right-10 -bottom-10 text-[10rem] text-white/[0.02] -rotate-12"></i>
           </div>
-          <div className="flex w-full overflow-x-auto no-scrollbar bg-white/5 p-1.5 rounded-2xl border border-white/10 relative z-10">
-            <div className="flex items-center gap-1 min-w-max">
+
+          {/* Row 2: Dedicated Navigation Row (Navbar) */}
+          <div className="bg-white/70 backdrop-blur-md rounded-3xl p-2 border border-slate-200 shadow-xl overflow-x-auto no-scrollbar scroll-smooth">
+            <div className="flex items-center gap-1.5 min-w-max">
               {tabs.map(tab => (
-                <button key={tab.id} onClick={() => setView(tab.id as any)} className={`relative flex items-center gap-2.5 px-4 sm:px-6 py-3 sm:py-3.5 rounded-xl text-[8px] sm:text-[9px] font-black uppercase tracking-widest transition-all ${view === tab.id ? 'bg-white text-slate-900 shadow-xl' : 'text-slate-400 hover:text-white'}`}>
-                  <i className={`fa-solid ${tab.icon}`}></i> {tab.label}
-                  {tab.badge !== undefined && tab.badge > 0 && <span className="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 text-white text-[8px] font-black flex items-center justify-center rounded-full border border-slate-900">{tab.badge}</span>}
+                <button
+                  key={tab.id}
+                  onClick={() => setView(tab.id as any)}
+                  className={`
+                    relative flex items-center gap-3 px-5 py-3.5 rounded-2xl text-[9px] font-black uppercase tracking-wider transition-all duration-300
+                    ${view === tab.id
+                      ? 'bg-slate-900 text-white shadow-lg shadow-slate-200 translate-y-[-1px]'
+                      : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
+                    }
+                  `}
+                >
+                  <i className={`fa-solid ${tab.icon} ${view === tab.id ? 'text-indigo-400' : 'text-slate-400'}`}></i>
+                  <span>{tab.label}</span>
+                  {tab.badge !== undefined && tab.badge > 0 && (
+                    <span className="flex items-center justify-center w-4 h-4 bg-rose-500 text-white text-[8px] font-black rounded-full shadow-sm border border-white">
+                      {tab.badge}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>
           </div>
         </div>
+
       </div>
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
         {view === 'overview' && (
