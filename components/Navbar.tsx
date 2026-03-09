@@ -403,38 +403,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
                       </div>
                     )}
                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-4 ml-6">Earning Hub</p>
-                    {authLinks.map(link => {
-                      if (link.id === 'micro-jobs') {
-                        const microSubLinks = [
-                          { name: 'MicroJobs Hub', id: 'micro-jobs', icon: 'fa-briefcase' },
-                          { name: 'Task Marketplace', id: 'tasks', icon: 'fa-list-check' },
-                          { name: 'Spread Links', id: 'spread-links', icon: 'fa-link' },
-                          { name: 'Math Solver', id: 'math-solver', icon: 'fa-calculator' },
-                          { name: 'Lucky Spin', id: 'spin', icon: 'fa-clover' },
-                          { name: 'Weekly Bonus', id: 'weekly-bonus', icon: 'fa-gift' },
-                        ];
-                        return (
-                          <div key="micro-hub-mobile" className="space-y-1 mb-6">
-                            {microSubLinks.map(sub => renderMobileLink(sub))}
-                          </div>
-                        );
-                      }
-                      if (link.id === 'advertise') {
-                        const adSubLinks = [
-                          { name: 'Create Advertisement', id: 'create-task', icon: 'fa-plus' },
-                          { name: 'Active Ads', id: 'my-campaigns', icon: 'fa-bullhorn' },
-                        ];
-                        return (
-                          <div key="ad-hub-mobile" className="space-y-1 mb-6">
-                            {renderMobileLink(link)}
-                            <div className="pl-4 space-y-1">
-                              {adSubLinks.map(sub => renderMobileLink(sub))}
-                            </div>
-                          </div>
-                        );
-                      }
-                      return renderMobileLink(link);
-                    })}
+                    {authLinks.map(link => renderMobileLink(link))}
                   </>
                 )}
               </div>
