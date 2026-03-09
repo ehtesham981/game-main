@@ -12,7 +12,7 @@ interface WeeklyBonusProps {
 
 const WeeklyBonus: React.FC<WeeklyBonusProps> = ({ user, transactions, onClaim, onBack, onNavigate }) => {
     const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
-    const REWARD_BALANCE = 0.05; // $0.05
+    const REWARD_BALANCE = 0.008; // $0.008
     const [timeLeft, setTimeLeft] = useState<number | null>(null);
     const [isClaiming, setIsClaiming] = useState(false);
 
@@ -74,7 +74,7 @@ const WeeklyBonus: React.FC<WeeklyBonusProps> = ({ user, transactions, onClaim, 
                             Weekly <span className="text-indigo-600">Bonus Hub</span>
                         </h1>
                         <p className="text-slate-500 font-medium text-lg md:text-xl leading-relaxed max-w-2xl">
-                            Unlock your recurring $0.05 reward every 7 days as a token of appreciation for being part of our network.
+                            Unlock your recurring $0.008 reward every 7 days as a token of appreciation for being part of our network.
                         </p>
                     </div>
                     {onBack && (
@@ -101,7 +101,7 @@ const WeeklyBonus: React.FC<WeeklyBonusProps> = ({ user, transactions, onClaim, 
                                         </div>
                                         <div>
                                             <p className="text-3xl font-black text-white tracking-tighter uppercase">Reward Available</p>
-                                            <p className="text-indigo-300 font-bold text-sm">$0.05 USD Ready for Claim</p>
+                                            <p className="text-indigo-300 font-bold text-sm">$0.008 USD Ready for Claim</p>
                                         </div>
                                     </div>
                                     <button
@@ -160,7 +160,7 @@ const WeeklyBonus: React.FC<WeeklyBonusProps> = ({ user, transactions, onClaim, 
                                 </div>
                                 <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100">
                                     <p className="text-[8px] font-black text-slate-400 uppercase mb-2">Vault Deposit</p>
-                                    <p className="text-xl font-black text-indigo-600">$0.05 USD</p>
+                                    <p className="text-xl font-black text-indigo-600">$0.008 USD</p>
                                 </div>
                             </div>
                         </div>

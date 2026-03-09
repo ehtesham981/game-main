@@ -56,10 +56,10 @@ const MicroJobs: React.FC<MicroJobsProps> = ({ user, onNavigate, initialTab = 'o
         {
             id: 'weekly-bonus',
             title: 'Weekly Bonus',
-            description: 'Claim your exclusive weekly loyalty reward of $0.09 every 7 days.',
+            description: 'Claim your exclusive weekly loyalty reward of $0.008 every 7 days.',
             icon: 'fa-gift',
             color: 'indigo',
-            reward: '$0.09 Reward',
+            reward: '$0.008 Reward',
             buttonText: 'Access Hub'
         }
 
