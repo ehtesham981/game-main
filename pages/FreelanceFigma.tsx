@@ -377,38 +377,6 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, tasks, onBack, on
                                 </div>
 
                                 <div className="grid grid-cols-1 gap-6">
-                                    {/* Placeholder for real buyer requests if we had a data source */}
-                                    <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm flex flex-col md:flex-row items-center justify-between gap-8 group">
-                                        <div className="flex items-center gap-8">
-                                            <div className="w-20 h-20 bg-amber-50 text-amber-500 rounded-3xl flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">
-                                                <i className="fa-solid fa-quote-left"></i>
-                                            </div>
-                                            <div>
-                                                <h4 className="text-xl font-black text-slate-900 mb-2">E-commerce UI/UX Website Design</h4>
-                                                <p className="text-slate-500 text-sm max-w-md leading-relaxed">I need a modern, high-converting checkout flow for my sneaker store. Must be responsive.</p>
-                                                <div className="flex items-center gap-4 mt-6">
-                                                    <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest flex items-center gap-2 bg-indigo-50 px-3 py-1.5 rounded-full">
-                                                        <i className="fa-solid fa-circle-user"></i> Client: alex_node
-                                                    </span>
-                                                    <span className="w-1.5 h-1.5 bg-slate-200 rounded-full"></span>
-                                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Posted 2h ago</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="flex flex-col items-end gap-6 min-w-[150px]">
-                                            <div className="text-right">
-                                                <p className="text-[10px] font-black text-slate-400 uppercase mb-1">Budget Offer</p>
-                                                <p className="text-2xl font-black text-emerald-600">$120.00 <span className="text-[10px] uppercase">USD</span></p>
-                                            </div>
-                                            <button
-                                                onClick={() => alert("Proposal transmission sequence initiated. Awaiting client node response...")}
-                                                className="w-full py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-xl active:scale-95"
-                                            >
-                                                Send Proposal
-                                            </button>
-                                        </div>
-                                    </div>
-
                                     <div className="py-20 text-center bg-white rounded-[3rem] border-2 border-dashed border-slate-100">
                                         <i className="fa-solid fa-magnifying-glass text-4xl text-slate-100 mb-6 block"></i>
                                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Discovery Phase Active</p>
