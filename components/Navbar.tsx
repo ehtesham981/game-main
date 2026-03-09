@@ -121,8 +121,6 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
                 if (link.id === 'micro-jobs') {
                   const microSubLinks = [
                     { name: 'Marketplace', id: 'micro-jobs', icon: 'fa-table-cells-large' },
-                    { name: 'Shotlinks', id: 'shortlinks', icon: 'fa-link' },
-                    { name: 'Task Jobs', id: 'tasks', icon: 'fa-tasks' },
                     { name: 'Math Solver', id: 'math-solver', icon: 'fa-calculator' },
                     { name: 'Lucky Spin', id: 'spin', icon: 'fa-clover' },
                     { name: 'Weekly Bonus', id: 'weekly-bonus', icon: 'fa-gift' },
