@@ -539,28 +539,45 @@ const App: React.FC = () => {
               user={user}
               linkId={currentPage.split('|')[1]}
               onBack={() => navigateTo('spread-links')}
-              onComplete={async (reward, title) => {
-                const updatedUser = {
-                  ...user,
-                  balance: user.balance + reward
-                };
-                setUser(updatedUser);
-                await storage.setUser(updatedUser);
+              onComplete={async (linkId, reward, title) => {
+                // Prevent duplicate claims
+                if (user.completedTasks?.includes(linkId)) {
+                  navigateTo('spread-links');
+                  return;
+                }
 
-                const tx: Transaction = {
-                  id: `SL-${Math.random().toString(36).substr(2, 6).toUpperCase()}-${Date.now()}`,
-                  userId: user.id,
-                  amount: reward,
-                  type: 'spread_link_reward',
-                  method: `Spread Link: ${title}`,
-                  status: 'success',
-                  date: new Date().toLocaleString()
-                };
-                await storage.addTransaction(tx);
-                await refreshUserBalance();
+                try {
+                  const updatedUser = {
+                    ...user,
+                    balance: (user.balance || 0) + reward,
+                    completedTasks: [...(user.completedTasks || []), linkId]
+                  };
 
-                alert(`Successfully earned $${reward.toFixed(3)}!`);
-                navigateTo('spread-links');
+                  // 1. Update local and cloud user state
+                  setUser(updatedUser);
+                  await storage.setUser(updatedUser);
+
+                  // 2. Record transaction
+                  const tx: Transaction = {
+                    id: `SL-${Math.random().toString(36).substr(2, 6).toUpperCase()}-${Date.now()}`,
+                    userId: user.id,
+                    amount: reward,
+                    type: 'spread_link_reward',
+                    method: `Spread Link: ${title}`,
+                    status: 'success',
+                    date: new Date().toLocaleString()
+                  };
+                  await storage.addTransaction(tx);
+
+                  // 3. Final sync to ensure UI is up to date
+                  await refreshUserBalance();
+
+                  alert(`Successfully earned $${reward.toFixed(3)}!`);
+                  navigateTo('spread-links');
+                } catch (error) {
+                  console.error("Spread Link claim error:", error);
+                  alert("Failed to claim reward. Please try again.");
+                }
               }}
             />
           )}

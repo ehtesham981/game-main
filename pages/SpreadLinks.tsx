@@ -64,7 +64,7 @@ const SpreadLinks: React.FC<SpreadLinksProps> = ({ user, onNavigate }) => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                    {spreadLinks.map((link) => (
+                    {spreadLinks.filter(l => !user.completedTasks?.includes(l.id)).map((link) => (
                         <div
                             key={link.id}
                             className="bg-white p-8 rounded-[3rem] border border-slate-200 shadow-sm hover:shadow-2xl transition-all duration-500 group relative overflow-hidden flex flex-col justify-between"
@@ -102,6 +102,14 @@ const SpreadLinks: React.FC<SpreadLinksProps> = ({ user, onNavigate }) => {
                             <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-600/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-indigo-600/10 transition-all"></div>
                         </div>
                     ))}
+
+                    {spreadLinks.filter(l => !user.completedTasks?.includes(l.id)).length === 0 && (
+                        <div className="col-span-full py-20 text-center bg-white rounded-[4rem] border border-dashed border-slate-300">
+                            <i className="fa-solid fa-circle-check text-5xl text-emerald-500 mb-6"></i>
+                            <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">All Links Completed</h3>
+                            <p className="text-slate-500 font-medium text-sm mt-2">You've successfully cleared the current Spread Link network. Check back later!</p>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

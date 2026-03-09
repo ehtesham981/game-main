@@ -5,9 +5,10 @@ import { User, SpreadLink } from '../types';
 interface SpreadLinkViewerProps {
     user: User;
     linkId: string;
-    onComplete: (reward: number, title: string) => void;
+    onComplete: (linkId: string, reward: number, title: string) => void;
     onBack: () => void;
 }
+
 
 const SpreadLinkViewer: React.FC<SpreadLinkViewerProps> = ({ user, linkId, onComplete, onBack }) => {
     // In a real app, we'd fetch the link by ID. For now, use dummy data or find in list.
@@ -90,7 +91,8 @@ const SpreadLinkViewer: React.FC<SpreadLinkViewerProps> = ({ user, linkId, onCom
                         </div>
                     ) : (
                         <button
-                            onClick={() => onComplete(link.reward, link.title)}
+                            onClick={() => onComplete(link.id, link.reward, link.title)}
+
                             className="bg-emerald-500 text-white px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-emerald-200 hover:bg-emerald-600 transition-all animate-bounce"
                         >
                             Complete & Claim Reward
