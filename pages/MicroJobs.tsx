@@ -6,9 +6,16 @@ import BackToDashboard from '../components/BackToDashboard';
 interface MicroJobsProps {
     user: User;
     onNavigate: (page: string) => void;
+    initialTab?: string;
 }
 
-const MicroJobs: React.FC<MicroJobsProps> = ({ user, onNavigate }) => {
+const MicroJobs: React.FC<MicroJobsProps> = ({ user, onNavigate, initialTab = 'offers' }) => {
+    const [activeTab, setActiveTab] = React.useState(initialTab);
+
+    // Sync state if initialTab changes (e.g. via navigation)
+    React.useEffect(() => {
+        setActiveTab(initialTab);
+    }, [initialTab]);
     const earningOptions = [
         {
             id: 'tasks',
@@ -68,39 +75,71 @@ const MicroJobs: React.FC<MicroJobsProps> = ({ user, onNavigate }) => {
                     </p>
                 </div>
 
-                {/* Earning Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                    {earningOptions.map((option) => (
-                        <div
-                            key={option.id}
-                            className="bg-white p-10 rounded-[3.5rem] border border-slate-200 shadow-sm hover:shadow-2xl transition-all duration-500 group relative overflow-hidden flex flex-col justify-between h-full"
-                        >
-                            <div>
-                                <div className={`w-20 h-20 bg-${option.color}-50 rounded-[2rem] flex items-center justify-center text-3xl text-${option.color}-600 mb-8 group-hover:bg-${option.color}-600 group-hover:text-white transition-all duration-500`}>
-                                    <i className={`fa-solid ${option.icon}`}></i>
-                                </div>
-                                <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">{option.title}</h3>
-                                    <span className={`px-3 py-1 bg-${option.color}-50 text-${option.color}-600 text-[8px] font-black uppercase rounded-full border border-${option.color}-100`}>
-                                        {option.reward}
-                                    </span>
-                                </div>
-                                <p className="text-slate-500 font-medium text-sm leading-relaxed mb-10">
-                                    {option.description}
-                                </p>
-                            </div>
-
-                            <button
-                                onClick={() => onNavigate(option.id)}
-                                className={`w-full py-5 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-${option.color}-600 transition-all shadow-xl`}
-                            >
-                                {option.buttonText}
-                            </button>
-
-                            <div className={`absolute top-0 right-0 w-32 h-32 bg-${option.color}-600/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-${option.color}-600/10 transition-all`}></div>
-                        </div>
-                    ))}
+                {/* Tab Switcher */}
+                <div className="flex gap-4 border-b border-slate-200">
+                    <button
+                        onClick={() => setActiveTab('offers')}
+                        className={`pb-4 px-2 text-sm font-black uppercase tracking-widest transition-all relative ${activeTab === 'offers' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}
+                    >
+                        Offers
+                        {activeTab === 'offers' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-indigo-600 rounded-t-full"></div>}
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('shortlinks')}
+                        className={`pb-4 px-2 text-sm font-black uppercase tracking-widest transition-all relative ${activeTab === 'shortlinks' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}
+                    >
+                        Shortlinks
+                        {activeTab === 'shortlinks' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-indigo-600 rounded-t-full"></div>}
+                    </button>
                 </div>
+
+                {activeTab === 'offers' ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                        {earningOptions.map((option) => (
+                            <div
+                                key={option.id}
+                                className="bg-white p-10 rounded-[3.5rem] border border-slate-200 shadow-sm hover:shadow-2xl transition-all duration-500 group relative overflow-hidden flex flex-col justify-between h-full"
+                            >
+                                <div>
+                                    <div className={`w-20 h-20 bg-${option.color}-50 rounded-[2rem] flex items-center justify-center text-3xl text-${option.color}-600 mb-8 group-hover:bg-${option.color}-600 group-hover:text-white transition-all duration-500`}>
+                                        <i className={`fa-solid ${option.icon}`}></i>
+                                    </div>
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">{option.title}</h3>
+                                        <span className={`px-3 py-1 bg-${option.color}-50 text-${option.color}-600 text-[8px] font-black uppercase rounded-full border border-${option.color}-100`}>
+                                            {option.reward}
+                                        </span>
+                                    </div>
+                                    <p className="text-slate-500 font-medium text-sm leading-relaxed mb-10">
+                                        {option.description}
+                                    </p>
+                                </div>
+
+                                <button
+                                    onClick={() => onNavigate(option.id)}
+                                    className={`w-full py-5 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-${option.color}-600 transition-all shadow-xl`}
+                                >
+                                    {option.buttonText}
+                                </button>
+
+                                <div className={`absolute top-0 right-0 w-32 h-32 bg-${option.color}-600/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-${option.color}-600/10 transition-all`}></div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="bg-white p-12 rounded-[3.5rem] border border-slate-200 text-center">
+                        <div className="w-20 h-20 bg-indigo-50 rounded-[2rem] flex items-center justify-center text-3xl text-indigo-600 mx-auto mb-8">
+                            <i className="fa-solid fa-link"></i>
+                        </div>
+                        <h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase mb-4">Shortlink Wall</h3>
+                        <p className="text-slate-500 font-medium text-sm leading-relaxed mb-8 max-w-md mx-auto">
+                            Complete shortlinks from our verified partners to earn instant USD rewards. Use our secure proxy node to protect your identity.
+                        </p>
+                        <div className="inline-flex items-center gap-3 px-6 py-3 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest">
+                            Coming Soon in v2.4
+                        </div>
+                    </div>
+                )}
 
                 {/* Statistics / Fun Footer */}
                 <div className="bg-slate-900 p-12 md:p-16 rounded-[4rem] shadow-3xl relative overflow-hidden">

@@ -23,6 +23,15 @@ const KEYS = {
 
 const isBrowser = typeof window !== 'undefined';
 
+/**
+ * GLOBAL_TASK_PURGE_LIST: 
+ * Add Task IDs here to automatically hide and eventually purge missions 
+ * from the entire platform (User and Admin panels) globally.
+ */
+export const GLOBAL_TASK_PURGE_LIST: string[] = [
+  // Example: 'TSK-K198AS', 'TSK-M9281B'
+];
+
 export const storage = {
   cleanData: (obj: any): any => {
     if (Array.isArray(obj)) {
@@ -107,11 +116,16 @@ export const storage = {
 
   getTasks: async (): Promise<Task[]> => {
     const snapshot = await get(ref(db, KEYS.TASKS));
-    return snapshot.exists() ? storage.ensureArray<Task>(snapshot.val()) : [];
+    const allTasks = snapshot.exists() ? storage.ensureArray<Task>(snapshot.val()) : [];
+
+    if (GLOBAL_TASK_PURGE_LIST.length > 0) {
+      return allTasks.filter(t => t && !GLOBAL_TASK_PURGE_LIST.includes(t.id));
+    }
+    return allTasks;
   },
 
-  setTasks: (tasks: Task[]) => {
-    set(ref(db, KEYS.TASKS), storage.ensureArray<Task>(tasks).map(storage.cleanData));
+  setTasks: (tasks: Task[]): Promise<void> => {
+    return set(ref(db, KEYS.TASKS), storage.ensureArray<Task>(tasks).map(storage.cleanData));
   },
 
   updateTaskInCloud: async (taskId: string, updates: Partial<Task>) => {
@@ -154,7 +168,7 @@ export const storage = {
     if (isBrowser) localStorage.removeItem(KEYS.TRANSACTIONS);
   },
 
-  addTransaction: async (tx: Transaction) => {
+  addTransaction: async (tx: Transaction): Promise<void> => {
     const cleanTx = storage.cleanData(tx);
     await set(ref(db, `${KEYS.ALL_TRANSACTIONS}/${tx.id}`), cleanTx);
     await push(ref(db, `${KEYS.USER_TXS}/${tx.userId}`), cleanTx);

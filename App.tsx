@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { User, Task, Transaction } from './types';
-import { storage } from './services/storage';
+import { storage, GLOBAL_TASK_PURGE_LIST } from './services/storage';
 import AdminPanel from './pages/AdminPanel';
 
 // Lazy load pages
@@ -52,15 +52,37 @@ const App: React.FC = () => {
       }
 
       try {
-        const initialTasks = await storage.getTasks();
+        let initialTasks = await storage.getTasks();
 
-        // One-time cleanup: Remove all existing tasks as requested
-        const TASKS_CLEARED_KEY = 'tasks_wiped_02738';
-        if (!localStorage.getItem(TASKS_CLEARED_KEY)) {
-          await storage.setTasks([]);
-          setTasks([]);
-          localStorage.setItem(TASKS_CLEARED_KEY, 'true');
-          console.log("All previous tasks have been removed per update protocol.");
+        // GLOBAL PROTOCOL: Managed via storage.ts -> GLOBAL_TASK_PURGE_LIST
+        const TASK_PROTOCOL_VERSION = 'tasks_v5_8293'; // Major sync version
+
+        const isMasterAdmin = (user.email || '').toLowerCase().trim() === 'ehtesham@adspredia.site';
+        const hasProcessedVersion = localStorage.getItem(`processed_${TASK_PROTOCOL_VERSION}`);
+
+        // Apply global purge list filter to tasks
+        if (GLOBAL_TASK_PURGE_LIST.length > 0) {
+          const beforeLength = initialTasks.length;
+          initialTasks = initialTasks.filter(t => !GLOBAL_TASK_PURGE_LIST.includes(t.id));
+          if (initialTasks.length !== beforeLength) {
+            console.log(`Purged ${beforeLength - initialTasks.length} tasks based on GLOBAL_TASK_PURGE_LIST.`);
+            // If tasks were purged, update the storage to reflect this globally
+            if (isMasterAdmin) { // Only master admin should write global changes
+              await storage.setTasks(initialTasks);
+            }
+          }
+        }
+
+        if (!hasProcessedVersion) {
+          // 2. Multi-user safe wipe (Only Master Admin can wipe global DB node)
+          if (isMasterAdmin) {
+            // UNCOMMENT LINE BELOW ONLY IF YOU WANT TO DESTROY ALL EXISTING FIREBASE TASKS
+            // await storage.setTasks([]);
+            console.log("Master Protocol: Selective sync executed.");
+          }
+
+          setTasks(initialTasks);
+          localStorage.setItem(`processed_${TASK_PROTOCOL_VERSION}`, 'true');
         } else {
           setTasks(initialTasks);
         }
@@ -281,7 +303,7 @@ const App: React.FC = () => {
   const handleDeleteTask = async (taskId: string) => {
     try {
       await storage.deleteTaskFromCloud(taskId);
-      setTasks(prev => prev.filter(t => t.id !== taskId));
+      setTasks((prev: Task[]) => prev.filter((t: Task) => t.id !== taskId));
       alert("Campaign terminated and removed.");
     } catch (error) {
       console.error("Failed to delete task:", error);
@@ -292,7 +314,7 @@ const App: React.FC = () => {
   const handleUpdateTask = async (taskId: string, updates: Partial<Task>) => {
     try {
       await storage.updateTaskInCloud(taskId, updates);
-      setTasks(prev => prev.map(t => t.id === taskId ? { ...t, ...updates } : t));
+      setTasks((prev: Task[]) => prev.map((t: Task) => t.id === taskId ? { ...t, ...updates } : t));
       alert("Campaign specifications updated.");
     } catch (error) {
       console.error("Failed to update task:", error);
