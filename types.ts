@@ -49,7 +49,7 @@ export interface Transaction {
   taskId?: string;
   username?: string;
   amount: number;
-  type: 'deposit' | 'withdraw' | 'earn' | 'spend' | 'spin' | 'referral_claim' | 'math_reward' | 'weekly_bonus';
+  type: 'deposit' | 'withdraw' | 'earn' | 'spend' | 'spin' | 'referral_claim' | 'math_reward' | 'weekly_bonus' | 'spread_link_reward';
   method?: string;
   account?: string;
   proofImage?: string;
@@ -58,6 +58,16 @@ export interface Transaction {
   status: 'pending' | 'success' | 'failed';
   date: string;
 }
+
+export interface SpreadLink {
+  id: string;
+  title: string;
+  description: string;
+  url: string;
+  reward: number;
+  timer: number;
+}
+
 
 export interface SEOConfig {
   siteTitle: string;

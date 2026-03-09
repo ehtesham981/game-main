@@ -45,6 +45,15 @@ const MicroJobs: React.FC<MicroJobsProps> = ({ user, onNavigate, initialTab = 'o
             buttonText: 'Spin Now'
         },
         {
+            id: 'spread-links',
+            title: 'Spread Links',
+            description: 'Visit partner websites and stay engaged for 20 seconds to earn instant USD rewards.',
+            icon: 'fa-link',
+            color: 'blue',
+            reward: 'Instant Pay',
+            buttonText: 'Open Links'
+        },
+        {
             id: 'weekly-bonus',
             title: 'Weekly Bonus',
             description: 'Claim your exclusive weekly loyalty reward of $0.09 every 7 days.',
@@ -53,6 +62,7 @@ const MicroJobs: React.FC<MicroJobsProps> = ({ user, onNavigate, initialTab = 'o
             reward: '$0.09 Reward',
             buttonText: 'Access Hub'
         }
+
     ];
 
     return (

@@ -121,10 +121,12 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
                 if (link.id === 'micro-jobs') {
                   const microSubLinks = [
                     { name: 'Marketplace', id: 'micro-jobs', icon: 'fa-table-cells-large' },
+                    { name: 'Spread Links', id: 'spread-links', icon: 'fa-link' },
                     { name: 'Math Solver', id: 'math-solver', icon: 'fa-calculator' },
                     { name: 'Lucky Spin', id: 'spin', icon: 'fa-clover' },
                     { name: 'Weekly Bonus', id: 'weekly-bonus', icon: 'fa-gift' },
                   ];
+
 
                   return (
                     <div
@@ -135,12 +137,13 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
                       <button
                         onMouseEnter={() => setIsMicroJobsDropdownOpen(true)}
                         onClick={() => handleNavClick('micro-jobs')}
-                        className={`px-5 py-3 rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-300 whitespace-nowrap flex items-center gap-2.5 ${currentPage === 'micro-jobs' || currentPage === 'shortlinks' || currentPage === 'tasks' || currentPage === 'math-solver' || currentPage === 'spin' || currentPage === 'weekly-bonus'
+                        className={`px-5 py-3 rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-300 whitespace-nowrap flex items-center gap-2.5 ${currentPage === 'micro-jobs' || currentPage === 'shortlinks' || currentPage === 'tasks' || currentPage === 'math-solver' || currentPage === 'spin' || currentPage === 'weekly-bonus' || currentPage === 'spread-links'
                           ? 'text-indigo-600 bg-white shadow-lg shadow-slate-200/50 ring-1 ring-slate-100'
                           : 'text-slate-500 hover:text-slate-900 hover:bg-white/40'
                           }`}
                       >
-                        <i className={`fa-solid ${link.icon} text-[10px] ${currentPage === 'micro-jobs' || currentPage === 'shortlinks' || currentPage === 'tasks' || currentPage === 'math-solver' || currentPage === 'spin' || currentPage === 'weekly-bonus' ? 'opacity-100' : 'opacity-40'}`}></i>
+                        <i className={`fa-solid ${link.icon} text-[10px] ${currentPage === 'micro-jobs' || currentPage === 'shortlinks' || currentPage === 'tasks' || currentPage === 'math-solver' || currentPage === 'spin' || currentPage === 'weekly-bonus' || currentPage === 'spread-links' ? 'opacity-100' : 'opacity-40'}`}></i>
+
                         {link.name}
                         <i className={`fa-solid fa-chevron-down text-[8px] transition-transform duration-300 ${isMicroJobsDropdownOpen ? 'rotate-180' : ''}`}></i>
                       </button>

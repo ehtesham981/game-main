@@ -26,6 +26,9 @@ const FreelanceFigma = lazy(() => import('./pages/FreelanceFigma'));
 const Advertise = lazy(() => import('./pages/Advertise'));
 const MicroJobs = lazy(() => import('./pages/MicroJobs'));
 const WeeklyBonus = lazy(() => import('./pages/WeeklyBonus'));
+const SpreadLinks = lazy(() => import('./pages/SpreadLinks'));
+const SpreadLinkViewer = lazy(() => import('./pages/SpreadLinkViewer'));
+
 
 
 const PageLoader = () => (
@@ -524,7 +527,46 @@ const App: React.FC = () => {
             />
           )}
 
+          {currentPage === 'spread-links' && user.isLoggedIn && (
+            <SpreadLinks
+              user={user}
+              onNavigate={navigateTo}
+            />
+          )}
+
+          {currentPage.startsWith('spread-link-viewer|') && user.isLoggedIn && (
+            <SpreadLinkViewer
+              user={user}
+              linkId={currentPage.split('|')[1]}
+              onBack={() => navigateTo('spread-links')}
+              onComplete={async (reward, title) => {
+                const updatedUser = {
+                  ...user,
+                  balance: user.balance + reward
+                };
+                setUser(updatedUser);
+                await storage.setUser(updatedUser);
+
+                const tx: Transaction = {
+                  id: `SL-${Math.random().toString(36).substr(2, 6).toUpperCase()}-${Date.now()}`,
+                  userId: user.id,
+                  amount: reward,
+                  type: 'spread_link_reward',
+                  method: `Spread Link: ${title}`,
+                  status: 'success',
+                  date: new Date().toLocaleString()
+                };
+                await storage.addTransaction(tx);
+                await refreshUserBalance();
+
+                alert(`Successfully earned $${reward.toFixed(3)}!`);
+                navigateTo('spread-links');
+              }}
+            />
+          )}
+
           {currentPage.startsWith('admin-') && user.isAdmin && <AdminPanel initialView={currentPage.slice(6) as any} onNavigate={navigateTo} />}
+
         </Suspense>
       </main>
       <Footer setCurrentPage={navigateTo} isLoggedIn={user.isLoggedIn} />
