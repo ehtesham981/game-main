@@ -59,12 +59,12 @@ export const storage = {
   },
 
   getUser: (): User => {
-    if (!isBrowser) return { id: 'SERVER', username: 'Guest', email: '', balance: 0, depositBalance: 0, completedTasks: [], createdTasks: [], isLoggedIn: false };
+    if (!isBrowser) return { id: 'SERVER', username: '', email: '', balance: 0, depositBalance: 0, completedTasks: [], createdTasks: [], isLoggedIn: false };
     const data = localStorage.getItem(KEYS.USER);
     try {
-      return data ? JSON.parse(data) : { id: storage.getUserId(), username: 'Guest', email: '', balance: 0, depositBalance: 0, completedTasks: [], createdTasks: [], isLoggedIn: false };
+      return data ? JSON.parse(data) : { id: storage.getUserId(), username: '', email: '', balance: 0, depositBalance: 0, completedTasks: [], createdTasks: [], isLoggedIn: false };
     } catch {
-      return { id: storage.getUserId(), username: 'Guest', email: '', balance: 0, depositBalance: 0, completedTasks: [], createdTasks: [], isLoggedIn: false };
+      return { id: storage.getUserId(), username: '', email: '', balance: 0, depositBalance: 0, completedTasks: [], createdTasks: [], isLoggedIn: false };
     }
   },
 

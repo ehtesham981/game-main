@@ -35,8 +35,9 @@ const PageLoader = () => (
 );
 
 const App: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState('dashboard');
-  const [user, setUser] = useState<User>({ ...storage.getUser(), isLoggedIn: true });
+  const initialUser = storage.getUser();
+  const [currentPage, setCurrentPage] = useState(initialUser.isLoggedIn ? (initialUser.isAdmin ? 'admin-overview' : 'dashboard') : 'home');
+  const [user, setUser] = useState<User>(initialUser);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>(storage.getTransactions());
   const [sessionConflict, setSessionConflict] = useState(false);
@@ -104,9 +105,9 @@ const App: React.FC = () => {
   }, []);
 
   const handleLogout = useCallback(() => {
-    const guestUser: User = {
+    const anonymousUser: User = {
       id: storage.getUserId(),
-      username: 'Guest',
+      username: '',
       email: '',
       balance: 0,
       depositBalance: 0,
@@ -114,7 +115,7 @@ const App: React.FC = () => {
       createdTasks: [],
       isLoggedIn: false
     };
-    setUser(guestUser);
+    setUser(anonymousUser);
     setCurrentPage('home');
     localStorage.removeItem('ct_user_session_id');
     localStorage.removeItem('ct_user');
