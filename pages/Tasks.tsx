@@ -174,46 +174,46 @@ export default function Tasks({ user, tasks, transactions, onComplete, navigateT
   };
 
   return (
-    <div className="pt-28 pb-20 min-h-screen bg-slate-50">
+    <div className="pt-24 md:pt-32 pb-20 min-h-screen bg-slate-50">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-8">
 
         <BackToDashboard onNavigate={navigateTo} />
 
-        <div className="mb-12 mt-12">
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 md:gap-12 border-b border-slate-200 pb-8 md:pb-12">
-            <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 border border-indigo-100 shadow-sm">
+        <div className="mb-10 md:mb-16 mt-8 md:mt-12">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 md:gap-12 border-b border-slate-200 pb-10 md:pb-16">
+            <div className="max-w-2xl text-center lg:text-left">
+              <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 border border-indigo-100 shadow-sm mx-auto lg:mx-0">
                 Node Status: Active
               </div>
-              <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter leading-none mb-4">
+              <h1 className="text-4xl md:text-7xl font-black text-slate-900 tracking-tighter leading-none mb-6">
                 {activeView === 'Marketplace' ? 'Marketplace' : 'My History'}
               </h1>
-              <p className="text-slate-500 font-medium text-sm md:text-lg leading-relaxed">
+              <p className="text-slate-500 font-medium text-sm md:text-xl leading-relaxed max-w-xl mx-auto lg:mx-0">
                 {activeView === 'Marketplace'
                   ? 'Identify micro-tasks to generate daily yield. Dual-proof verification required.'
                   : 'Track your verification status and audit history.'}
               </p>
             </div>
 
-            <div className="flex bg-slate-100 p-1.5 rounded-[2rem] border border-slate-200 shadow-inner">
+            <div className="flex bg-slate-100 p-1.5 rounded-[2rem] border border-slate-200 shadow-inner w-full max-w-sm mx-auto lg:mx-0">
               <button
                 onClick={() => setActiveView('Marketplace')}
-                className={`px-8 py-4 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest transition-all ${activeView === 'Marketplace' ? 'bg-white text-indigo-600 shadow-xl' : 'text-slate-400 hover:text-slate-600'}`}
+                className={`flex-1 px-4 py-4 rounded-[1.5rem] text-[10px] md:text-[11px] font-black uppercase tracking-widest transition-all ${activeView === 'Marketplace' ? 'bg-white text-indigo-600 shadow-xl' : 'text-slate-400 hover:text-slate-600'}`}
               >
                 Marketplace
               </button>
               <button
                 onClick={() => setActiveView('My History')}
-                className={`px-8 py-4 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest transition-all ${activeView === 'My History' ? 'bg-white text-indigo-600 shadow-xl' : 'text-slate-400 hover:text-slate-600'}`}
+                className={`flex-1 px-4 py-4 rounded-[1.5rem] text-[10px] md:text-[11px] font-black uppercase tracking-widest transition-all ${activeView === 'My History' ? 'bg-white text-indigo-600 shadow-xl' : 'text-slate-400 hover:text-slate-600'}`}
               >
                 My History
               </button>
             </div>
           </div>
 
-          <div className="mt-8 flex flex-wrap items-center justify-between gap-6">
+          <div className="mt-10 flex flex-wrap items-center justify-center lg:justify-between gap-8">
             {activeView === 'Marketplace' ? (
-              <div className="flex bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto no-scrollbar">
+              <div className="flex bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto no-scrollbar w-full sm:w-auto">
                 {marketCategories.map(cat => (
                   <button
                     key={cat.id}
@@ -238,21 +238,21 @@ export default function Tasks({ user, tasks, transactions, onComplete, navigateT
         </div>
 
         {activeView === 'Marketplace' ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-10">
             {availableTasks.length === 0 ? (
-              <div className="col-span-full py-40 text-center bg-white rounded-[4rem] border-2 border-dashed border-slate-200">
-                <i className="fa-solid fa-box-open text-6xl text-slate-100 mb-6"></i>
-                <h3 className="text-xl font-black text-slate-300 uppercase tracking-widest">No Active Tasks</h3>
+              <div className="col-span-full py-24 md:py-40 text-center bg-white rounded-[2.5rem] md:rounded-[4rem] border-2 border-dashed border-slate-200 animate-in fade-in zoom-in-95 duration-700">
+                <i className="fa-solid fa-box-open text-5xl md:text-6xl text-slate-100 mb-6"></i>
+                <h3 className="text-lg md:text-xl font-black text-slate-300 uppercase tracking-widest">No Active Tasks</h3>
               </div>
             ) : (
               availableTasks.map(task => (
                 <div
                   key={task.id}
                   onClick={() => setSelectedTask(task)}
-                  className="group bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-8 border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer flex flex-col h-full relative overflow-hidden"
+                  className="group bg-white rounded-[2.5rem] md:rounded-[3rem] p-8 md:p-10 border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer flex flex-col h-full relative overflow-hidden"
                 >
-                  <div className="flex justify-between items-start mb-8">
-                    <div className="w-14 h-14 bg-slate-50 rounded-[1.25rem] flex items-center justify-center text-xl group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                  <div className="flex justify-between items-start mb-8 md:mb-10">
+                    <div className="w-12 h-12 md:w-14 md:h-14 bg-slate-50 rounded-[1.25rem] flex items-center justify-center text-lg md:text-xl group-hover:bg-indigo-600 group-hover:text-white transition-all">
                       <i className={`fa-solid ${getIcon(task.type)}`}></i>
                     </div>
                     <div className="px-5 py-3 bg-white/5 rounded-[1.25rem] text-slate-900 border border-slate-100 flex items-center gap-3">
@@ -260,23 +260,23 @@ export default function Tasks({ user, tasks, transactions, onComplete, navigateT
                       <span className="text-xl font-black">{task.reward.toFixed(3)}</span>
                     </div>
                   </div>
-                  <div className="flex-grow mb-8">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-[8px] font-black text-indigo-500 uppercase tracking-widest">{task.type}</span>
-                      {task.createdAt && <span className="text-[7px] font-black text-slate-300 uppercase tracking-widest">Posted: {task.createdAt}</span>}
+                  <div className="flex-grow mb-8 md:mb-10">
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">{task.type}</span>
+                      {task.createdAt && <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest">Posted: {task.createdAt}</span>}
                     </div>
                     <h3 className="text-xl font-black text-slate-900 tracking-tight mb-2 line-clamp-1 group-hover:text-indigo-600 transition-colors">{task.title}</h3>
                     <p className="text-slate-400 text-xs font-medium line-clamp-2">{task.description}</p>
                   </div>
-                  <div className="pt-6 border-t border-slate-50">
-                    <div className="flex justify-between items-center mb-4 text-[9px] font-black uppercase text-slate-400 tracking-widest">
+                  <div className="pt-6 md:pt-8 border-t border-slate-50">
+                    <div className="flex justify-between items-center mb-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">
                       <span>Progress</span>
                       <span>{Math.floor((task.completedCount / (task.totalWorkers || 1)) * 100)}%</span>
                     </div>
                     <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-6">
                       <div className="h-full bg-indigo-600" style={{ width: `${(task.completedCount / (task.totalWorkers || 1)) * 100}%` }}></div>
                     </div>
-                    <button className="w-full py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest group-hover:bg-indigo-600 transition-all">
+                    <button className="w-full py-5 bg-slate-900 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest group-hover:bg-indigo-600 transition-all shadow-lg active:scale-95">
                       View Details
                     </button>
                   </div>
@@ -293,9 +293,9 @@ export default function Tasks({ user, tasks, transactions, onComplete, navigateT
               </div>
             ) : (
               userHistoryItems.map(tx => (
-                <div key={tx.id} className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] border border-slate-100 shadow-sm relative overflow-hidden group">
+                <div key={tx.id} className="bg-white p-8 md:p-12 rounded-[2.5rem] md:rounded-[3rem] border border-slate-100 shadow-sm relative overflow-hidden group">
                   <div className="flex justify-between items-start mb-8">
-                    <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-xl text-slate-400 group-hover:bg-slate-900 group-hover:text-white transition-all">
+                    <div className="w-12 h-12 md:w-16 md:h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-lg md:text-2xl text-slate-400 group-hover:bg-slate-900 group-hover:text-white transition-all">
                       <i className={`fa-solid ${getIcon(tx.method || '')}`}></i>
                     </div>
                     <div className={`px-4 py-1.5 text-[8px] font-black rounded-lg uppercase tracking-widest border transition-all ${tx.status === 'success' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :

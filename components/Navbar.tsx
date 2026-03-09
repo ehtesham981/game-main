@@ -120,7 +120,8 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
                 // Handle 'MicroJobs' as a dropdown
                 if (link.id === 'micro-jobs') {
                   const microSubLinks = [
-                    { name: 'Marketplace', id: 'micro-jobs', icon: 'fa-table-cells-large' },
+                    { name: 'MicroJobs Hub', id: 'micro-jobs', icon: 'fa-briefcase' },
+                    { name: 'Task Marketplace', id: 'tasks', icon: 'fa-list-check' },
                     { name: 'Spread Links', id: 'spread-links', icon: 'fa-link' },
                     { name: 'Math Solver', id: 'math-solver', icon: 'fa-calculator' },
                     { name: 'Lucky Spin', id: 'spin', icon: 'fa-clover' },
@@ -405,7 +406,8 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, user, onLo
                     {authLinks.map(link => {
                       if (link.id === 'micro-jobs') {
                         const microSubLinks = [
-                          { name: 'Marketplace', id: 'micro-jobs', icon: 'fa-table-cells-large' },
+                          { name: 'MicroJobs Hub', id: 'micro-jobs', icon: 'fa-briefcase' },
+                          { name: 'Task Marketplace', id: 'tasks', icon: 'fa-list-check' },
                           { name: 'Spread Links', id: 'spread-links', icon: 'fa-link' },
                           { name: 'Math Solver', id: 'math-solver', icon: 'fa-calculator' },
                           { name: 'Lucky Spin', id: 'spin', icon: 'fa-clover' },
