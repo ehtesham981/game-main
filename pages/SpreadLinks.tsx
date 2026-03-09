@@ -6,44 +6,11 @@ import BackToDashboard from '../components/BackToDashboard';
 interface SpreadLinksProps {
     user: User;
     onNavigate: (page: string, params?: any) => void;
+    spreadLinks: SpreadLink[];
 }
 
-const SpreadLinks: React.FC<SpreadLinksProps> = ({ user, onNavigate }) => {
-    // Dummy data for spread links
-    const spreadLinks: SpreadLink[] = [
-        {
-            id: 'SL-001',
-            title: 'Visit Tech News',
-            description: 'Read the latest technology updates and trends in the industry.',
-            url: 'https://news.google.com',
-            reward: 0.005,
-            timer: 20
-        },
-        {
-            id: 'SL-002',
-            title: 'Explore AI Tools',
-            description: 'Discover the most powerful AI tools available for developers.',
-            url: 'https://openai.com',
-            reward: 0.007,
-            timer: 20
-        },
-        {
-            id: 'SL-003',
-            title: 'Crypto Market Update',
-            description: 'Check out the real-time prices and trends of major cryptocurrencies.',
-            url: 'https://coinmarketcap.com',
-            reward: 0.006,
-            timer: 20
-        },
-        {
-            id: 'SL-004',
-            title: 'Modern Web Frameworks',
-            description: 'A deep dive into the most popular React and Nextjs frameworks of 2024.',
-            url: 'https://vercel.com',
-            reward: 0.008,
-            timer: 20
-        }
-    ];
+const SpreadLinks: React.FC<SpreadLinksProps> = ({ user, onNavigate, spreadLinks }) => {
+
 
     return (
         <div className="pt-28 pb-20 min-h-screen bg-slate-50">

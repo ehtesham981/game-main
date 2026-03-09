@@ -44,6 +44,8 @@ const App: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>(storage.getTransactions());
   const [sessionConflict, setSessionConflict] = useState(false);
+  const [spreadLinks, setSpreadLinks] = useState<any[]>([]);
+
 
   useEffect(() => {
     const initApp = async () => {
@@ -122,6 +124,10 @@ const App: React.FC = () => {
 
         const seo = await storage.getSEOConfig();
         document.title = seo.siteTitle;
+
+        const cloudSpreadLinks = await storage.getSpreadLinks();
+        setSpreadLinks(cloudSpreadLinks || []);
+
       } catch (error) {
         console.error("Sync error:", error);
       }
@@ -531,6 +537,7 @@ const App: React.FC = () => {
             <SpreadLinks
               user={user}
               onNavigate={navigateTo}
+              spreadLinks={spreadLinks}
             />
           )}
 
@@ -538,6 +545,7 @@ const App: React.FC = () => {
             <SpreadLinkViewer
               user={user}
               linkId={currentPage.split('|')[1]}
+              spreadLinks={spreadLinks}
               onBack={() => navigateTo('spread-links')}
               onComplete={async (linkId, reward, title) => {
                 // Prevent duplicate claims

@@ -1,12 +1,14 @@
 // @ts-nocheck
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { User, Task, Transaction } from '../types';
+import { User, Task, Transaction, SpreadLink } from '../types';
+
 import { storage } from '../services/storage';
 import BackToDashboard from '../components/BackToDashboard';
 import NumericInput from '../components/NumericInput';
 
 interface AdminPanelProps {
-  initialView?: 'overview' | 'users' | 'history' | 'tasks' | 'finance' | 'reviews' | 'seo' | 'create-task' | 'freelance' | 'create-freelance' | 'referrals';
+  initialView?: 'overview' | 'users' | 'history' | 'tasks' | 'finance' | 'reviews' | 'seo' | 'create-task' | 'freelance' | 'create-freelance' | 'referrals' | 'spreadlinks';
+
   onNavigate?: (page: string) => void;
 }
 
@@ -22,6 +24,11 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
   const [editingFreelancerId, setEditingFreelancerId] = useState<string | null>(null);
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
   const [editingTaskData, setEditingTaskData] = useState<Task | null>(null);
+  const [spreadLinks, setSpreadLinks] = useState<SpreadLink[]>([]);
+  const [editingSpreadLinkId, setEditingSpreadLinkId] = useState<string | null>(null);
+  const [editingSpreadLinkData, setEditingSpreadLinkData] = useState<SpreadLink | null>(null);
+
+
 
   useEffect(() => {
     if (editingTaskId) {
@@ -32,19 +39,32 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
     }
   }, [editingTaskId, tasks]);
 
+  useEffect(() => {
+    if (editingSpreadLinkId) {
+      const link = spreadLinks.find(l => l.id === editingSpreadLinkId);
+      if (link) setEditingSpreadLinkData(link);
+    } else {
+      setEditingSpreadLinkData(null);
+    }
+  }, [editingSpreadLinkId, spreadLinks]);
+
+
   const refreshActiveData = useCallback(async () => {
     setIsSyncing(true);
     try {
       if (view === 'overview') {
         // Optimize overview load: fetch concurrently
-        const [allTxs, allUsers, allTasks] = await Promise.all([
+        const [allTxs, allUsers, allTasks, allSpreadLinks] = await Promise.all([
           storage.getAllGlobalTransactions(),
           storage.getAllUsers(),
-          storage.getTasks()
+          storage.getTasks(),
+          storage.getSpreadLinks()
         ]);
         setTransactions(allTxs || []);
         setUsers(allUsers || []);
         setTasks(allTasks || []);
+        setSpreadLinks(allSpreadLinks || []);
+
       } else {
         if (['history', 'reviews', 'finance', 'tasks'].includes(view)) {
           const allTxs = await storage.getAllGlobalTransactions();
@@ -58,10 +78,15 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
           const allTasks = await storage.getTasks();
           setTasks(allTasks || []);
         }
-        if (view === 'freelance') {
+        if (view === 'freelance' || view === 'spreadlinks') {
           const allUsers = await storage.getAllUsers();
           setUsers(allUsers || []);
+          if (view === 'spreadlinks') {
+            const allLinks = await storage.getSpreadLinks();
+            setSpreadLinks(allLinks || []);
+          }
         }
+
       }
     } catch (err) {
       console.error("Sync error:", err);
@@ -112,7 +137,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
     { id: 'finance', label: 'Finance', icon: 'fa-wallet', badge: stats.pendingFinance },
     { id: 'referrals', label: 'Referrals', icon: 'fa-people-group' },
     { id: 'create-task', label: 'Create Campaign', icon: 'fa-plus' },
+    { id: 'spreadlinks', label: 'Spread Links', icon: 'fa-link' },
     { id: 'history', label: 'Logs', icon: 'fa-clock' }
+
   ];
 
   return (
@@ -1097,81 +1124,177 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
           </div>
         )}
 
-        {view === 'referrals' && (
-          <div className="bg-white rounded-[2rem] sm:rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
-            <div className="p-6 sm:p-10 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center bg-slate-50/30 gap-6">
-              <div>
-                <h2 className="text-2xl font-black text-slate-900 uppercase">Referral Network</h2>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">{referralData.length} active referrers</p>
+        {view === 'spreadlinks' && (
+          <div className="space-y-6 animate-in fade-in duration-500">
+            <div className="bg-white rounded-[2rem] sm:rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">
+              <div className="p-6 sm:p-10 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center bg-slate-50/30 gap-6">
+                <div>
+                  <h2 className="text-2xl font-black text-slate-900 uppercase">Spread Link Network</h2>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">{spreadLinks.length} active traffic nodes</p>
+                </div>
+                <button
+                  onClick={() => {
+                    const newLink = {
+                      id: `SL-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
+                      title: '',
+                      description: '',
+                      url: '',
+                      reward: 0.005,
+                      timer: 20
+                    };
+                    setSpreadLinks([newLink, ...spreadLinks]);
+                    setEditingSpreadLinkId(newLink.id);
+                  }}
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-4 bg-slate-900 text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-lg active:scale-95 whitespace-nowrap"
+                >
+                  <i className="fa-solid fa-plus"></i> Create Link
+                </button>
               </div>
-              <input type="text" placeholder="Search Referrers..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="w-full sm:w-80 px-6 py-4 bg-white border border-slate-200 rounded-2xl text-[11px] font-bold outline-none" />
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left min-w-[900px]">
-                <thead className="bg-slate-50 text-[10px] font-black uppercase text-slate-400 border-b border-slate-100">
-                  <tr>
-                    <th className="px-10 py-6">Referrer Identity</th>
-                    <th className="px-6 py-6 font-black uppercase">Referred Members</th>
-                    <th className="px-10 py-6 text-right">Metrics</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-50">
-                  {referralData
-                    .filter(item => !searchQuery || item.referrer.username.toLowerCase().includes(searchQuery.toLowerCase()) || item.referrer.email.toLowerCase().includes(searchQuery.toLowerCase()) || item.referrer.id.toLowerCase().includes(searchQuery.toLowerCase()))
-                    .map(({ referrer, referredUsers }) => (
-                      <tr key={referrer.id} className="hover:bg-slate-50/50 transition-colors">
-                        <td className="px-10 py-8 align-top">
-                          <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-black text-xs uppercase shadow-lg shadow-indigo-100">
-                              {referrer.username.charAt(0)}
-                            </div>
-                            <div>
-                              <p className="text-sm font-black text-slate-900">{referrer.username}</p>
-                              <p className="text-[10px] text-slate-400 font-mono">{referrer.email}</p>
-                              <p className="text-[9px] text-indigo-400 font-bold uppercase mt-1">ID: {referrer.id}</p>
-                            </div>
-                          </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left min-w-[900px]">
+                  <thead className="bg-slate-50 text-[10px] font-black uppercase text-slate-400 border-b border-slate-100">
+                    <tr>
+                      <th className="px-10 py-6">Link Identity</th>
+                      <th className="px-6 py-6">Resource URL</th>
+                      <th className="px-6 py-6">Reward / Timer</th>
+                      <th className="px-10 py-6 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-50">
+                    {spreadLinks.map(link => (
+                      <tr key={link.id} className="hover:bg-slate-50/50 transition-colors">
+                        <td className="px-10 py-6">
+                          <p className="text-sm font-black text-slate-900">{link.title || 'Untitled Link'}</p>
+                          <p className="text-[10px] text-slate-400 font-medium line-clamp-1 max-w-[200px]">{link.description || 'No description'}</p>
+                          <p className="text-[8px] text-indigo-400 font-mono mt-1">{link.id}</p>
                         </td>
-                        <td className="px-6 py-8">
-                          <div className="space-y-4">
-                            {referredUsers.map(u => (
-                              <div key={u.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 group/item">
-                                <div className="flex items-center gap-4">
-                                  <div className="w-8 h-8 bg-white border border-slate-200 rounded-lg flex items-center justify-center text-[10px] font-black text-slate-400 uppercase">
-                                    {u.username.charAt(0)}
-                                  </div>
-                                  <div>
-                                    <p className="text-[11px] font-black text-slate-700">{u.username}</p>
-                                    <p className="text-[9px] text-slate-400 font-medium">{u.email}</p>
-                                  </div>
-                                </div>
-                                <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest bg-emerald-50 px-2 py-0.5 rounded">Joined</span>
-                              </div>
-                            ))}
-                          </div>
+                        <td className="px-6 py-6">
+                          <p className="text-[10px] font-bold text-indigo-600 truncate max-w-[200px]">{link.url}</p>
                         </td>
-                        <td className="px-10 py-8 text-right align-top">
-                          <div className="inline-block px-6 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest">
-                            {referredUsers.length} <span className="opacity-50 ml-1">Refers</span>
-                          </div>
-                          <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-4">Growth Index: +{(referredUsers.length * 100 / users.length).toFixed(1)}%</p>
+                        <td className="px-6 py-6">
+                          <p className="text-[11px] font-black text-slate-900">${link.reward.toFixed(4)}</p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{link.timer} Seconds</p>
+                        </td>
+                        <td className="px-10 py-6 text-right space-x-2">
+                          <button
+                            onClick={() => setEditingSpreadLinkId(link.id)}
+                            className="px-4 py-2 bg-indigo-50 text-indigo-600 text-[9px] font-black uppercase rounded-lg hover:bg-indigo-600 hover:text-white transition-all border border-indigo-100"
+                          >
+                            <i className="fa-solid fa-pen mr-1"></i>Edit
+                          </button>
+                          <button
+                            onClick={async () => {
+                              if (confirm(`CRITICAL: Decommission traffic node ${link.id}?`)) {
+                                const updated = spreadLinks.filter(l => l.id !== link.id);
+                                setSpreadLinks(updated);
+                                await storage.setSpreadLinks(updated);
+                                alert('Node removed from network.');
+                              }
+                            }}
+                            className="px-4 py-2 bg-rose-50 text-rose-500 text-[9px] font-black uppercase rounded-lg hover:bg-rose-500 hover:text-white transition-all border border-rose-100"
+                          >
+                            <i className="fa-solid fa-trash mr-1"></i>Delete
+                          </button>
                         </td>
                       </tr>
                     ))}
-                  {referralData.length === 0 && (
-                    <tr>
-                      <td colSpan={3} className="px-10 py-32 text-center text-slate-300 font-black uppercase tracking-widest text-xs">
-                        <i className="fa-solid fa-people-group text-5xl mb-6 opacity-20"></i>
-                        <br />
-                        No referral data nodes located in mainnet
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                    {spreadLinks.length === 0 && (
+                      <tr>
+                        <td colSpan={4} className="px-10 py-20 text-center">
+                          <i className="fa-solid fa-link-slash text-5xl text-slate-100 mb-6 block"></i>
+                          <p className="text-sm font-black text-slate-400 uppercase tracking-widest">No traffic nodes currently deployed</p>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         )}
+
+        {/* Spread Link Edit Modal */}
+        {editingSpreadLinkId && editingSpreadLinkData && (
+          <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-xl animate-in fade-in duration-300">
+            <div className="bg-white rounded-[3.5rem] w-full max-w-xl p-10 md:p-14 border border-slate-200 shadow-2xl animate-in zoom-in-95 duration-300">
+              <div className="flex justify-between items-start mb-10">
+                <div>
+                  <h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">Configure Link</h3>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">{editingSpreadLinkData.id}</p>
+                </div>
+                <button onClick={() => setEditingSpreadLinkId(null)} className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-all">
+                  <i className="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Link Title</label>
+                  <input
+                    value={editingSpreadLinkData.title}
+                    onChange={e => setEditingSpreadLinkData({ ...editingSpreadLinkData, title: e.target.value })}
+                    className="w-full px-6 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold outline-none focus:bg-white focus:border-indigo-500 transition-all"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Description</label>
+                  <textarea
+                    value={editingSpreadLinkData.description}
+                    onChange={e => setEditingSpreadLinkData({ ...editingSpreadLinkData, description: e.target.value })}
+                    rows={2}
+                    className="w-full px-6 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold outline-none focus:bg-white focus:border-indigo-500 transition-all resize-none"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Target URL</label>
+                  <input
+                    value={editingSpreadLinkData.url}
+                    onChange={e => setEditingSpreadLinkData({ ...editingSpreadLinkData, url: e.target.value })}
+                    className="w-full px-6 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-[10px] font-mono outline-none focus:bg-white focus:border-indigo-500 transition-all"
+                    placeholder="https://example.com"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <NumericInput
+                      label="Reward (USD)"
+                      value={editingSpreadLinkData.reward}
+                      onChange={val => setEditingSpreadLinkData({ ...editingSpreadLinkData, reward: val })}
+                      min={0}
+                      step={0.0001}
+                      unitLabel="USD"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <NumericInput
+                      label="Timer (Sec)"
+                      value={editingSpreadLinkData.timer}
+                      onChange={val => setEditingSpreadLinkData({ ...editingSpreadLinkData, timer: val })}
+                      min={5}
+                      unitLabel="Seconds"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-4">
+                  <button
+                    onClick={async () => {
+                      const updated = spreadLinks.map(l => l.id === editingSpreadLinkId ? editingSpreadLinkData : l);
+                      setSpreadLinks(updated);
+                      await storage.setSpreadLinks(updated);
+                      setEditingSpreadLinkId(null);
+                      alert('Network node updated.');
+                    }}
+                    className="w-full py-5 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-xl active:scale-95"
+                  >
+                    <i className="fa-solid fa-cloud-arrow-up mr-2"></i> Deploy Changes
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
 
       {/* Proof Preview Modal */}

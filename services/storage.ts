@@ -18,8 +18,10 @@ const KEYS = {
   ALL_TRANSACTIONS: 'all_transactions',
   SEO: 'seo_config',
   EMAIL_LOOKUP: 'email_to_id',
-  USER_TXS: 'user_transactions'
+  USER_TXS: 'user_transactions',
+  SPREAD_LINKS: 'spread_links'
 };
+
 
 const isBrowser = typeof window !== 'undefined';
 
@@ -221,5 +223,14 @@ export const storage = {
 
   setSEOConfig: async (config: SEOConfig) => {
     await set(ref(db, KEYS.SEO), storage.cleanData(config));
+  },
+
+  getSpreadLinks: async (): Promise<any[]> => {
+    const snapshot = await get(ref(db, KEYS.SPREAD_LINKS));
+    return snapshot.exists() ? storage.ensureArray(snapshot.val()) : [];
+  },
+
+  setSpreadLinks: async (links: any[]) => {
+    await set(ref(db, KEYS.SPREAD_LINKS), storage.ensureArray(links).map(storage.cleanData));
   }
 };
