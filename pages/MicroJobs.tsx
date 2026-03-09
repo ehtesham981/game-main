@@ -66,8 +66,8 @@ const MicroJobs: React.FC<MicroJobsProps> = ({ user, onNavigate, initialTab = 'o
     ];
 
     return (
-        <div className="pt-24 md:pt-32 pb-16 md:pb-24 min-h-screen bg-slate-50">
-            <div className="max-w-[1600px] mx-auto px-4 md:px-12 space-y-12 md:space-y-16 animate-in fade-in slide-in-from-bottom-6 duration-700">
+        <div className="pt-28 md:pt-32 pb-16 md:pb-24 min-h-screen bg-slate-50">
+            <div className="max-w-[1600px] mx-auto px-4 md:px-12 space-y-8 md:space-y-16 animate-in fade-in slide-in-from-bottom-6 duration-700">
 
                 <BackToDashboard onNavigate={onNavigate} />
 
@@ -77,10 +77,10 @@ const MicroJobs: React.FC<MicroJobsProps> = ({ user, onNavigate, initialTab = 'o
                         <i className="fa-solid fa-briefcase"></i>
                         Micro-Job Network
                     </div>
-                    <h1 className="text-4xl md:text-7xl font-black text-slate-900 tracking-tighter leading-tight md:leading-[0.9] mb-4 md:mb-6">
+                    <h1 className="text-3xl md:text-7xl font-black text-slate-900 tracking-tighter leading-tight md:leading-[0.9] mb-4 md:mb-6">
                         Earning <span className="text-indigo-600">Simplified</span>
                     </h1>
-                    <p className="text-slate-500 font-medium text-base md:text-xl leading-relaxed max-w-2xl">
+                    <p className="text-slate-400 md:text-slate-500 font-medium text-sm md:text-xl leading-relaxed max-w-2xl">
                         Choose from a variety of authorized micro-jobs and start accumulating USD wealth across our verified partner network.
                     </p>
                 </div>
@@ -108,14 +108,14 @@ const MicroJobs: React.FC<MicroJobsProps> = ({ user, onNavigate, initialTab = 'o
                         {earningOptions.map((option) => (
                             <div
                                 key={option.id}
-                                className="bg-white p-7 md:p-10 rounded-3xl md:rounded-[3.5rem] border border-slate-200 shadow-sm hover:shadow-2xl transition-all duration-500 group relative overflow-hidden flex flex-col justify-between h-full"
+                                className="bg-white p-6 md:p-10 rounded-3xl md:rounded-[3.5rem] border border-slate-200 shadow-sm hover:shadow-2xl transition-all duration-500 group relative overflow-hidden flex flex-col justify-between h-full"
                             >
                                 <div>
-                                    <div className={`w-16 h-16 md:w-20 md:h-20 bg-${option.color}-50 rounded-2xl md:rounded-[2rem] flex items-center justify-center text-2xl md:text-3xl text-${option.color}-600 mb-6 md:mb-8 group-hover:bg-${option.color}-600 group-hover:text-white transition-all duration-500`}>
+                                    <div className={`w-14 h-14 md:w-20 md:h-20 bg-${option.color}-50 rounded-2xl md:rounded-[2rem] flex items-center justify-center text-xl md:text-3xl text-${option.color}-600 mb-6 md:mb-8 group-hover:bg-${option.color}-600 group-hover:text-white transition-all duration-500`}>
                                         <i className={`fa-solid ${option.icon}`}></i>
                                     </div>
                                     <div className="flex items-center justify-between mb-4">
-                                        <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tighter uppercase">{option.title}</h3>
+                                        <h3 className="text-lg md:text-2xl font-black text-slate-900 tracking-tighter uppercase">{option.title}</h3>
                                         <span className={`px-2 md:px-3 py-1 bg-${option.color}-50 text-${option.color}-600 text-[8px] font-black uppercase rounded-full border border-${option.color}-100`}>
                                             {option.reward}
                                         </span>
@@ -152,29 +152,29 @@ const MicroJobs: React.FC<MicroJobsProps> = ({ user, onNavigate, initialTab = 'o
                 )}
 
                 {/* Statistics / Fun Footer */}
-                <div className="bg-slate-900 p-8 md:p-16 rounded-3xl md:rounded-[4rem] shadow-3xl relative overflow-hidden">
+                <div className="bg-slate-900 p-6 md:p-16 rounded-3xl md:rounded-[4rem] shadow-3xl relative overflow-hidden">
                     <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
                         <div>
-                            <h4 className="text-2xl md:text-3xl font-black text-white tracking-tighter uppercase mb-4 md:mb-6">Your <span className="text-indigo-400">Activity Profile</span></h4>
-                            <p className="text-slate-400 font-bold text-xs md:text-sm leading-relaxed mb-8">
+                            <h4 className="text-xl md:text-3xl font-black text-white tracking-tighter uppercase mb-4 md:mb-6">Your <span className="text-indigo-400">Activity Profile</span></h4>
+                            <p className="text-slate-400 font-bold text-[10px] md:text-sm leading-relaxed mb-6 md:mb-8">
                                 Track your progress and authorized job completions in real-time. Our network synchronizes your balance across all Micro-Job nodes.
                             </p>
                             <div className="flex flex-wrap gap-4 md:gap-6">
-                                <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-5 md:p-6 rounded-2xl md:rounded-3xl flex-grow md:flex-none min-w-[140px]">
+                                <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-4 md:p-6 rounded-2xl md:rounded-3xl flex-grow md:flex-none min-w-[120px]">
                                     <span className="block text-[8px] font-black text-indigo-400 uppercase tracking-widest mb-1">Total Balance</span>
-                                    <span className="text-xl md:text-2xl font-black text-white tabular-nums">${user.balance.toLocaleString(undefined, { minimumFractionDigits: 3 })}</span>
+                                    <span className="text-lg md:text-2xl font-black text-white tabular-nums">${user.balance.toLocaleString(undefined, { minimumFractionDigits: 3 })}</span>
                                 </div>
-                                <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-5 md:p-6 rounded-2xl md:rounded-3xl flex-grow md:flex-none min-w-[140px]">
+                                <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-4 md:p-6 rounded-2xl md:rounded-3xl flex-grow md:flex-none min-w-[120px]">
                                     <span className="block text-[8px] font-black text-emerald-400 uppercase tracking-widest mb-1">Status</span>
-                                    <span className="text-xl md:text-2xl font-black text-white uppercase">{user.isLoggedIn ? 'Active' : 'Offline'}</span>
+                                    <span className="text-lg md:text-2xl font-black text-white uppercase">{user.isLoggedIn ? 'Active' : 'Offline'}</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex flex-col items-center justify-center p-8 md:p-10 bg-white/5 backdrop-blur-md rounded-3xl md:rounded-[3rem] border border-white/10 text-center">
-                            <i className="fa-solid fa-rocket text-3xl md:text-4xl text-indigo-400 mb-6 animate-pulse"></i>
-                            <h5 className="text-lg md:text-xl font-black text-white mb-4">Want more rewards?</h5>
-                            <p className="text-slate-400 text-[10px] md:text-xs font-medium mb-8">Invite your network and earn 10% from every micro-job completion they perform.</p>
+                        <div className="flex flex-col items-center justify-center p-6 md:p-10 bg-white/5 backdrop-blur-md rounded-3xl md:rounded-[3rem] border border-white/10 text-center">
+                            <i className="fa-solid fa-rocket text-2xl md:text-4xl text-indigo-400 mb-6 animate-pulse"></i>
+                            <h5 className="text-base md:text-xl font-black text-white mb-4">Want more rewards?</h5>
+                            <p className="text-slate-400 text-[9px] md:text-xs font-medium mb-6 md:mb-8">Invite your network and earn 10% from every micro-job completion they perform.</p>
                             <button
                                 onClick={() => onNavigate('referrals')}
                                 className="w-full md:w-auto px-8 md:px-12 py-4 md:py-5 bg-white text-slate-900 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-400 hover:text-white transition-all shadow-xl"
