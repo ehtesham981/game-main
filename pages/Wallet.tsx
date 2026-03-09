@@ -30,7 +30,7 @@ const Wallet: React.FC<WalletProps> = ({ balance = 0, depositBalance = 0, onActi
 
    // Updated Exchange Rates
    const MIN_DEPOSIT = 1.00;
-   const MIN_WITHDRAWAL = 0.50;
+   const MIN_WITHDRAWAL = 1.20;
 
    // External conversion multipliers (simulated live rates)
    const PKR_RATE = 280;
