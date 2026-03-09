@@ -67,6 +67,14 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, tasks, onBack, on
         }
     ];
 
+    const [activeTab, setActiveTab] = useState<'marketplace' | 'buyer-requests'>('marketplace');
+
+    const freelanceEarnings = useMemo(() => {
+        const freelanceTypes = ['Content Writing', 'Graphics Designing', 'Blog Development', 'SEO'];
+        const completedFreelanceTasks = tasks.filter(t => freelanceTypes.includes(t.type) && user.completedTasks?.includes(t.id));
+        return completedFreelanceTasks.reduce((acc, t) => acc + t.reward, 0);
+    }, [tasks, user.completedTasks]);
+
     const currentCategory = useMemo(() => categories.find(c => c.id === activeCategory), [activeCategory]);
 
     const activeTasks = useMemo(() => {
@@ -211,100 +219,209 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, tasks, onBack, on
                     <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
                 </header>
 
+                {/* Mini Dashboard / Quick Stats */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all duration-500">
+                        <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                            <i className="fa-solid fa-hand-holding-dollar"></i>
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Freelance Earn</p>
+                            <h3 className="text-3xl font-black text-slate-900 tracking-tighter">${freelanceEarnings.toFixed(3)}</h3>
+                        </div>
+                    </div>
+
+                    <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all duration-500">
+                        <div className="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                            <i className="fa-solid fa-briefcase"></i>
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Payouts</p>
+                            <h3 className="text-3xl font-black text-slate-900 tracking-tighter">${freelanceEarnings.toFixed(3)}</h3>
+                        </div>
+                    </div>
+
+                    <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center gap-8 group hover:shadow-xl transition-all duration-500">
+                        <div className="w-16 h-16 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                            <i className="fa-solid fa-clock-rotate-left"></i>
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Pending Txs</p>
+                            <h3 className="text-3xl font-black text-slate-900 tracking-tighter">0.000</h3>
+                        </div>
+                    </div>
+                </div>
+
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                    {/* Marketplace Grid */}
+                    {/* Main Content Area */}
                     <div className="lg:col-span-8 space-y-10">
-                        {activeCategory ? (
-                            <div className="space-y-8 animate-in slide-in-from-right duration-500">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-6">
-                                        <button
-                                            onClick={() => setActiveCategory(null)}
-                                            className="w-12 h-12 bg-white rounded-2xl border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-all shadow-sm"
-                                        >
-                                            <i className="fa-solid fa-chevron-left"></i>
-                                        </button>
-                                        <div>
-                                            <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">{currentCategory?.title} Jobs</h2>
-                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Global active assignments</p>
+                        {/* Tab Switcher */}
+                        <div className="flex items-center gap-4 bg-white p-2 rounded-[2rem] border border-slate-100 shadow-sm w-fit">
+                            <button
+                                onClick={() => setActiveTab('marketplace')}
+                                className={`px-8 py-4 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'marketplace' ? 'bg-slate-900 text-white shadow-xl' : 'text-slate-400 hover:bg-slate-50'}`}
+                            >
+                                Service Marketplace
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('buyer-requests')}
+                                className={`px-8 py-4 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'buyer-requests' ? 'bg-slate-900 text-white shadow-xl' : 'text-slate-400 hover:bg-slate-50'}`}
+                            >
+                                Buyer Requests
+                            </button>
+                        </div>
+
+                        {activeTab === 'marketplace' ? (
+                            <>
+                                {activeCategory ? (
+                                    <div className="space-y-8 animate-in slide-in-from-right duration-500">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-6">
+                                                <button
+                                                    onClick={() => setActiveCategory(null)}
+                                                    className="w-12 h-12 bg-white rounded-2xl border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-all shadow-sm"
+                                                >
+                                                    <i className="fa-solid fa-chevron-left"></i>
+                                                </button>
+                                                <div>
+                                                    <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">{currentCategory?.title} Jobs</h2>
+                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Global active assignments</p>
+                                                </div>
+                                            </div>
+                                            <div className={`w-14 h-14 ${currentCategory?.color} rounded-2xl flex items-center justify-center text-white text-xl shadow-lg`}>
+                                                <i className={`fa-solid ${currentCategory?.icon}`}></i>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 gap-6">
+                                            {activeTasks.length > 0 ? activeTasks.map((job) => (
+                                                <div key={job.id} onClick={() => setSelectedTask(job)} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 group cursor-pointer">
+                                                    <div className="flex items-center gap-6">
+                                                        <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                                                            <i className="fa-solid fa-briefcase"></i>
+                                                        </div>
+                                                        <div>
+                                                            <h4 className="text-lg font-black text-slate-900 mb-1">{job.title}</h4>
+                                                            <div className="flex items-center gap-4">
+                                                                <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">ID: {job.id}</span>
+                                                                <span className="w-1 h-1 bg-slate-200 rounded-full"></span>
+                                                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Active Node</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-8">
+                                                        <div className="text-right">
+                                                            <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Potential Yield</p>
+                                                            <p className="text-xl font-black text-indigo-600">${job.reward.toFixed(3)} <span className="text-[10px] uppercase">USD</span></p>
+                                                        </div>
+                                                        <button className="px-8 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-lg active:scale-95">
+                                                            Enter Node
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )) : (
+                                                <div className="py-20 text-center bg-white rounded-[3rem] border-2 border-dashed border-slate-100">
+                                                    <i className="fa-solid fa-folder-open text-5xl text-slate-100 mb-4 block"></i>
+                                                    <p className="text-sm font-black text-slate-400 uppercase tracking-widest">No active nodes in this sector</p>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
-                                    <div className={`w-14 h-14 ${currentCategory?.color} rounded-2xl flex items-center justify-center text-white text-xl shadow-lg`}>
-                                        <i className={`fa-solid ${currentCategory?.icon}`}></i>
+                                ) : (
+                                    <>
+                                        <div>
+                                            <h2 className="text-2xl font-black text-slate-900 tracking-tighter uppercase mb-2">Service Marketplace</h2>
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Select your specialization node</p>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                            {categories.map((cat) => (
+                                                <div key={cat.id} className="group bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 flex flex-col justify-between h-full relative overflow-hidden">
+                                                    <div className="relative z-10">
+                                                        <div className={`w-16 h-16 ${cat.color} rounded-2xl flex items-center justify-center text-white text-2xl mb-8 shadow-xl group-hover:scale-110 transition-transform`}>
+                                                            <i className={`fa-solid ${cat.icon}`}></i>
+                                                        </div>
+                                                        <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-4">{cat.title}</h3>
+                                                        <p className="text-slate-500 font-medium text-sm leading-relaxed mb-10">{cat.desc}</p>
+                                                    </div>
+
+                                                    <div className="relative z-10 border-t border-slate-50 pt-8 flex items-center justify-between">
+                                                        <div>
+                                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Base Yield</p>
+                                                            <p className="text-sm font-black text-emerald-600">{cat.yield}</p>
+                                                        </div>
+                                                        <button
+                                                            onClick={() => setActiveCategory(cat.id)}
+                                                            className="px-6 py-3 bg-slate-900 text-white rounded-xl text-[9px] font-black uppercase tracking-widest group-hover:bg-indigo-600 transition-colors shadow-lg"
+                                                        >
+                                                            Access Node
+                                                        </button>
+                                                    </div>
+                                                    <div className={`absolute -right-8 -bottom-8 text-8xl ${cat.color} opacity-5 -rotate-12 transition-transform group-hover:scale-110`}>
+                                                        <i className={`fa-solid ${cat.icon}`}></i>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
+                            </>
+                        ) : (
+                            /* Buyer Request Section */
+                            <div className="space-y-10 animate-in fade-in slide-in-from-left duration-500">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <h2 className="text-2xl font-black text-slate-900 tracking-tighter uppercase mb-2">Live Buyer Requests</h2>
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Respond to custom project briefs from global clients</p>
                                     </div>
+                                    <button
+                                        onClick={() => alert("Buyer Request submission system is initializing. Please check back soon.")}
+                                        className="px-6 py-3 bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg hover:bg-slate-900 transition-all active:scale-95"
+                                    >
+                                        Post Request
+                                    </button>
                                 </div>
 
                                 <div className="grid grid-cols-1 gap-6">
-                                    {activeTasks.length > 0 ? activeTasks.map((job) => (
-                                        <div key={job.id} onClick={() => setSelectedTask(job)} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 group cursor-pointer">
-                                            <div className="flex items-center gap-6">
-                                                <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 group-hover:bg-indigo-600 group-hover:text-white transition-all">
-                                                    <i className="fa-solid fa-briefcase"></i>
-                                                </div>
-                                                <div>
-                                                    <h4 className="text-lg font-black text-slate-900 mb-1">{job.title}</h4>
-                                                    <div className="flex items-center gap-4">
-                                                        <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">ID: {job.id}</span>
-                                                        <span className="w-1 h-1 bg-slate-200 rounded-full"></span>
-                                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Active Node</span>
-                                                    </div>
+                                    {/* Placeholder for real buyer requests if we had a data source */}
+                                    <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm flex flex-col md:flex-row items-center justify-between gap-8 group">
+                                        <div className="flex items-center gap-8">
+                                            <div className="w-20 h-20 bg-amber-50 text-amber-500 rounded-3xl flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">
+                                                <i className="fa-solid fa-quote-left"></i>
+                                            </div>
+                                            <div>
+                                                <h4 className="text-xl font-black text-slate-900 mb-2">E-commerce UI/UX Website Design</h4>
+                                                <p className="text-slate-500 text-sm max-w-md leading-relaxed">I need a modern, high-converting checkout flow for my sneaker store. Must be responsive.</p>
+                                                <div className="flex items-center gap-4 mt-6">
+                                                    <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest flex items-center gap-2 bg-indigo-50 px-3 py-1.5 rounded-full">
+                                                        <i className="fa-solid fa-circle-user"></i> Client: alex_node
+                                                    </span>
+                                                    <span className="w-1.5 h-1.5 bg-slate-200 rounded-full"></span>
+                                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Posted 2h ago</span>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-8">
-                                                <div className="text-right">
-                                                    <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Potential Yield</p>
-                                                    <p className="text-xl font-black text-indigo-600">${job.reward.toFixed(3)} <span className="text-[10px] uppercase">USD</span></p>
-                                                </div>
-                                                <button className="px-8 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-lg active:scale-95">
-                                                    Enter Node
-                                                </button>
+                                        </div>
+                                        <div className="flex flex-col items-end gap-6 min-w-[150px]">
+                                            <div className="text-right">
+                                                <p className="text-[10px] font-black text-slate-400 uppercase mb-1">Budget Offer</p>
+                                                <p className="text-2xl font-black text-emerald-600">$120.00 <span className="text-[10px] uppercase">USD</span></p>
                                             </div>
+                                            <button
+                                                onClick={() => alert("Proposal transmission sequence initiated. Awaiting client node response...")}
+                                                className="w-full py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-xl active:scale-95"
+                                            >
+                                                Send Proposal
+                                            </button>
                                         </div>
-                                    )) : (
-                                        <div className="py-20 text-center bg-white rounded-[3rem] border-2 border-dashed border-slate-100">
-                                            <i className="fa-solid fa-folder-open text-5xl text-slate-100 mb-4 block"></i>
-                                            <p className="text-sm font-black text-slate-400 uppercase tracking-widest">No active nodes in this sector</p>
-                                        </div>
-                                    )}
+                                    </div>
+
+                                    <div className="py-20 text-center bg-white rounded-[3rem] border-2 border-dashed border-slate-100">
+                                        <i className="fa-solid fa-magnifying-glass text-4xl text-slate-100 mb-6 block"></i>
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Discovery Phase Active</p>
+                                        <p className="text-[10px] font-medium text-slate-300 mt-2">More buyer requests will populate as nodes initialize.</p>
+                                    </div>
                                 </div>
                             </div>
-                        ) : (
-                            <>
-                                <div>
-                                    <h2 className="text-2xl font-black text-slate-900 tracking-tighter uppercase mb-2">Service Marketplace</h2>
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Select your specialization node</p>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    {categories.map((cat) => (
-                                        <div key={cat.id} className="group bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 flex flex-col justify-between h-full relative overflow-hidden">
-                                            <div className="relative z-10">
-                                                <div className={`w-16 h-16 ${cat.color} rounded-2xl flex items-center justify-center text-white text-2xl mb-8 shadow-xl group-hover:scale-110 transition-transform`}>
-                                                    <i className={`fa-solid ${cat.icon}`}></i>
-                                                </div>
-                                                <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-4">{cat.title}</h3>
-                                                <p className="text-slate-500 font-medium text-sm leading-relaxed mb-10">{cat.desc}</p>
-                                            </div>
-
-                                            <div className="relative z-10 border-t border-slate-50 pt-8 flex items-center justify-between">
-                                                <div>
-                                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Base Yield</p>
-                                                    <p className="text-sm font-black text-emerald-600">{cat.yield}</p>
-                                                </div>
-                                                <button
-                                                    onClick={() => setActiveCategory(cat.id)}
-                                                    className="px-6 py-3 bg-slate-900 text-white rounded-xl text-[9px] font-black uppercase tracking-widest group-hover:bg-indigo-600 transition-colors shadow-lg"
-                                                >
-                                                    Access Node
-                                                </button>
-                                            </div>
-                                            <div className={`absolute -right-8 -bottom-8 text-8xl ${cat.color} opacity-5 -rotate-12 transition-transform group-hover:scale-110`}>
-                                                <i className={`fa-solid ${cat.icon}`}></i>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </>
                         )}
 
                         {/* Project History Section */}
