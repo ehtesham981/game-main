@@ -30,7 +30,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
   const progressToNextMilestone = ((earnings.total % 0.5) / 0.5) * 100;
 
   const ledgerList = useMemo(() => {
-    let filtered = transactions.filter(tx => ['earn', 'spin', 'referral_claim', 'math_reward', 'deposit', 'withdraw', 'spend'].includes(tx.type));
+    let filtered = transactions.filter(tx => ['earn', 'spin', 'referral_claim', 'math_reward', 'deposit', 'withdraw', 'spend', 'spread_link_reward'].includes(tx.type));
     if (ledgerTab === 'pending') filtered = filtered.filter(tx => tx.status === 'pending');
     else if (ledgerTab === 'verified') filtered = filtered.filter(tx => tx.status === 'success');
 
@@ -40,13 +40,14 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
   }, [transactions, ledgerTab]);
 
   const activityStats = useMemo(() => {
-    const counts: Record<string, number> = { 'Lucky Spin': 0, 'Referrals': 0, 'Math Solver': 0 };
+    const counts: Record<string, number> = { 'Lucky Spin': 0, 'Referrals': 0, 'Math Solver': 0, 'Spread Links': 0 };
     transactions
       .filter(tx => tx.status === 'success')
       .forEach(tx => {
         if (tx.type === 'spin' || tx.method === 'Spin Wheel') counts['Lucky Spin'] += tx.amount;
         else if (tx.type === 'referral_claim') counts['Referrals'] += tx.amount;
         else if (tx.type === 'math_reward') counts['Math Solver'] += tx.amount;
+        else if (tx.type === 'spread_link_reward') counts['Spread Links'] += tx.amount;
       });
     return counts;
   }, [transactions]);
@@ -57,6 +58,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
     if (type === 'spin' || method === 'Spin Wheel') return 'fa-clover text-emerald-500';
     if (type === 'referral_claim') return 'fa-users text-blue-500';
     if (type === 'math_reward') return 'fa-calculator text-indigo-500';
+    if (type === 'spread_link_reward') return 'fa-cloud-arrow-up text-blue-400';
     if (type === 'deposit') return 'fa-building-columns text-emerald-600';
     if (type === 'withdraw') return 'fa-wallet text-rose-500';
     return 'fa-coins text-amber-500';
@@ -131,7 +133,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full sm:w-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full sm:w-auto">
                   <div className="stat-box">
                     <p className="text-[8px] font-black uppercase text-slate-500 mb-2 tracking-widest">Vault Balance</p>
                     <p className="text-2xl sm:text-3xl font-black tabular-nums">${earnings.usd}</p>
@@ -143,6 +145,15 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
                   <div className="stat-box">
                     <p className="text-[8px] font-black uppercase text-slate-500 mb-2 tracking-widest">Ref Partners</p>
                     <p className="text-2xl sm:text-3xl font-black tabular-nums">{user.claimedReferrals?.length || 0}</p>
+                  </div>
+                  <div className="stat-box">
+                    <p className="text-[8px] font-black uppercase text-slate-500 mb-2 tracking-widest">Link Yield</p>
+                    <p className="text-2xl sm:text-3xl font-black tabular-nums">
+                      ${transactions
+                        .filter(tx => tx.type === 'spread_link_reward' && tx.status === 'success')
+                        .reduce((sum, tx) => sum + tx.amount, 0)
+                        .toFixed(2)}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -183,7 +194,10 @@ const Dashboard: React.FC<DashboardProps> = ({ user, tasks, transactions }) => {
                   </div>
                   <div className="w-full h-2.5 bg-slate-50 rounded-full overflow-hidden border border-slate-100">
                     <div
-                      className={`h-full rounded-full transition-all duration-1000 ${act === 'Lucky Spin' ? 'bg-emerald-500' : 'bg-blue-500'
+                      className={`h-full rounded-full transition-all duration-1000 ${act === 'Lucky Spin' ? 'bg-emerald-500' :
+                        act === 'Referrals' ? 'bg-blue-500' :
+                          act === 'Math Solver' ? 'bg-indigo-500' :
+                            'bg-indigo-400'
                         }`}
                       style={{ width: `${((val as number) / maxActivityValue) * 100}%` }}
                     ></div>

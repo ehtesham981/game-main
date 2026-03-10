@@ -28,6 +28,7 @@ const MicroJobs = lazy(() => import('./pages/MicroJobs'));
 const WeeklyBonus = lazy(() => import('./pages/WeeklyBonus'));
 const SpreadLinks = lazy(() => import('./pages/SpreadLinks'));
 const SpreadLinkViewer = lazy(() => import('./pages/SpreadLinkViewer'));
+const SpreadHistory = lazy(() => import('./pages/SpreadHistory'));
 
 
 
@@ -542,6 +543,14 @@ const App: React.FC = () => {
               user={user}
               onNavigate={navigateTo}
               spreadLinks={spreadLinks}
+            />
+          )}
+
+          {currentPage === 'spread-history' && user.isLoggedIn && (
+            <SpreadHistory
+              user={user}
+              transactions={transactions}
+              onNavigate={navigateTo}
             />
           )}
 

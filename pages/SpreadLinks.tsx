@@ -17,17 +17,32 @@ const SpreadLinks: React.FC<SpreadLinksProps> = ({ user, onNavigate, spreadLinks
             <div className="max-w-[1600px] mx-auto px-4 md:px-8 space-y-8 md:space-y-12 animate-in fade-in slide-in-from-bottom-6 duration-700">
                 <BackToDashboard onNavigate={onNavigate} />
 
-                <div className="max-w-3xl">
-                    <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 border border-indigo-100 shadow-sm">
-                        <i className="fa-solid fa-link-slash"></i>
-                        Spread Link Network
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div className="max-w-3xl">
+                        <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 border border-indigo-100 shadow-sm">
+                            <i className="fa-solid fa-link-slash"></i>
+                            Spread Link Network
+                        </div>
+                        <h1 className="text-3xl md:text-7xl font-black text-slate-900 tracking-tighter leading-tight md:leading-[0.9] mb-4 md:mb-6">
+                            Traffic <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-indigo-400">Accelerator</span>
+                        </h1>
+                        <p className="text-slate-400 md:text-slate-500 font-medium text-sm md:text-xl leading-relaxed max-w-2xl">
+                            Visit verified partner links, stay engaged for the required duration, and earn instant USD rewards.
+                        </p>
                     </div>
-                    <h1 className="text-3xl md:text-7xl font-black text-slate-900 tracking-tighter leading-tight md:leading-[0.9] mb-4 md:mb-6">
-                        Traffic <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-indigo-400">Accelerator</span>
-                    </h1>
-                    <p className="text-slate-400 md:text-slate-500 font-medium text-sm md:text-xl leading-relaxed max-w-2xl">
-                        Visit verified partner links, stay engaged for the required duration, and earn instant USD rewards.
-                    </p>
+
+                    <button
+                        onClick={() => onNavigate('spread-history')}
+                        className="group flex items-center gap-4 bg-white px-8 py-5 rounded-3xl border border-slate-200 shadow-sm hover:border-indigo-600 transition-all"
+                    >
+                        <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                            <i className="fa-solid fa-clock-rotate-left"></i>
+                        </div>
+                        <div className="text-left">
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Performance Tracker</p>
+                            <p className="text-sm font-black text-slate-900 uppercase">View History</p>
+                        </div>
+                    </button>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
