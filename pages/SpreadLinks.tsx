@@ -24,7 +24,6 @@ const SpreadLinks: React.FC<SpreadLinksProps> = ({ user, onNavigate, spreadLinks
     return (
         <div className="pt-32 md:pt-36 pb-20 min-h-screen bg-slate-50">
             <div className="max-w-[1600px] mx-auto px-4 md:px-8 space-y-8 md:space-y-12 animate-in fade-in slide-in-from-bottom-6 duration-700">
-                <BackToDashboard onNavigate={onNavigate} />
 
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
                     <div className="max-w-3xl">

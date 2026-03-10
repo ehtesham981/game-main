@@ -31,7 +31,6 @@ const Advertise: React.FC<AdvertiseProps> = ({ user, onRefresh, onNavigate }) =>
         <div className="pt-28 pb-20 min-h-screen bg-slate-50">
             <div className="max-w-[1600px] mx-auto px-4 sm:px-8 space-y-12 animate-in fade-in slide-in-from-bottom-6 duration-700">
 
-                <BackToDashboard onNavigate={onNavigate} />
 
                 {/* Header Section */}
                 <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 border-b border-slate-200 pb-12">

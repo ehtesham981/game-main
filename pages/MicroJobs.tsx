@@ -69,7 +69,6 @@ const MicroJobs: React.FC<MicroJobsProps> = ({ user, onNavigate, initialTab = 'o
         <div className="pt-28 md:pt-32 pb-16 md:pb-24 min-h-screen bg-slate-50">
             <div className="max-w-[1600px] mx-auto px-4 md:px-12 space-y-8 md:space-y-16 animate-in fade-in slide-in-from-bottom-6 duration-700">
 
-                <BackToDashboard onNavigate={onNavigate} />
 
                 {/* Header Section */}
                 <div className="max-w-3xl mb-12 md:mb-16">

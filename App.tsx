@@ -49,6 +49,11 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const initApp = async () => {
+      // Initialize history state if not present
+      if (!window.history.state || !window.history.state.page) {
+        window.history.replaceState({ page: currentPage }, '', '');
+      }
+
       const urlParams = new URLSearchParams(window.location.search);
       const referralId = urlParams.get('id');
       if (referralId) {
@@ -147,10 +152,9 @@ const App: React.FC = () => {
       isLoggedIn: false
     };
     setUser(anonymousUser);
-    setCurrentPage('home');
+    navigateTo('home', true);
     localStorage.removeItem('ct_user_session_id');
     localStorage.removeItem('ct_user');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   const refreshUserBalance = useCallback(async (userId?: string) => {
@@ -179,8 +183,7 @@ const App: React.FC = () => {
     };
     setUser(updatedUser);
     await storage.setUser(updatedUser);
-    setCurrentPage(updatedUser.isAdmin ? 'admin-overview' : 'dashboard');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    navigateTo(updatedUser.isAdmin ? 'admin-overview' : 'dashboard', true);
   };
 
   const handleWalletAction = async (type: 'deposit' | 'withdraw', amt: number, meth: string, acc?: string, proof?: string) => {
@@ -335,10 +338,25 @@ const App: React.FC = () => {
     }
   };
 
-  const navigateTo = (page: string) => {
+  const navigateTo = (page: string, replace = false) => {
+    if (replace) {
+      window.history.replaceState({ page }, '', '');
+    } else {
+      window.history.pushState({ page }, '', '');
+    }
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      if (event.state && event.state.page) {
+        setCurrentPage(event.state.page);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
@@ -349,8 +367,26 @@ const App: React.FC = () => {
           <div className="bg-white p-12 rounded-[3rem] max-w-md shadow-2xl animate-in zoom-in-95 duration-300">
             <h2 className="text-3xl font-black text-slate-900 tracking-tighter mb-4">Access Terminated</h2>
             <p className="text-slate-500 font-bold text-sm mb-8">Dual session detected.</p>
-            <button onClick={() => { setSessionConflict(false); setCurrentPage('login'); }} className="w-full py-5 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase">Reconnect</button>
+            <button onClick={() => { setSessionConflict(false); navigateTo('login'); }} className="w-full py-5 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase">Reconnect</button>
           </div>
+        </div>
+      )}
+
+      {/* Global Back Button */}
+      {currentPage !== 'dashboard' && currentPage !== 'home' && currentPage !== 'login' && !currentPage.startsWith('admin-') && (
+        <div className="pt-24 pb-2 px-4 md:px-10 max-w-[1700px] mx-auto w-full">
+          <button
+            onClick={() => window.history.back()}
+            className="flex items-center gap-2.5 group transition-all duration-300"
+          >
+            <div className="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm group-hover:shadow-md group-hover:bg-indigo-50 group-hover:border-indigo-100 transition-all">
+              <i className="fa-solid fa-chevron-left text-[10px] text-slate-500 group-hover:text-indigo-600"></i>
+            </div>
+            <div className="flex flex-col items-start leading-none">
+              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-indigo-400 transition-colors">Navigation</span>
+              <span className="text-[7px] font-bold text-slate-300 uppercase tracking-widest mt-0.5">Retrace Vector</span>
+            </div>
+          </button>
         </div>
       )}
 

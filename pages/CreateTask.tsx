@@ -97,7 +97,6 @@ const CreateTask: React.FC<CreateTaskProps> = ({ tasks, user, onDeleteTask, onUp
     <div className="pt-28 pb-20 min-h-screen bg-slate-50">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-8 space-y-20">
 
-        <BackToDashboard onNavigate={navigateTo} />
 
         {/* Main Form Section */}
         <section>

@@ -177,7 +177,6 @@ export default function Tasks({ user, tasks, transactions, onComplete, navigateT
     <div className="pt-24 md:pt-32 pb-20 min-h-screen bg-slate-50">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-8">
 
-        <BackToDashboard onNavigate={navigateTo} />
 
         <div className="mb-10 md:mb-16 mt-8 md:mt-12">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 md:gap-12 border-b border-slate-200 pb-10 md:pb-16">

@@ -158,7 +158,6 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, tasks, onBack, on
         return (
             <div className="pt-28 pb-20 min-h-screen bg-slate-50 flex items-center justify-center p-4">
                 <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-8">
-                    <BackToDashboard onNavigate={onBack} />
                     <div className="max-w-2xl mx-auto text-center mt-12 bg-white p-12 md:p-20 rounded-[4rem] border border-slate-100 shadow-sm animate-in zoom-in-95 duration-500">
                         <div className="w-24 h-24 bg-indigo-600 rounded-[2.5rem] flex items-center justify-center text-white mx-auto mb-10 shadow-2xl">
                             <i className={`fa-solid ${isInitializing ? 'fa-spinner fa-spin' : 'fa-id-card-clip'} text-4xl`}></i>
@@ -186,7 +185,6 @@ const FreelanceFigma: React.FC<FreelanceFigmaProps> = ({ user, tasks, onBack, on
         <div className="pt-28 pb-20 min-h-screen bg-slate-50 overflow-x-hidden">
             <div className="max-w-[1600px] mx-auto px-4 sm:px-8 space-y-12 animate-in fade-in duration-700">
 
-                <BackToDashboard onNavigate={onBack} />
 
                 {/* Header Profile Section */}
                 <header className="bg-slate-900 p-10 md:p-14 rounded-[3.5rem] text-white flex flex-col md:flex-row items-center justify-between gap-10 relative overflow-hidden shadow-3xl">

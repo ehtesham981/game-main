@@ -146,7 +146,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
     <div className="min-h-screen bg-slate-50 pt-24 md:pt-32 pb-20">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 mb-12">
 
-        {onNavigate && <BackToDashboard onNavigate={onNavigate} />}
 
         <div className="mt-8 md:mt-12 space-y-6">
           {/* Row 1: Brand & Global Telemetry */}

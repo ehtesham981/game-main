@@ -55,7 +55,6 @@ const MyCampaigns: React.FC<MyCampaignsProps> = ({ user, tasks, transactions, on
     <div className="pt-28 pb-20 min-h-screen bg-slate-50">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-8 space-y-12">
 
-        <BackToDashboard onNavigate={onNavigate} />
 
         {/* Header Block */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mt-12">

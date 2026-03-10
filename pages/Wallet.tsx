@@ -1,8 +1,6 @@
-
 // @ts-nocheck
 import React, { useState, useRef, useMemo } from 'react';
 import { Transaction } from '../types';
-import BackToDashboard from '../components/BackToDashboard';
 import NumericInput from '../components/NumericInput';
 
 interface WalletProps {
@@ -175,7 +173,6 @@ const Wallet: React.FC<WalletProps> = ({ balance = 0, depositBalance = 0, onActi
       <div className="pt-24 md:pt-32 pb-16 md:pb-24 min-h-screen bg-slate-50">
          <div className="max-w-[1600px] mx-auto px-4 sm:px-8 md:px-12 space-y-10 md:space-y-16">
 
-            <BackToDashboard onNavigate={onNavigate} />
 
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 bg-white p-8 md:p-0 rounded-[2.5rem] md:rounded-none md:bg-transparent shadow-sm md:shadow-none border border-slate-100 md:border-none">

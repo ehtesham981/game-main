@@ -83,7 +83,6 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ userBalance, onSpin, transactions
     <div className="pt-28 pb-20 min-h-screen bg-slate-50">
       <div className="max-w-[1600px] mx-auto px-6 md:px-12">
 
-        {onNavigate && <BackToDashboard onNavigate={onNavigate} />}
 
         {/* Header Section */}
         <div className="text-center mb-24 max-w-2xl mx-auto mt-12 animate-in fade-in slide-in-from-top-4 duration-1000">
