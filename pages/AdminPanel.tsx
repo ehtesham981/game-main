@@ -586,59 +586,63 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
-                  {transactions.filter(tx => (tx.type === 'deposit' || tx.type === 'withdraw')).map(tx => (
-                    <tr key={tx.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-10 py-6">
-                        <p className="text-[10px] text-indigo-400 font-mono">{tx.id.substring(0, 12)}...</p>
-                        <p className="text-xs font-black text-slate-900 mt-1">{tx.userId}</p>
-                      </td>
-                      <td className="px-6 py-6 font-black">
-                        <span className={`px-2 py-1 rounded text-[9px] uppercase tracking-widest ${tx.type === 'withdraw' ? 'bg-amber-100 text-amber-600' : 'bg-emerald-100 text-emerald-600'}`}>
-                          {tx.type}
-                        </span>
-                        <p className="mt-2 text-slate-900">${tx.amount.toLocaleString(undefined, { minimumFractionDigits: tx.type === 'deposit' ? 2 : 3 })} USD</p>
-                      </td>
-                      <td className="px-6 py-6">
-                        <p className="text-[10px] font-bold text-slate-500">{tx.method} <br /> {tx.account}</p>
-                        <p className={`text-[10px] font-black uppercase mt-1 ${tx.status === 'pending' ? 'text-amber-500' : tx.status === 'success' ? 'text-emerald-500' : 'text-rose-500'}`}>{tx.status}</p>
-                      </td>
-                      <td className="px-10 py-6 text-right space-x-2">
-                        {tx.proofImage && (
-                          <button
-                            onClick={() => setPreviewImages([tx.proofImage])}
-                            className="inline-block px-4 py-2 bg-indigo-50 text-indigo-600 text-[9px] font-black uppercase rounded-lg hover:bg-indigo-600 hover:text-white transition-all shadow-sm"
-                          >
-                            Proof
-                          </button>
-                        )}
-                        {tx.status === 'pending' && (
-                          <>
+                  {transactions.filter(tx => (tx.type === 'deposit' || tx.type === 'withdraw')).map(tx => {
+                    const txUser = users.find(u => u.id === tx.userId);
+                    return (
+                      <tr key={tx.id} className="hover:bg-slate-50/50 transition-colors">
+                        <td className="px-10 py-6">
+                          <p className="text-[10px] text-indigo-400 font-mono">{tx.id.substring(0, 12)}...</p>
+                          <p className="text-xs font-black text-slate-900 mt-1">{txUser?.username || tx.userId}</p>
+                          <p className="text-[10px] text-slate-500 font-medium">{txUser?.email}</p>
+                        </td>
+                        <td className="px-6 py-6 font-black">
+                          <span className={`px-2 py-1 rounded text-[9px] uppercase tracking-widest ${tx.type === 'withdraw' ? 'bg-amber-100 text-amber-600' : 'bg-emerald-100 text-emerald-600'}`}>
+                            {tx.type}
+                          </span>
+                          <p className="mt-2 text-slate-900">${tx.amount.toLocaleString(undefined, { minimumFractionDigits: tx.type === 'deposit' ? 2 : 3 })} USD</p>
+                        </td>
+                        <td className="px-6 py-6">
+                          <p className="text-[10px] font-bold text-slate-500">{tx.method} <br /> {tx.account}</p>
+                          <p className={`text-[10px] font-black uppercase mt-1 ${tx.status === 'pending' ? 'text-amber-500' : tx.status === 'success' ? 'text-emerald-500' : 'text-rose-500'}`}>{tx.status}</p>
+                        </td>
+                        <td className="px-10 py-6 text-right space-x-2">
+                          {tx.proofImage && (
                             <button
-                              onClick={async () => {
-                                // 1. Update Transaction
-                                await storage.updateGlobalTransaction(tx.id, { status: 'success' });
-
-                                // 2. Credit User
-                                if (tx.type === 'deposit') {
-                                  const user = users.find(u => u.id === tx.userId);
-                                  if (user) {
-                                    const newDepositBal = (Number(user.depositBalance) || 0) + Number(tx.amount);
-                                    await storage.updateUserInCloud(user.id, { depositBalance: newDepositBal });
-                                  }
-                                }
-
-                                refreshActiveData();
-                              }}
-                              className="px-4 py-2 bg-emerald-500 text-white text-[9px] font-black uppercase rounded-lg shadow-lg shadow-emerald-100 active:scale-95 transition-all"
+                              onClick={() => setPreviewImages([tx.proofImage])}
+                              className="inline-block px-4 py-2 bg-indigo-50 text-indigo-600 text-[9px] font-black uppercase rounded-lg hover:bg-indigo-600 hover:text-white transition-all shadow-sm"
                             >
-                              Approve
+                              Proof
                             </button>
-                            <button onClick={async () => { await storage.updateGlobalTransaction(tx.id, { status: 'failed' }); refreshActiveData(); }} className="px-4 py-2 bg-rose-500 text-white text-[9px] font-black uppercase rounded-lg shadow-lg shadow-rose-100 active:scale-95 transition-all">Reject</button>
-                          </>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
+                          )}
+                          {tx.status === 'pending' && (
+                            <>
+                              <button
+                                onClick={async () => {
+                                  // 1. Update Transaction
+                                  await storage.updateGlobalTransaction(tx.id, { status: 'success' });
+
+                                  // 2. Credit User
+                                  if (tx.type === 'deposit') {
+                                    const user = users.find(u => u.id === tx.userId);
+                                    if (user) {
+                                      const newDepositBal = (Number(user.depositBalance) || 0) + Number(tx.amount);
+                                      await storage.updateUserInCloud(user.id, { depositBalance: newDepositBal });
+                                    }
+                                  }
+
+                                  refreshActiveData();
+                                }}
+                                className="px-4 py-2 bg-emerald-500 text-white text-[9px] font-black uppercase rounded-lg shadow-lg shadow-emerald-100 active:scale-95 transition-all"
+                              >
+                                Approve
+                              </button>
+                              <button onClick={async () => { await storage.updateGlobalTransaction(tx.id, { status: 'failed' }); refreshActiveData(); }} className="px-4 py-2 bg-rose-500 text-white text-[9px] font-black uppercase rounded-lg shadow-lg shadow-rose-100 active:scale-95 transition-all">Reject</button>
+                            </>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
