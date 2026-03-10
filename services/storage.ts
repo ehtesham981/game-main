@@ -106,6 +106,8 @@ export const storage = {
       const cloudData = snapshot.val();
       const user: User = {
         ...cloudData,
+        balance: cloudData.balance || 0,
+        depositBalance: cloudData.depositBalance || 0,
         completedTasks: storage.ensureArray(cloudData.completedTasks),
         createdTasks: storage.ensureArray(cloudData.createdTasks),
         claimedReferrals: storage.ensureArray(cloudData.claimedReferrals)

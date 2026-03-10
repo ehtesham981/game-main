@@ -168,6 +168,10 @@ const App: React.FC = () => {
     localStorage.setItem('ct_user_session_id', newSessionId);
     const cloudUser = await storage.syncUserFromCloud(userData.id);
     const updatedUser: User = {
+      balance: 0,
+      depositBalance: 0,
+      completedTasks: [],
+      createdTasks: [],
       ...userData,
       ...(cloudUser || {}),
       isLoggedIn: true,

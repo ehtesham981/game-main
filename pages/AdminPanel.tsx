@@ -1167,6 +1167,74 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ initialView = 'overview', onNav
           </div>
         )}
 
+        {view === 'referrals' && (
+          <div className="bg-white rounded-[2rem] sm:rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm animate-in fade-in duration-500">
+            <div className="p-6 sm:p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
+              <div>
+                <h2 className="text-2xl font-black text-slate-900 uppercase">Referral Network</h2>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">{referralData.length} Active Referrers</p>
+              </div>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left min-w-[800px]">
+                <thead className="bg-slate-50 text-[10px] font-black uppercase text-slate-400 border-b border-slate-100">
+                  <tr>
+                    <th className="px-10 py-6">Referrer (Source)</th>
+                    <th className="px-6 py-6">Referred Count</th>
+                    <th className="px-6 py-6">Referred Users</th>
+                    <th className="px-10 py-6 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50">
+                  {referralData.map((item, idx) => (
+                    <tr key={idx} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="px-10 py-6">
+                        <p className="text-sm font-black text-slate-900">{item.referrer.username}</p>
+                        <p className="text-[10px] text-indigo-400 font-mono italic">{item.referrer.id}</p>
+                      </td>
+                      <td className="px-6 py-6">
+                        <span className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black">
+                          {item.referredUsers.length} Nodes
+                        </span>
+                      </td>
+                      <td className="px-6 py-6">
+                        <div className="flex flex-wrap gap-2 max-w-[400px]">
+                          {item.referredUsers.slice(0, 5).map(u => (
+                            <span key={u.id} className="text-[9px] font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded">
+                              {u.username}
+                            </span>
+                          ))}
+                          {item.referredUsers.length > 5 && (
+                            <span className="text-[9px] font-black text-indigo-400 mt-1">
+                              +{item.referredUsers.length - 5} more
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-10 py-6 text-right">
+                        <button
+                          onClick={() => setEditingUserId(item.referrer.id)}
+                          className="px-4 py-2 bg-slate-900 text-white text-[9px] font-black uppercase rounded-lg hover:bg-indigo-600 transition-all"
+                        >
+                          View Referrer
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {referralData.length === 0 && (
+                    <tr>
+                      <td colSpan={4} className="px-10 py-20 text-center">
+                        <i className="fa-solid fa-people-group text-5xl text-slate-100 mb-6 block"></i>
+                        <p className="text-sm font-black text-slate-400 uppercase tracking-widest">No referral activity detected on network</p>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
         {view === 'spreadlinks' && (
           <div className="space-y-6 animate-in fade-in duration-500">
             <div className="bg-white rounded-[2rem] sm:rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm">

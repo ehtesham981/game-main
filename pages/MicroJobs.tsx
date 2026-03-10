@@ -162,7 +162,7 @@ const MicroJobs: React.FC<MicroJobsProps> = ({ user, onNavigate, initialTab = 'o
                             <div className="flex flex-wrap gap-4 md:gap-6">
                                 <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-4 md:p-6 rounded-2xl md:rounded-3xl flex-grow md:flex-none min-w-[120px]">
                                     <span className="block text-[8px] font-black text-indigo-400 uppercase tracking-widest mb-1">Total Balance</span>
-                                    <span className="text-lg md:text-2xl font-black text-white tabular-nums">${user.balance.toLocaleString(undefined, { minimumFractionDigits: 3 })}</span>
+                                    <span className="text-lg md:text-2xl font-black text-white tabular-nums">${(user.balance || 0).toLocaleString(undefined, { minimumFractionDigits: 3 })}</span>
                                 </div>
                                 <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-4 md:p-6 rounded-2xl md:rounded-3xl flex-grow md:flex-none min-w-[120px]">
                                     <span className="block text-[8px] font-black text-emerald-400 uppercase tracking-widest mb-1">Status</span>
